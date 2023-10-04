@@ -14,7 +14,7 @@ const Navbar = () => {
   };
   return (
     <div className="fixed top-0 w-full flex justify-between items-center gap-5 px-10 text-xl border-b border-black h-[4.5rem] bg-colors">
-      <Image src="/logo.png" alt="Padcast Logo" width={200} height={50} />
+      <Image src="/logo4.png" alt="Padcast Logo" width={150} height={30} />
       <div
         className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-10 text-3xl ${bangers.className}`}
       >

@@ -6,6 +6,7 @@ import { useIsConnected } from "@/hooks/useIsConnected";
 import { Client } from "@xmtp/xmtp-js";
 import useEtherWalletClient from "@/hooks/useEtherWalletClient";
 import { useClient } from "@xmtp/react-sdk";
+import { getAppVersion } from "@/helpers/appVersion";
 
 const icons = ["/wallet_icons/coinbase.svg", "/wallet_icons/metamask.png"];
 
@@ -24,7 +25,9 @@ const Login = () => {
       keys,
       signer,
       options: {
+        // persistConversations: false,
         env: "production",
+        appVersion: getAppVersion(),
       },
     });
     setSteps(2);
@@ -50,14 +53,14 @@ const Login = () => {
       className={`flex min-h-screen flex-col items-center justify-center p-24`}
     >
       <Image
-        src="/logo.png"
-        alt="Wagmi Logo"
+        src="/logo4.png"
+        alt="PodCast Logo"
         width={800}
         height={200}
         priority
       />
       {steps === 0 ? (
-        <div className="grid grid-rows-4 gap-4 w-64">
+        <div className="mt-12 grid grid-rows-4 gap-4 w-64">
           {connectors.map((connector, index) => (
             <button
               className="bg-black text-xl text-white font-bold py-2 px-4 rounded-full flex items-center gap-4"
@@ -82,7 +85,7 @@ const Login = () => {
         </div>
       ) : (
         <button
-          className="w-64 bg-black text-xl text-white font-bold py-2 px-4 rounded-full"
+          className="mt-12 w-64 bg-black text-xl text-white font-bold py-2 px-4 rounded-full"
           onClick={handleInitXmtp}
         >
           Connected to XMTP
