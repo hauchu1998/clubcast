@@ -6,11 +6,10 @@ import { address } from "@/types/address";
 
 interface ChatWrapperProps {
   conversation: CachedConversation;
-  selectedConversation?: CachedConversation;
   onConversationClick?: (conversation: CachedConversation) => void;
 }
 const ChatWrapper = (props: ChatWrapperProps) => {
-  const { conversation, selectedConversation, onConversationClick } = props;
+  const { conversation, onConversationClick } = props;
   const { peerAddress } = conversation;
   const { data: ensName } = useEnsName({
     address: peerAddress as address,
@@ -36,15 +35,15 @@ const ChatWrapper = (props: ChatWrapperProps) => {
           data-testid="avatar"
           seed={peerAddress?.toLowerCase() || ""}
           scale={5}
-          size={10}
+          size={9}
           className="rounded-full"
         />
       </div>
       <div className="col-span-4 h-full py-1 border-b">
-        <div className="text-xl font-bold">
+        <div className="text-lg font-bold">
           {ensName || shortAddress(peerAddress) || peerAddress}
         </div>
-        <div className="text-lg truncate">{content}</div>
+        <div className="truncate">{content}</div>
       </div>
     </div>
   );

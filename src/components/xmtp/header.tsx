@@ -1,32 +1,55 @@
 import { shortAddress } from "@/helpers/address";
+import useSelectedConversation from "@/hooks/useSelectedConversation";
+import { useInboxStore } from "@/store/inbox";
 import {
-  CachedConversation,
-  isValidAddress,
+  useConversation,
   useCanMessage,
+  useConversations,
 } from "@xmtp/react-sdk";
-import { useCallback, useState } from "react";
+import { set } from "date-fns";
+import { is } from "date-fns/locale";
+import { useCallback, useEffect, useState } from "react";
 import Blockies from "react-blockies";
 
-interface ChatHeaderProps {
-  mode: "chats" | "room" | "new";
-  selectedConversation?: CachedConversation;
-  newPeerAddress: string;
-  onAddressChange: Function;
-}
-
-const ChatHeader = (props: ChatHeaderProps) => {
-  const { mode, selectedConversation, newPeerAddress, onAddressChange } = props;
+const ChatHeader = () => {
   const [isValid, setIsValid] = useState(true);
   const { canMessage } = useCanMessage();
+  const { conversations } = useConversations();
+  const { getCachedByPeerAddress } = useConversation();
+  const selectedConversation = useSelectedConversation();
+  const { mode, setMode, peerAddress, setPeerAddress, setConversationTopic } =
+    useInboxStore((state) => ({
+      mode: state.mode,
+      setMode: state.setMode,
+      peerAddress: state.peerAddress,
+      setPeerAddress: state.setPeerAddress,
+      setConversationTopic: state.setConversationTopic,
+    }));
 
   const handleAddressChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const address = e.target.value;
-      onAddressChange(address);
+      setPeerAddress(address);
+      setIsValid(false);
       const isOnNetwork = await canMessage(address);
       setIsValid(isOnNetwork);
+
+      if (isValid) {
+        const existing = await getCachedByPeerAddress(address);
+        if (existing) {
+          setConversationTopic(existing.topic);
+          setMode("room");
+        }
+      }
     },
-    [onAddressChange, canMessage]
+    [
+      setPeerAddress,
+      canMessage,
+      isValid,
+      setMode,
+      setConversationTopic,
+      getCachedByPeerAddress,
+    ]
   );
 
   if (mode === "chats") {
@@ -37,7 +60,7 @@ const ChatHeader = (props: ChatHeaderProps) => {
 
   if (mode === "room" && selectedConversation) {
     return (
-      <div className="text-center bg-colors">
+      <div className="text-center ">
         <div className="flex flex-col items-center justify-center">
           <Blockies
             data-testid="avatar"
@@ -61,7 +84,7 @@ const ChatHeader = (props: ChatHeaderProps) => {
         <div className="w-full">
           <input
             className="w-full px-1 bg-transparent border-b border-black focus:outline-none focus:border-purple-600"
-            value={newPeerAddress}
+            value={peerAddress}
             onChange={handleAddressChange}
           />
           <div className={`${!isValid ? "text-red-500" : "hidden"}`}>

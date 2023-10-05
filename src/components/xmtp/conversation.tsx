@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   CachedConversation,
   isValidAddress,
@@ -8,30 +8,27 @@ import {
 import { BsImages, BsFillSendFill, BsCameraVideo } from "react-icons/bs";
 import { BiMicrophone } from "react-icons/bi";
 import { AiOutlineFile } from "react-icons/ai";
+import { useInboxStore } from "@/store/inbox";
+import useSelectedConversation from "@/hooks/useSelectedConversation";
 
 interface ConversationProps {
-  mode: "chats" | "room" | "new";
-  setMode: Function;
-  conversation: CachedConversation | undefined;
-  setSelectedConversation: Function;
-  message: string;
-  setMessage: Function;
-  peerAddress?: string;
   children?: React.ReactNode;
 }
 const Conversation = (props: ConversationProps) => {
-  const {
-    mode,
-    setMode,
-    conversation,
-    setSelectedConversation,
-    peerAddress,
-    message,
-    setMessage,
-  } = props;
-  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const { mode, setMode, peerAddress, setConversationTopic } = useInboxStore(
+    (state) => ({
+      mode: state.mode,
+      setMode: state.setMode,
+      peerAddress: state.peerAddress,
+      setPeerAddress: state.setPeerAddress,
+      setConversationTopic: state.setConversationTopic,
+    })
+  );
+  const selectedConversation = useSelectedConversation();
   const { startConversation } = useStartConversation();
   const { sendMessage } = useSendMessage();
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleMessageChange = useCallback(
     (e: any) => {
@@ -42,58 +39,64 @@ const Conversation = (props: ConversationProps) => {
 
   const handleStartConversation = useCallback(async () => {
     if (peerAddress && message) {
-      setIsLoading(true);
-      const conversation = await startConversation(peerAddress, message);
-      setSelectedConversation(conversation);
-      setIsLoading(false);
-      setMode("room");
+      const { cachedConversation } = await startConversation(
+        peerAddress,
+        message
+      );
+      if (cachedConversation) {
+        setConversationTopic(cachedConversation.topic);
+        setMode("room");
+      }
     }
+  }, [message, peerAddress, startConversation, setConversationTopic, setMode]);
+
+  const handleSendMessage = useCallback(async () => {
+    if (mode === "new") {
+      await handleStartConversation();
+    } else if (mode === "room") {
+      if (
+        selectedConversation?.peerAddress &&
+        isValidAddress(selectedConversation?.peerAddress) &&
+        message &&
+        selectedConversation
+      ) {
+        const res = await sendMessage(selectedConversation, message);
+      }
+    }
+    setMessage("");
   }, [
+    mode,
     message,
-    peerAddress,
-    startConversation,
-    setSelectedConversation,
-    setMode,
+    sendMessage,
+    selectedConversation,
+    handleStartConversation,
+    setMessage,
   ]);
 
-  const handleSendMessage = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (mode === "new") {
-        await handleStartConversation();
-      } else if (mode === "room") {
-        if (
-          peerAddress &&
-          isValidAddress(peerAddress) &&
-          message &&
-          conversation
-        ) {
-          setIsLoading(true);
-          await sendMessage(conversation, message);
-          setIsLoading(false);
-        }
-      }
-    },
-    [
-      mode,
-      message,
-      peerAddress,
-      sendMessage,
-      conversation,
-      handleStartConversation,
-    ]
-  );
-
   return (
-    <div className="w-full relative">
+    <div className="w-[18%] fixed top-[10rem] right-0 h-[calc(100vh-10rem)]">
       {props.children}
-      <div className="fixed bottom-0 right-0 gap-5 px-5 py-2  bg-black w-[18%]">
+      <div className="w-[18%] fixed bottom-0 right-0 gap-5 px-5 py-2 bg-black">
         <textarea
+          id="chat"
           name="textmessage"
+          ref={textAreaRef}
+          data-testid="message-input"
           placeholder="..."
           value={message}
-          // rows={1}
-          className="rounded-lg px-3 py-1 w-full bg-white "
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              void handleSendMessage();
+            }
+          }}
+          rows={1}
+          className={`rounded-lg px-3 py-1 w-full bg-white ${
+            textAreaRef?.current?.scrollHeight &&
+            textAreaRef?.current?.scrollHeight <= 32
+              ? "max-h-8"
+              : "max-h-40"
+          } min-h-8 outline-none border-none focus:ring-0 resize-none`}
           onChange={handleMessageChange}
         />
         <div className="mt-1 flex justify-between">
