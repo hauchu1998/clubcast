@@ -1,20 +1,13 @@
 import { shortAddress } from "@/helpers/address";
-import useSelectedConversation from "@/hooks/useSelectedConversation";
+import useSelectedConversation from "@/hooks/xmtp/useSelectedConversation";
 import { useInboxStore } from "@/store/inbox";
-import {
-  useConversation,
-  useCanMessage,
-  useConversations,
-} from "@xmtp/react-sdk";
-import { set } from "date-fns";
-import { is } from "date-fns/locale";
-import { useCallback, useEffect, useState } from "react";
+import { useConversation, useCanMessage } from "@xmtp/react-sdk";
+import { useCallback, useState } from "react";
 import Blockies from "react-blockies";
 
 const ChatHeader = () => {
   const [isValid, setIsValid] = useState(true);
   const { canMessage } = useCanMessage();
-  const { conversations } = useConversations();
   const { getCachedByPeerAddress } = useConversation();
   const selectedConversation = useSelectedConversation();
   const { mode, setMode, peerAddress, setPeerAddress, setConversationTopic } =

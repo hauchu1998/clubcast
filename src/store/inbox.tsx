@@ -12,7 +12,7 @@ interface InboxState {
   setStartedFirstMessage: (startedFirstMessage: boolean) => void;
   attachmentError: string;
   setAttachmentError: (attachmentError: string) => void;
-  resetInboxStore: () => void;
+  resetInboxState: () => void;
 }
 
 export const useInboxStore = create<InboxState>((set) => ({
@@ -26,7 +26,7 @@ export const useInboxStore = create<InboxState>((set) => ({
   setStartedFirstMessage: (startedFirstMessage) => set({ startedFirstMessage }),
   attachmentError: "",
   setAttachmentError: (attachmentError) => set({ attachmentError }),
-  resetInboxStore: () =>
+  resetInboxState: () =>
     set({
       mode: "chats",
       peerAddress: "",

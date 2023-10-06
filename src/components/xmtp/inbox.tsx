@@ -4,7 +4,7 @@ import { useConversations } from "@xmtp/react-sdk";
 import ChatHeader from "./header";
 import Conversation from "./conversation";
 import Messages from "./messages";
-import useSelectedConversation from "@/hooks/useSelectedConversation";
+import useSelectedConversation from "@/hooks/xmtp/useSelectedConversation";
 import ConversationList from "./conversationList";
 import { useInboxStore } from "@/store/inbox";
 

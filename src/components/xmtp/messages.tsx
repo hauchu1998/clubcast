@@ -43,7 +43,6 @@ const Messages = (props: MessagesProps) => {
         if (shouldDisplayDate) {
           renderedDatesRef.current.push(msg.sentAt);
         }
-        console.log(msg, msg.uuid, msg.xmtpID);
         const messageDiv = (
           <div key={msg.uuid}>
             {shouldDisplayDate && (
@@ -74,7 +73,7 @@ const Messages = (props: MessagesProps) => {
   if (isLoading) {
     return (
       <div className="w-full h-full flex items-center justify-center">
-        <div className="text-3xl font-bold">Loading messages...</div>
+        <div className="">Loading messages...</div>
       </div>
     );
   }
