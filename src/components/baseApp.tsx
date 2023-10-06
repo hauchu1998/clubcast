@@ -8,7 +8,7 @@ interface BaseAppProps {
 
 const BaseApp = (props: BaseAppProps) => {
   return (
-    <div className="relative w-full min-h-screen">
+    <div className="relative w-full min-h-screen z-10">
       <Navbar />
       <Inbox />
       <div className="w-[82%] mt-16 ">{props.children}</div>

@@ -49,8 +49,8 @@ const Login = () => {
   }, [isConnected, router, steps]);
 
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-center p-24`}
+    <div
+      className={`fixed top-0 left-0 flex w-screen h-screen flex-col items-center justify-center p-24 z-50 bg-colors`}
     >
       <Image
         src="/logo4.png"
@@ -95,7 +95,7 @@ const Login = () => {
       {error && (
         <div className="mt-4 text-red-500 text-lg">{error.message}</div>
       )}
-    </main>
+    </div>
   );
 };
 

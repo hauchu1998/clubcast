@@ -6315,7 +6315,7 @@ web-streams-polyfill@^3.1.1:
   resolved "https://registry.yarnpkg.com/web-streams-polyfill/-/web-streams-polyfill-3.2.1.tgz#71c2718c52b45fd49dbeee88634b3a60ceab42a6"
   integrity sha512-e0MO3wdXWKrLbL0DgGnUV7WHVuw9OUvL4hjgnPkIeEvESk74gAITi5G606JtZPp39cd8HA9VQzCIvA49LpPN5Q==
 
-web3.storage@^4.5.4:
+web3.storage@^4.5.5:
   version "4.5.5"
   resolved "https://registry.yarnpkg.com/web3.storage/-/web3.storage-4.5.5.tgz#6c886c51e09bd97bf242e7867f16db2efe223822"
   integrity sha512-ABW1Gk4gpkVkEIgeQTcoqZ1pI1YKQiBbZDploAcyldFWCXtdBpsijrRHg0S5Mwlvllw4E8OsRm/9HG2nVaGsCg==
