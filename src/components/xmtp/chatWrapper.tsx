@@ -1,5 +1,5 @@
 import { CachedConversation, useLastMessage } from "@xmtp/react-sdk";
-import { useEnsAvatar, useEnsName } from "wagmi";
+import { useEnsName } from "wagmi";
 import { isValidLongWalletAddress, shortAddress } from "@/helpers/address";
 import Blockies from "react-blockies";
 import { address } from "@/types/address";
@@ -14,7 +14,7 @@ const ChatWrapper = (props: ChatWrapperProps) => {
   const { data: ensName } = useEnsName({
     address: peerAddress as address,
     enabled: isValidLongWalletAddress(peerAddress),
-    staleTime: 10000,
+    chainId: 1,
   });
 
   const lastMessage = useLastMessage(conversation.topic);
@@ -41,7 +41,7 @@ const ChatWrapper = (props: ChatWrapperProps) => {
       </div>
       <div className="col-span-4 h-full py-1 border-b">
         <div className="text-lg font-bold">
-          {ensName || shortAddress(peerAddress) || peerAddress}
+          {shortAddress(peerAddress) || peerAddress}
         </div>
         <div className="truncate">{content}</div>
       </div>
