@@ -43,6 +43,12 @@ const Navbar = () => {
     wagmiReset,
   ]);
 
+  useEffect(() => {
+    if (!isConnected) {
+      router.replace("/login");
+    }
+  }, [isConnected, router]);
+
   return (
     <div className="fixed top-0 w-full flex justify-between items-center gap-5 px-10 text-xl border-b border-black h-[4.5rem] bg-colors">
       <Image

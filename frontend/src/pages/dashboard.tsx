@@ -16,11 +16,7 @@ const Dashboard = () => {
     chainId: 1,
   });
   const router = useRouter();
-  useEffect(() => {
-    if (!isConnected) {
-      router.replace("/login");
-    }
-  }, [isConnected, router]);
+
   return (
     <div className="w-full py-3">
       <div className="w-full px-10 py-3 flex gap-5 items-center h-32">
