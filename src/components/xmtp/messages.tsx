@@ -7,7 +7,7 @@ import {
 import { isSameDay } from "date-fns";
 import { useEffect, useRef, useCallback, useMemo, use } from "react";
 import { DateDivider } from "./dateDivider";
-import { MessageContent } from "./messageContent";
+import MessageController from "./messageController";
 import { shortAddress } from "@xmtp/react-components";
 
 interface MessagesProps {
@@ -23,6 +23,7 @@ const Messages = (props: MessagesProps) => {
 
   // XMTP Hooks
   const { messages, isLoading } = useMessages(conversation);
+  console.log(messages);
 
   const messagesWithDates = useMemo(
     () =>
@@ -48,7 +49,7 @@ const Messages = (props: MessagesProps) => {
             {shouldDisplayDate && (
               <DateDivider date={renderedDatesRef.current.at(-1) as Date} />
             )}
-            <MessageContent
+            <MessageController
               message={msg}
               key={msg.xmtpID}
               from={{

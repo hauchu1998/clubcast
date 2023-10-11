@@ -105,7 +105,6 @@ const Conversation = (props: ConversationProps) => {
   const handleSendMessage = useCallback(async () => {
     const text = message;
     const attach = attachment;
-    console.log(text);
 
     setMessage("");
     setAttachment(undefined);
@@ -132,6 +131,7 @@ const Conversation = (props: ConversationProps) => {
         conversation
       ) {
         if (attach && conversation) {
+          console.log(attach);
           await sendMessageContent(conversation, attach, "attachment");
         }
         if (message && conversation) {
@@ -204,6 +204,7 @@ const Conversation = (props: ConversationProps) => {
           } min-h-8 outline-none border-none focus:ring-0 resize-none`}
           onChange={handleMessageChange}
         />
+
         {attachmentPreview && (
           <div className="relative m-8 w-fit">
             {typeLookup[extension] === "video" ? (

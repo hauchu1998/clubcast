@@ -15,7 +15,7 @@ import Upload from "@/helpers/upload";
 import { useInboxStore } from "@/store/inbox";
 import { isValidLongWalletAddress } from "@/helpers/address";
 
-const useSendMessageContent = (attachment?: Attachment) => {
+const useSendMessageContent = () => {
   const { sendMessage: _sendMessage, isLoading, error } = _useSendMessage();
   const peerAddress = useInboxStore((state) => state.peerAddress);
 
@@ -28,13 +28,15 @@ const useSendMessageContent = (attachment?: Attachment) => {
       if (!isValidLongWalletAddress(peerAddress)) {
         return;
       }
-      if (attachment && type === "attachment") {
+
+      if (message && type === "attachment") {
         const web3Storage = new Web3Storage({
-          token: process.env.VITE_WEB3_STORAGE_TOKEN,
+          token: process.env.NEXT_PUBLIC_WEB3_STORAGE_TOKEN,
         });
+        console.log("attachment", message, web3Storage);
 
         const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
-          attachment,
+          message,
           new AttachmentCodec()
         );
 
@@ -52,8 +54,8 @@ const useSendMessageContent = (attachment?: Attachment) => {
           nonce: encryptedEncoded.nonce,
           secret: encryptedEncoded.secret,
           scheme: "https://",
-          filename: attachment.filename,
-          contentLength: attachment.data.byteLength,
+          filename: (message as Attachment).filename,
+          contentLength: (message as Attachment).data.byteLength,
         };
 
         void _sendMessage(
@@ -68,7 +70,7 @@ const useSendMessageContent = (attachment?: Attachment) => {
         void _sendMessage(conversation, message);
       }
     },
-    [peerAddress, attachment, _sendMessage]
+    [peerAddress, _sendMessage]
   );
 
   return {
