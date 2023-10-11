@@ -4,6 +4,9 @@ import { useRouter } from "next/router";
 import Blockies from "react-blockies";
 import { isValidLongWalletAddress } from "@/helpers/address";
 import { address } from "@/types/address";
+import PersonalLists from "@/components/clubs/clubList";
+import ClubCard from "@/components/clubs/clubCard";
+import ClubList from "@/components/clubs/clubList";
 
 const Dashboard = () => {
   const { address: walletAddress, isConnected } = useAccount();
@@ -20,7 +23,7 @@ const Dashboard = () => {
   }, [isConnected, router]);
   return (
     <div className="w-full py-3">
-      <div className="w-full px-10 py-3 flex gap-5 items-center">
+      <div className="w-full px-10 py-3 flex gap-5 items-center h-32">
         <div data-testid="avatar" className="flex items-center justify-center">
           <Blockies
             data-testid="avatar"
@@ -49,6 +52,10 @@ const Dashboard = () => {
             )
           }
         </div>
+      </div>
+      <div className="h-[calc(100vh-14rem)] p-3">
+        <ClubList section="personal" />
+        <ClubList section="subscribed" />
       </div>
     </div>
   );

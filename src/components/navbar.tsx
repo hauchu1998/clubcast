@@ -5,7 +5,6 @@ import { useAccount, useDisconnect } from "wagmi";
 import { bangers } from "@/styles/fonts";
 import { type Signer, useClient } from "@xmtp/react-sdk";
 import { useEffect } from "react";
-import useEtherWalletClient from "@/hooks/useEtherWalletClient";
 import { useInboxStore } from "@/store/inbox";
 import { useIsConnected } from "@/hooks/useIsConnected";
 

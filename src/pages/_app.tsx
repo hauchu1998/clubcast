@@ -1,6 +1,6 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
-import { zillaSlab } from "@/styles/fonts";
+
 import { WagmiConfig } from "wagmi";
 import { wagmiConfig } from "@/config/wagmiConfig";
 import { attachmentContentTypeConfig, XMTPProvider } from "@xmtp/react-sdk";
@@ -16,11 +16,9 @@ export default function App({ Component, pageProps }: AppProps) {
         contentTypeConfigs={contentTypeConfigs}
         dbVersion={DB_VERSION}
       >
-        <main className={zillaSlab.className}>
-          <BaseApp>
-            <Component {...pageProps} />
-          </BaseApp>
-        </main>
+        <BaseApp>
+          <Component {...pageProps} />
+        </BaseApp>
       </XMTPProvider>
     </WagmiConfig>
   );

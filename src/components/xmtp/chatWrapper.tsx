@@ -27,7 +27,7 @@ const ChatWrapper = (props: ChatWrapperProps) => {
   return (
     <div
       key={conversation.topic}
-      className="py-3 w-full grid grid-cols-5 gap-3 cursor-pointer"
+      className="py-3 w-full grid grid-cols-5 gap-3 cursor-pointer px-2"
       onClick={() => onConversationClick?.(conversation)}
     >
       <div data-testid="avatar" className="flex items-center justify-center">
