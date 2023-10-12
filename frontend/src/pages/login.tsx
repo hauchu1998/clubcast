@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { useConnect } from "wagmi";
 import { useIsConnected } from "@/hooks/useIsConnected";

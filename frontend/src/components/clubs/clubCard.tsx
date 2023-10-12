@@ -1,9 +1,9 @@
 import Image from "next/image";
-import { clubCard } from "@/types/club";
+import { type ClubCard } from "@/types/club";
 import Link from "next/link";
 
 interface ClubCardProps {
-  club: clubCard;
+  club: ClubCard;
   css?: string;
 }
 

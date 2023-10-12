@@ -1,6 +1,6 @@
-import { clubCard } from "@/types/club";
+import { ClubCard } from "@/types/club";
 
-export const personalClubs: clubCard[] = [
+export const personalClubs: ClubCard[] = [
   {
     id: "asdfasdf",
     name: "Scroll",
@@ -18,7 +18,7 @@ export const personalClubs: clubCard[] = [
   },
 ];
 
-export const subscribedClubs: clubCard[] = [
+export const subscribedClubs: ClubCard[] = [
   {
     id: "tiskdnfa",
     name: "iPodcast",
@@ -37,4 +37,4 @@ export const subscribedClubs: clubCard[] = [
   },
 ];
 
-export const allClubs: clubCard[] = [...personalClubs, ...subscribedClubs];
+export const allClubs: ClubCard[] = [...personalClubs, ...subscribedClubs];
