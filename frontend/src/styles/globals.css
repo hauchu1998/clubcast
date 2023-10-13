@@ -24,3 +24,30 @@ body {
 .bg-colors {
   background: rgb(255, 247, 232);
 }
+
+.scrollbar {
+  overflow-y: overlay;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 7px;
+}
+
+.scrollbar::-webkit-scrollbar-button {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.scrollbar::-webkit-scrollbar-track-piece {
+  background: transparent;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: transparent;
+  border: 1px solid rgb(200, 200, 232);
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  box-shadow: transparent;
+}

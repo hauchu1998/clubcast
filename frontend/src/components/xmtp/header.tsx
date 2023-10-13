@@ -2,8 +2,12 @@ import { shortAddress } from "@/helpers/address";
 import useSelectedConversation from "@/hooks/xmtp/useSelectedConversation";
 import { useInboxStore } from "@/store/inbox";
 import { useConversation, useCanMessage } from "@xmtp/react-sdk";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Blockies from "react-blockies";
+
+interface ChatHeaderProps {
+  width: string;
+}
 
 const ChatHeader = () => {
   const [isValid, setIsValid] = useState(true);

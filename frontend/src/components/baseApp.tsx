@@ -15,9 +15,9 @@ const BaseApp = (props: BaseAppProps) => {
   return (
     <div className={`h-screen w-full z-10 ${zillaSlab.className}`}>
       <Navbar />
-      {isConnected && client && <Inbox />}
+      {isConnected && client && <Inbox width="w-[20%]" />}
       <div className="h-16"></div>
-      <div className="w-[82%]">{props.children}</div>
+      <div className="w-[80%]">{props.children}</div>
     </div>
   );
 };

@@ -1,11 +1,8 @@
 import { useAccount, useEnsName } from "wagmi";
-import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Blockies from "react-blockies";
 import { isValidLongWalletAddress } from "@/helpers/address";
 import { address } from "@/types/address";
-import PersonalLists from "@/components/clubs/clubList";
-import ClubCard from "@/components/clubs/clubCard";
 import ClubList from "@/components/clubs/clubList";
 
 const Dashboard = () => {

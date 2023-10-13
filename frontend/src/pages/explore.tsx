@@ -1,6 +1,6 @@
 import { bangers } from "@/styles/fonts";
 import { allClubs } from "@/db/clubs";
-import ClubCard from "@/components/clubs/clubCard";
+import ClubCardContent from "@/components/clubs/clubCard";
 import Link from "next/link";
 
 const Explore = () => {
@@ -18,12 +18,16 @@ const Explore = () => {
         creators. Have fun!!
       </div>
 
-      <div className="w-[80%] mt-10 grid grid-cols-5 gap-5">
+      <div className="w-[80%] h-96 mt-10 grid grid-cols-5 gap-5">
         {allClubs.map((club) => {
           return (
-            <div key={club.id} className="w-full flex justify-center">
-              <ClubCard club={club} />
-            </div>
+            <Link
+              key={club.id}
+              className="w-full flex justify-center"
+              href={`/club/${club.id}`}
+            >
+              <ClubCardContent club={club} />
+            </Link>
           );
         })}
       </div>

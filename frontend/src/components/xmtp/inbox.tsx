@@ -8,12 +8,19 @@ import useSelectedConversation from "@/hooks/xmtp/useSelectedConversation";
 import ConversationList from "./conversationList";
 import { useInboxStore } from "@/store/inbox";
 
-const Inbox = () => {
-  const { mode, setMode, setConversationTopic } = useInboxStore((state) => ({
-    mode: state.mode,
-    setMode: state.setMode,
-    setConversationTopic: state.setConversationTopic,
-  }));
+interface InboxProps {
+  width: string;
+}
+
+const Inbox = ({ width }: InboxProps) => {
+  const { mode, setMode, setConversationTopic, setPeerAddress } = useInboxStore(
+    (state) => ({
+      mode: state.mode,
+      setMode: state.setMode,
+      setConversationTopic: state.setConversationTopic,
+      setPeerAddress: state.setPeerAddress,
+    })
+  );
   const selectedConversation = useSelectedConversation();
   const { error, isLoading } = useConversations();
 
@@ -22,8 +29,14 @@ const Inbox = () => {
     setConversationTopic("");
   };
 
+  const handleNewConversation = () => {
+    setMode("new");
+    setPeerAddress("");
+  };
   if (error) {
-    <div className="fixed top-[4.5rem] right-0 w-[18%] h-[calc(100vh-4.5rem)] border-l border-black px-3 py-2">
+    <div
+      className={`fixed top-[4.5rem] right-0 ${width} h-[calc(100vh-4.5rem)] border-l border-black px-3 py-2`}
+    >
       <div className="text-3xl text-center font-bold">Chats</div>
       <div className="text-red-500">
         An error occurred while loading conversations
@@ -32,15 +45,21 @@ const Inbox = () => {
   }
 
   if (isLoading) {
-    <div className="fixed top-[4.5rem] right-0 w-[18%] h-[calc(100vh-4.5rem)] border-l border-black px-3 py-2">
+    <div
+      className={`fixed top-[4.5rem] right-0 ${width} h-[calc(100vh-4.5rem)] border-l border-black px-3 py-2`}
+    >
       <div className="text-3xl text-center font-bold">Chats</div>
       <div className="">Loading conversations...</div>
     </div>;
   }
 
   return (
-    <div className="fixed top-[4.5rem] right-0 w-[18%] h-[calc(100vh-4.5rem)] border-l border-black py-2">
-      <div className="fixed top-[4.5rem] right-0 flex justify-between items-center gap-3 px-3 bg-colors w-[18%] h-[5.5rem] border-l border-b border-black">
+    <div
+      className={`fixed top-[4.5rem] right-0 ${width} h-[calc(100vh-4.5rem)] border-l border-black py-2`}
+    >
+      <div
+        className={`fixed top-[4.5rem] right-0 flex justify-between items-center gap-3 px-3 bg-colors ${width} h-[5.5rem] border-l border-b border-black`}
+      >
         <button
           className={`${mode === "chats" ? "invisible" : "visible"} `}
           onClick={handleBackToInbox}
@@ -50,7 +69,7 @@ const Inbox = () => {
         <ChatHeader />
         <button
           className={`${mode === "chats" ? "visible" : "invisible"} `}
-          onClick={() => setMode("new")}
+          onClick={handleNewConversation}
         >
           <BsPencilSquare className="text-2xl" />
         </button>
@@ -59,7 +78,7 @@ const Inbox = () => {
       {mode === "chats" ? (
         <ConversationList />
       ) : (
-        <Conversation>
+        <Conversation width={width}>
           {selectedConversation && (
             <Messages conversation={selectedConversation} />
           )}

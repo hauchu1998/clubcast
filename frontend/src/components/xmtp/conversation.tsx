@@ -21,6 +21,7 @@ import { Attachment } from "@xmtp/content-type-remote-attachment";
 import useSendMessageContent from "@/hooks/xmtp/useSendMessageContent";
 
 interface ConversationProps {
+  width: string;
   children: React.ReactNode;
 }
 const Conversation = (props: ConversationProps) => {
@@ -168,9 +169,13 @@ const Conversation = (props: ConversationProps) => {
   }, [acceptedTypes]);
   const extension = attachment?.mimeType.split("/")?.[1] || "";
   return (
-    <div className="w-[18%] fixed top-[10rem] right-0 h-[calc(100vh-10rem)]">
+    <div
+      className={`${props.width} fixed top-[10rem] right-0 h-[calc(100vh-10rem)]`}
+    >
       {props.children}
-      <div className="w-[18%] fixed bottom-0 right-0 gap-5 px-5 py-2 bg-black">
+      <div
+        className={`${props.width} fixed bottom-0 right-0 gap-5 px-5 py-2 bg-black`}
+      >
         <input
           type="file"
           id="file"
@@ -225,7 +230,7 @@ const Conversation = (props: ConversationProps) => {
               <Image
                 src={attachmentPreview || ""}
                 alt="uploaded image"
-                className="relative w-95/100 max-h-80 rounded-xl overflow-auto border border-cyan-400"
+                className="relative w-95/100 max-h-80 rounded-xl border border-cyan-400"
                 width={150}
                 height={100}
                 priority
