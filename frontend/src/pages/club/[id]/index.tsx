@@ -18,13 +18,13 @@ const ClubPage = () => {
   return (
     <div className="w-full h-[calc(100vh-4rem)] flex flex-col items-center">
       <div className="w-full h-full flex">
-        <div className="w-[30%] h-full overflow-y-auto">
-          <ClubIntro club={club} css="" />
+        <div className="w-[40%] h-full overflow-y-auto">
+          <ClubIntro club={club} css="h-3/7 scrollbar" />
           {chain?.id === club.chainId && (isMember || isHost) && (
-            <PollController css="" />
+            <PollController css="h-4/7 scrollbarcd ." />
           )}
         </div>
-        <div className="w-[70%] h-full px-3">
+        <div className="w-[60%] h-full ">
           {chain?.id !== club.chainId ? (
             <div className="w-full h-full flex justify-center items-center">
               <SwitchNetworkButton chainId={club.chainId} />
@@ -39,7 +39,11 @@ const ClubPage = () => {
               </button>
             </div>
           ) : (
-            <EpisodeController isHost={isHost} episodes={club.episodes} />
+            <EpisodeController
+              isHost={isHost}
+              hostAddress={club.owner}
+              episodes={club.episodes}
+            />
           )}
         </div>
       </div>

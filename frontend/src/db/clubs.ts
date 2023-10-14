@@ -7,7 +7,7 @@ export const club: Club = {
     "ETHGlobal's flagship online event is back: The idea for the first ETHOnline formed out of sheer necessity. As we were forced to take a break from in-person events back in 2020, we raced to create a virtual equivalent that could inspire the same magical feeling.",
   image:
     "https://pbs.twimg.com/profile_images/1333830155287097349/rGY9wviF_400x400.jpg",
-  owner: "0xE2A794de195D92bBA0BA64e006FcC3568104245d",
+  owner: "0x8F0D0011c2D3B6597Fa958bF2E551a69762c07Ab",
   daoAddress: "",
   chainId: 534351,
   episodes: [

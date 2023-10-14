@@ -23,7 +23,6 @@ const Messages = (props: MessagesProps) => {
 
   // XMTP Hooks
   const { messages, isLoading } = useMessages(conversation);
-  console.log(messages);
 
   const messagesWithDates = useMemo(
     () =>
