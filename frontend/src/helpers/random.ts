@@ -1,2 +1,2 @@
-export const generateRandomNumber = () =>
-  Math.floor(100000 + Math.random() * 900000);
+import { randomBytes } from "crypto";
+export const generateRandomNumber = () => randomBytes(16).toString("hex");
