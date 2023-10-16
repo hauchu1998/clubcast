@@ -31,9 +31,8 @@ const useSendMessageContent = () => {
 
       if (message && type === "attachment") {
         const web3Storage = new Web3Storage({
-          token: process.env.NEXT_PUBLIC_WEB3_STORAGE_TOKEN,
+          token: process.env.NEXT_PUBLIC_WEB3_STORAGE_TOKEN || "",
         });
-        console.log("attachment", message, web3Storage);
 
         const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
           message,

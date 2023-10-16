@@ -89,7 +89,9 @@ describe("Linkt", function () {
 
       const count = await linkt.getPublicationCount(erc721Mock.address);
       // Then tip
-      await expect(linkt.connect(owner).tipContentCreator(50, erc721Mock.address))
+      await expect(
+        linkt.connect(owner).tipContentCreator(50, erc721Mock.address)
+      )
         .to.emit(linkt, "Tipped")
         .withArgs(owner.address, erc721Mock.address, 50);
 
@@ -100,7 +102,9 @@ describe("Linkt", function () {
 
     it("Should allow withdrawing tips", async function () {
       // Withdraw tips
-      await expect(linkt.connect(owner).withdrawTips(erc721Mock.address)).to.emit(linkt, "Withdrawn").withArgs(owner.address, erc721Mock.address, 50);
+      await expect(linkt.connect(owner).withdrawTips(erc721Mock.address))
+        .to.emit(linkt, "Withdrawn")
+        .withArgs(owner.address, erc721Mock.address, 50);
 
       // Validate tips are now 0
       const tipAmount = await linkt.tips(owner.address);
@@ -122,11 +126,16 @@ describe("Linkt", function () {
       ).to.not.be.reverted;
 
       // Fetch the mapped tokens
-      const [mappedAddresses, mappedTokenIds] = await linkt.getUserTokenMapping(owner.address);
+      const [mappedAddresses, mappedTokenIds] = await linkt.getUserTokenMapping(
+        owner.address
+      );
       const mappedTokenIdsAsNumbers = mappedTokenIds.map((id) => id.toNumber());
 
       // Assert the correctness of the mapped addresses and token IDs
-      expect(mappedAddresses).to.include.members([erc721Mock.address, erc721Mock2.address]);
+      expect(mappedAddresses).to.include.members([
+        erc721Mock.address,
+        erc721Mock2.address,
+      ]);
       expect(mappedTokenIdsAsNumbers).to.include.members([1, 1]);
     });
 
@@ -150,15 +159,21 @@ describe("Linkt", function () {
 
     it("Should overwrite existing mappings", async function () {
       // First mapping
-      await expect(linkt.connect(owner).addUserTokenMapping([erc721Mock.address], [1])).to.not.be.reverted;
+      await expect(
+        linkt.connect(owner).addUserTokenMapping([erc721Mock.address], [1])
+      ).to.not.be.reverted;
 
       // To call below the owner would need to own token 2 - so mint it.
       await erc721Mock.connect(owner).mint(owner.address, 2);
 
       // Overwrite with a new mapping
-      await expect(linkt.connect(owner).addUserTokenMapping([erc721Mock.address], [2])).to.not.be.reverted;
+      await expect(
+        linkt.connect(owner).addUserTokenMapping([erc721Mock.address], [2])
+      ).to.not.be.reverted;
 
-      const [mappedAddresses, mappedTokenIds] = await linkt.getUserTokenMapping(owner.address);
+      const [mappedAddresses, mappedTokenIds] = await linkt.getUserTokenMapping(
+        owner.address
+      );
       const mappedTokenIdsAsNumbers = mappedTokenIds.map((id) => id.toNumber());
 
       expect(mappedAddresses).to.include.members([erc721Mock.address]);
@@ -172,7 +187,9 @@ describe("Linkt", function () {
       });
 
       it("Should list publications correctly", async function () {
-        const publicationInfos = await linkt.connect(owner).listPublications(erc721Mock.address, owner.address);
+        const publicationInfos = await linkt
+          .connect(owner)
+          .listPublications(erc721Mock.address, owner.address);
 
         expect(publicationInfos[0].videoId).to.equal(69);
         expect(publicationInfos[0].publisher).to.equal(owner.address);
@@ -208,7 +225,9 @@ describe("Linkt", function () {
         { audienceType: 3, tokenId: 2 } // For token 2
       );
 
-      const countAfterNextPublish = await linkt.getPublicationCount(erc721Mock.address);
+      const countAfterNextPublish = await linkt.getPublicationCount(
+        erc721Mock.address
+      );
       expect(countAfterNextPublish.toNumber()).to.equal(3);
 
       await linkt.publishVideo(
@@ -218,24 +237,43 @@ describe("Linkt", function () {
         { audienceType: 1, tokenId: 0 } // For ALL holders (audience 1) of the collection (token 0)
       );
 
-      const countAfterAllPublish = await linkt.getPublicationCount(erc721Mock.address);
+      const countAfterAllPublish = await linkt.getPublicationCount(
+        erc721Mock.address
+      );
       expect(countAfterAllPublish.toNumber()).to.equal(4);
 
-      const publicationInfosOwner = await linkt.listPublications(erc721Mock.address, owner.address);
+      const publicationInfosOwner = await linkt.listPublications(
+        erc721Mock.address,
+        owner.address
+      );
 
-      const videoIdsOwner = publicationInfosOwner.map((info) => info.videoId.toNumber());
-      const publishersOwner = publicationInfosOwner.map((info) => info.publisher);
+      const videoIdsOwner = publicationInfosOwner.map((info) =>
+        info.videoId.toNumber()
+      );
+      const publishersOwner = publicationInfosOwner.map(
+        (info) => info.publisher
+      );
       const md5HashesOwner = publicationInfosOwner.map((info) => info.md5Hash);
 
       expect(videoIdsOwner).to.deep.equal([69, 3, 5]);
-      expect(publishersOwner).to.deep.equal([owner.address, owner.address, owner.address]);
+      expect(publishersOwner).to.deep.equal([
+        owner.address,
+        owner.address,
+        owner.address,
+      ]);
       expect(md5HashesOwner).to.deep.equal(["md5Hash", "md5Hash2", "md5Hash0"]);
 
       // // Call listPublications from addr1's perspective
-      const publicationInfosAddr1 = await linkt.connect(addr1).listPublications(erc721Mock.address, addr1.address);
+      const publicationInfosAddr1 = await linkt
+        .connect(addr1)
+        .listPublications(erc721Mock.address, addr1.address);
 
-      const videoIdsAddr1 = publicationInfosAddr1.map((info) => info.videoId.toNumber());
-      const publishersAddr1 = publicationInfosAddr1.map((info) => info.publisher);
+      const videoIdsAddr1 = publicationInfosAddr1.map((info) =>
+        info.videoId.toNumber()
+      );
+      const publishersAddr1 = publicationInfosAddr1.map(
+        (info) => info.publisher
+      );
       const md5HashesAddr1 = publicationInfosAddr1.map((info) => info.md5Hash);
 
       expect(videoIdsAddr1).to.deep.equal([69, 5]); // Only the content for user1 on erc721Mock should be shown
@@ -243,10 +281,16 @@ describe("Linkt", function () {
       expect(md5HashesAddr1).to.deep.equal(["md5Hash", "md5Hash0"]);
 
       // There are tokens for this contract but owner address has not added mappings for this
-      const publicationInfosAddr2 = await linkt.connect(owner).listPublications(erc721Mock2.address, owner.address);
+      const publicationInfosAddr2 = await linkt
+        .connect(owner)
+        .listPublications(erc721Mock2.address, owner.address);
 
-      const videoIdsAddr2 = publicationInfosAddr2.map((info) => info.videoId.toNumber());
-      const publishersAddr2 = publicationInfosAddr2.map((info) => info.publisher);
+      const videoIdsAddr2 = publicationInfosAddr2.map((info) =>
+        info.videoId.toNumber()
+      );
+      const publishersAddr2 = publicationInfosAddr2.map(
+        (info) => info.publisher
+      );
       const md5HashesAddr2 = publicationInfosAddr2.map((info) => info.md5Hash);
 
       expect(videoIdsAddr2).to.deep.equal([]); // Only the content for user1 on erc721Mock should be shown
@@ -269,36 +313,58 @@ describe("Linkt", function () {
         await erc721Mock2.connect(addr2).mint(addr2.address, iterator);
       }
 
-      await linkt.connect(addr2).addUserTokenMapping([erc721Mock2.address], [6]);
+      await linkt
+        .connect(addr2)
+        .addUserTokenMapping([erc721Mock2.address], [6]);
 
-      const publicationInfosAddr3 = await linkt.connect(addr2).listPublications(erc721Mock2.address, addr2.address);
+      const publicationInfosAddr3 = await linkt
+        .connect(addr2)
+        .listPublications(erc721Mock2.address, addr2.address);
 
-      const videoIdsAddr3 = publicationInfosAddr3.map((info) => info.videoId.toNumber());
-      const publishersAddr3 = publicationInfosAddr3.map((info) => info.publisher);
+      const videoIdsAddr3 = publicationInfosAddr3.map((info) =>
+        info.videoId.toNumber()
+      );
+      const publishersAddr3 = publicationInfosAddr3.map(
+        (info) => info.publisher
+      );
       const md5HashesAddr3 = publicationInfosAddr3.map((info) => info.md5Hash);
 
       expect(videoIdsAddr3).to.deep.equal([1]); // Only the content for user1 on erc721Mock should be shown
       expect(publishersAddr3).to.deep.equal([addr1.address]);
       expect(md5HashesAddr3).to.deep.equal(["pepega-hash"]);
 
-      const publicationInfosAddr4 = await linkt.connect(addr3).listPublications(erc721Mock2.address, addr3.address);
+      const publicationInfosAddr4 = await linkt
+        .connect(addr3)
+        .listPublications(erc721Mock2.address, addr3.address);
 
-      const videoIdsAddr4 = publicationInfosAddr4.map((info) => info.videoId.toNumber());
+      const videoIdsAddr4 = publicationInfosAddr4.map((info) =>
+        info.videoId.toNumber()
+      );
       expect(videoIdsAddr4).to.deep.equal([]); // addr3 doesnt hold any tokens so should only see audience 1 content
 
       await erc721Mock2.connect(addr3).mint(addr3.address, 7);
 
-      await linkt.connect(addr3).addUserTokenMapping([erc721Mock2.address], [7]);
+      await linkt
+        .connect(addr3)
+        .addUserTokenMapping([erc721Mock2.address], [7]);
 
-      const publicationInfosAddr5 = await linkt.connect(addr3).listPublications(erc721Mock2.address, addr3.address);
+      const publicationInfosAddr5 = await linkt
+        .connect(addr3)
+        .listPublications(erc721Mock2.address, addr3.address);
 
-      const videoIdsAddr5 = publicationInfosAddr5.map((info) => info.videoId.toNumber());
+      const videoIdsAddr5 = publicationInfosAddr5.map((info) =>
+        info.videoId.toNumber()
+      );
       expect(videoIdsAddr5).to.deep.equal([1]); // addr3 just minted and conntected token 7
 
       // addr4 doesnt own any tokens and has nothing connected
-      const publicationInfosAddr6 = await linkt.connect(addr4).listPublications(erc721Mock.address, addr4.address);
+      const publicationInfosAddr6 = await linkt
+        .connect(addr4)
+        .listPublications(erc721Mock.address, addr4.address);
 
-      const videoIdsAddr6 = publicationInfosAddr6.map((info) => info.videoId.toNumber());
+      const videoIdsAddr6 = publicationInfosAddr6.map((info) =>
+        info.videoId.toNumber()
+      );
 
       expect(videoIdsAddr6).to.deep.equal([69]); //  just minted and conntected token 7
     });

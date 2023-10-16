@@ -29,3 +29,20 @@ export interface Club extends ClubCard {
   chainId: number;
   episodes: Episode[];
 }
+
+export enum Vote {
+  No,
+  Abstain,
+  Yes,
+}
+export interface Proposal {
+  id: string;
+  title: string;
+  proposer: string;
+  description: string;
+  expiration: Date;
+  yes: number;
+  abstain: number;
+  no: number;
+  user: Vote;
+}

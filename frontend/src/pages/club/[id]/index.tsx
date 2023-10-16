@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { club } from "@/db/clubs";
-import PollController from "@/components/clubs/pollController";
+import ProposalController from "@/components/clubs/proposalController";
 import EpisodeController from "@/components/clubs/episodeController";
 import { useMemo, useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
@@ -16,12 +16,12 @@ const ClubPage = () => {
   const isHost = useMemo(() => address === club.owner, [address]);
 
   return (
-    <div className="w-full h-[calc(100vh-4rem)] flex flex-col items-center">
+    <div className="w-full h-[calc(100vh-5.5rem)] flex flex-col items-center">
       <div className="w-full h-full flex">
-        <div className="w-[40%] h-full overflow-y-auto">
-          <ClubIntro club={club} css="h-3/7 scrollbar" />
+        <div className="w-[40%] h-full">
+          <ClubIntro club={club} css="h-[40%] scrollbar " />
           {chain?.id === club.chainId && (isMember || isHost) && (
-            <PollController css="h-4/7 scrollbarcd ." />
+            <ProposalController css="h-[60%]" />
           )}
         </div>
         <div className="w-[60%] h-full ">
