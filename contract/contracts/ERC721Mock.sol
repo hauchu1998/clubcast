@@ -43,9 +43,10 @@ contract ERC721Mock is ERC721, Ownable, EIP712, ERC721Votes {
     }
 
     function publicMint(address _to) external returns (uint256) {
-        uint256 _tokenId = _nextTokenId++;
-        require(_tokenId <= max_supply, "Max supply reached");
+        uint256 _tokenId = _nextTokenId;
+        require(_tokenId < max_supply, "Max supply reached");
         _mint(_to, _tokenId);
+        _nextTokenId++;
         return _tokenId;
     }
 

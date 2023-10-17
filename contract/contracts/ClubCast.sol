@@ -62,7 +62,7 @@ contract ClubCast is Ownable {
         address _erc721Address = getClubErc721(_clubId);
         IERC721 erc721 = IERC721(_erc721Address);
         uint256 tokenId = userClubTokenMappings[requester][_clubId];
-        require(tokenId > 0 && erc721.ownerOf(tokenId) == requester, "You must be the owner of the token");
+        require(erc721.ownerOf(tokenId) == requester, "You must be the owner of the token");
         _;
     }
 
@@ -76,6 +76,10 @@ contract ClubCast is Ownable {
 
     function getClubGovernance(string memory _clubId) public view returns (address) {
         return clubs[_clubId].governanceAddress;
+    }
+
+    function getClubInfo(string memory _clubId) public view returns (Club memory) {
+        return clubs[_clubId];
     }
 
     function createClub(string memory _clubId, address _erc721Address, address _governanceAddress) external {
@@ -102,10 +106,10 @@ contract ClubCast is Ownable {
         emit NewPublication(_videoId, _clubId, msg.sender, _md5Hash);
     }
 
-    function joinClub(string memory _clubId) external {
+    function joinClub(string memory _clubId) external returns (uint256 _tokenId) {
         address _erc721Address = getClubErc721(_clubId);
         IERC721 erc721 = IERC721(_erc721Address);
-        uint256 _tokenId = erc721.publicMint(msg.sender);
+        _tokenId = erc721.publicMint(msg.sender);
 
         require(erc721.ownerOf(_tokenId) == msg.sender, "Caller must be the owner of the token");
         userClubTokenMappings[msg.sender][_clubId] = _tokenId;
@@ -145,8 +149,13 @@ contract ClubCast is Ownable {
         emit Withdrawn(msg.sender, _clubId, amountToWithdraw);
     }
 
-    function getUserClubIds(address _userAddress) public view returns (string[] memory) {
+    function getUserClubIds(address _userAddress) public view returns (string[] memory, uint256[] memory) {
         string[] memory clubIds = userClubIds[_userAddress];
-        return clubIds;
+        uint256[] memory clubTokens = new uint256[](clubIds.length);
+
+        for (uint256 i = 0; i < clubIds.length; i++) {
+            clubTokens[i] = userClubTokenMappings[_userAddress][clubIds[i]];
+        }
+        return (clubIds, clubTokens);
     }
 }
