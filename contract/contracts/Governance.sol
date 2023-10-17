@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol
 import "@openzeppelin/contracts/governance/extensions/GovernorStorage.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
-import "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol";
 
 contract ClubCastGovernor is
     Governor,
@@ -15,13 +14,11 @@ contract ClubCastGovernor is
     GovernorCountingSimple,
     GovernorStorage,
     GovernorVotes,
-    GovernorVotesQuorumFraction,
-    GovernorTimelockControl
+    GovernorVotesQuorumFraction
 {
     // day = 60 * 60 * 24 / 12
     constructor(
         IVotes _token,
-        TimelockController _timelock,
         uint256 initialProposalThreshold,
         uint256 initialQuorum
     )
@@ -29,7 +26,6 @@ contract ClubCastGovernor is
         GovernorSettings(7200, 50400, initialProposalThreshold)
         GovernorVotes(_token)
         GovernorVotesQuorumFraction(initialQuorum)
-        GovernorTimelockControl(_timelock)
     {}
 
     // The following functions are overrides required by Solidity.
@@ -46,13 +42,11 @@ contract ClubCastGovernor is
         return super.quorum(blockNumber);
     }
 
-    function state(uint256 proposalId) public view override(Governor, GovernorTimelockControl) returns (ProposalState) {
+    function state(uint256 proposalId) public view override(Governor) returns (ProposalState) {
         return super.state(proposalId);
     }
 
-    function proposalNeedsQueuing(
-        uint256 proposalId
-    ) public view override(Governor, GovernorTimelockControl) returns (bool) {
+    function proposalNeedsQueuing(uint256 proposalId) public view override(Governor) returns (bool) {
         return super.proposalNeedsQueuing(proposalId);
     }
 
@@ -76,7 +70,7 @@ contract ClubCastGovernor is
         uint256[] memory values,
         bytes[] memory calldatas,
         bytes32 descriptionHash
-    ) internal override(Governor, GovernorTimelockControl) returns (uint48) {
+    ) internal override(Governor) returns (uint48) {
         return super._queueOperations(proposalId, targets, values, calldatas, descriptionHash);
     }
 
@@ -86,7 +80,7 @@ contract ClubCastGovernor is
         uint256[] memory values,
         bytes[] memory calldatas,
         bytes32 descriptionHash
-    ) internal override(Governor, GovernorTimelockControl) {
+    ) internal override(Governor) {
         super._executeOperations(proposalId, targets, values, calldatas, descriptionHash);
     }
 
@@ -95,11 +89,11 @@ contract ClubCastGovernor is
         uint256[] memory values,
         bytes[] memory calldatas,
         bytes32 descriptionHash
-    ) internal override(Governor, GovernorTimelockControl) returns (uint256) {
+    ) internal override(Governor) returns (uint256) {
         return super._cancel(targets, values, calldatas, descriptionHash);
     }
 
-    function _executor() internal view override(Governor, GovernorTimelockControl) returns (address) {
+    function _executor() internal view override(Governor) returns (address) {
         return super._executor();
     }
 }
