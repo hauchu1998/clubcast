@@ -52,7 +52,7 @@ describe("clubcast", function () {
     erc721Mock = await ERC721Mock.deploy(owner.address, "podcast", "POD", 10);
     await erc721Mock.deployed();
 
-    erc721Mock2 = await ERC721Mock.deploy(owner.address, "club", "CBH", 10);
+    erc721Mock2 = await ERC721Mock.deploy(addr2.address, "club", "CBH", 10);
     await erc721Mock2.deployed();
 
     erc20Mock = await ERC20Mock.deploy(owner.address, "Token", "TOKEN");
@@ -102,7 +102,9 @@ describe("clubcast", function () {
     it("Should fail if not the owner of the club", async function () {
       await expect(
         clubcast.connect(addr1).publishVideo(clubId, 2, "md5Hash2")
-      ).to.be.revertedWith("You must be the owner of the club");
+      ).to.be.revertedWith(
+        "You must be the owner of the club and the ERC721 contract"
+      );
     });
 
     describe("Tipping content creators", function () {
@@ -161,181 +163,76 @@ describe("clubcast", function () {
         expect(publicationInfos[0].md5Hash).to.equal("md5Hash");
       });
     });
-    // });
+  });
+  describe("Multi-user Publication Filtering", function () {
+    it("Should carry out a set of more complex minting, connecting and publishing patterns", async function () {
+      const clubId = generateRandomNumber();
+      const clubId2 = generateRandomNumber();
+      await clubcast
+        .connect(owner)
+        .createClub(clubId, erc721Mock.address, governance.address);
+      await clubcast
+        .connect(addr2)
+        .createClub(clubId2, erc721Mock2.address, governance2.address);
 
-    // describe("Multi-user Publication Filtering", function () {
-    //   it("Should carry out a set of more complex minting, connecting and publishing patterns", async function () {
-    //     // Mint tokens for owner and addr1
-    //     await erc721Mock.connect(owner).mint(owner.address, 3);
-    //     await erc721Mock.connect(owner).mint(addr1.address, 4);
+      await clubcast.connect(addr3).joinClub(clubId);
+      await clubcast.connect(addr3).joinClub(clubId2);
+      await clubcast.connect(addr4).joinClub(clubId);
 
-    //     // Add user token mappings
-    //     await clubcast
-    //       .connect(owner)
-    //       .addUserTokenMapping([erc721Mock.address], [1]);
-    //     await clubcast
-    //       .connect(addr1)
-    //       .addUserTokenMapping([erc721Mock.address], [4]);
+      // Publish videos targeting specific tokens
+      await clubcast.publishVideo(clubId, 3, "md5Hash3");
+      await clubcast.publishVideo(clubId, 4, "md5Hash4");
+      await clubcast.connect(addr2).publishVideo(clubId2, 5, "md5Hash5");
+      const count = await clubcast.getPublicationCount(clubId);
+      expect(count.toNumber()).to.equal(2);
 
-    //     // Publish videos targeting specific tokens
-    //     await clubcast.publishVideo(
-    //       3,
-    //       "md5Hash2",
-    //       erc721Mock.address,
-    //       { audienceType: 3, tokenId: 1 } // For token 1
-    //     );
-    //     const count = await clubcast.getPublicationCount(erc721Mock.address);
-    //     expect(count.toNumber()).to.equal(2);
+      const count2 = await clubcast.getPublicationCount(clubId2);
+      expect(count2.toNumber()).to.equal(1);
 
-    //     await clubcast.publishVideo(
-    //       4,
-    //       "md5Hash3",
-    //       erc721Mock.address,
-    //       { audienceType: 3, tokenId: 2 } // For token 2
-    //     );
+      await clubcast.publishVideo(clubId, 6, "md5Hash6");
+      const countAfterNextPublish = await clubcast.getPublicationCount(clubId);
+      expect(countAfterNextPublish.toNumber()).to.equal(3);
 
-    //     const countAfterNextPublish = await clubcast.getPublicationCount(
-    //       erc721Mock.address
-    //     );
-    //     expect(countAfterNextPublish.toNumber()).to.equal(3);
+      const addr3ClubPublications = await clubcast
+        .connect(addr3)
+        .listPublications(clubId, addr3.address);
 
-    //     await clubcast.publishVideo(
-    //       5,
-    //       "md5Hash0",
-    //       erc721Mock.address,
-    //       { audienceType: 1, tokenId: 0 } // For ALL holders (audience 1) of the collection (token 0)
-    //     );
+      const addr3Club2Publications = await clubcast
+        .connect(addr3)
+        .listPublications(clubId2, addr3.address);
 
-    //     const countAfterAllPublish = await clubcast.getPublicationCount(
-    //       erc721Mock.address
-    //     );
-    //     expect(countAfterAllPublish.toNumber()).to.equal(4);
+      const videoIdsClub = addr3ClubPublications.map((info) =>
+        info.videoId.toNumber()
+      );
+      const md5HashesClub = addr3ClubPublications.map((info) => info.md5Hash);
+      expect(videoIdsClub).to.deep.equal([3, 4, 6]);
+      expect(md5HashesClub).to.deep.equal(["md5Hash3", "md5Hash4", "md5Hash6"]);
 
-    //     const publicationInfosOwner = await clubcast.listPublications(
-    //       erc721Mock.address,
-    //       owner.address
-    //     );
+      const videoIdsClub2 = addr3Club2Publications.map((info) =>
+        info.videoId.toNumber()
+      );
+      expect(videoIdsClub2).to.deep.equal([5]);
 
-    //     const videoIdsOwner = publicationInfosOwner.map((info) =>
-    //       info.videoId.toNumber()
-    //     );
-    //     const publishersOwner = publicationInfosOwner.map(
-    //       (info) => info.publisher
-    //     );
-    //     const md5HashesOwner = publicationInfosOwner.map((info) => info.md5Hash);
+      await expect(
+        clubcast.connect(addr4).listPublications(clubId2, addr4.address)
+      ).to.be.rejectedWith("You are not a club member");
 
-    //     expect(videoIdsOwner).to.deep.equal([69, 3, 5]);
-    //     expect(publishersOwner).to.deep.equal([
-    //       owner.address,
-    //       owner.address,
-    //       owner.address,
-    //     ]);
-    //     expect(md5HashesOwner).to.deep.equal(["md5Hash", "md5Hash2", "md5Hash0"]);
+      const addr4ClubPublications = await clubcast
+        .connect(addr4)
+        .listPublications(clubId, addr4.address);
+      const addr4VideoIdsClub = addr4ClubPublications.map((info) =>
+        info.videoId.toNumber()
+      );
 
-    //     // // Call listPublications from addr1's perspective
-    //     const publicationInfosAddr1 = await clubcast
-    //       .connect(addr1)
-    //       .listPublications(erc721Mock.address, addr1.address);
-
-    //     const videoIdsAddr1 = publicationInfosAddr1.map((info) =>
-    //       info.videoId.toNumber()
-    //     );
-    //     const publishersAddr1 = publicationInfosAddr1.map(
-    //       (info) => info.publisher
-    //     );
-    //     const md5HashesAddr1 = publicationInfosAddr1.map((info) => info.md5Hash);
-
-    //     expect(videoIdsAddr1).to.deep.equal([69, 5]); // Only the content for user1 on erc721Mock should be shown
-    //     expect(publishersAddr1).to.deep.equal([owner.address, owner.address]);
-    //     expect(md5HashesAddr1).to.deep.equal(["md5Hash", "md5Hash0"]);
-
-    //     // There are tokens for this contract but owner address has not added mappings for this
-    //     const publicationInfosAddr2 = await clubcast
-    //       .connect(owner)
-    //       .listPublications(erc721Mock2.address, owner.address);
-
-    //     const videoIdsAddr2 = publicationInfosAddr2.map((info) =>
-    //       info.videoId.toNumber()
-    //     );
-    //     const publishersAddr2 = publicationInfosAddr2.map(
-    //       (info) => info.publisher
-    //     );
-    //     const md5HashesAddr2 = publicationInfosAddr2.map((info) => info.md5Hash);
-
-    //     expect(videoIdsAddr2).to.deep.equal([]); // Only the content for user1 on erc721Mock should be shown
-    //     expect(publishersAddr2).to.deep.equal([]);
-    //     expect(md5HashesAddr2).to.deep.equal([]);
-
-    //     await erc721Mock2.connect(owner).transferOwnership(addr1.address);
-    //     expect(await erc721Mock2.connect(owner).owner()).to.equal(addr1.address);
-    //     console.log(`addr1 is now the owner of erc721Mock2`);
-
-    //     await clubcast.connect(addr1).publishVideo(
-    //       1,
-    //       "pepega-hash",
-    //       erc721Mock2.address,
-    //       { audienceType: 1, tokenId: 1 } // For any holders of this collection
-    //     );
-
-    //     // Mint a few tokens
-    //     for (const iterator of [2, 3, 4, 5, 6]) {
-    //       await erc721Mock2.connect(addr2).mint(addr2.address, iterator);
-    //     }
-
-    //     await clubcast
-    //       .connect(addr2)
-    //       .addUserTokenMapping([erc721Mock2.address], [6]);
-
-    //     const publicationInfosAddr3 = await clubcast
-    //       .connect(addr2)
-    //       .listPublications(erc721Mock2.address, addr2.address);
-
-    //     const videoIdsAddr3 = publicationInfosAddr3.map((info) =>
-    //       info.videoId.toNumber()
-    //     );
-    //     const publishersAddr3 = publicationInfosAddr3.map(
-    //       (info) => info.publisher
-    //     );
-    //     const md5HashesAddr3 = publicationInfosAddr3.map((info) => info.md5Hash);
-
-    //     expect(videoIdsAddr3).to.deep.equal([1]); // Only the content for user1 on erc721Mock should be shown
-    //     expect(publishersAddr3).to.deep.equal([addr1.address]);
-    //     expect(md5HashesAddr3).to.deep.equal(["pepega-hash"]);
-
-    //     const publicationInfosAddr4 = await clubcast
-    //       .connect(addr3)
-    //       .listPublications(erc721Mock2.address, addr3.address);
-
-    //     const videoIdsAddr4 = publicationInfosAddr4.map((info) =>
-    //       info.videoId.toNumber()
-    //     );
-    //     expect(videoIdsAddr4).to.deep.equal([]); // addr3 doesnt hold any tokens so should only see audience 1 content
-
-    //     await erc721Mock2.connect(addr3).mint(addr3.address, 7);
-
-    //     await clubcast
-    //       .connect(addr3)
-    //       .addUserTokenMapping([erc721Mock2.address], [7]);
-
-    //     const publicationInfosAddr5 = await clubcast
-    //       .connect(addr3)
-    //       .listPublications(erc721Mock2.address, addr3.address);
-
-    //     const videoIdsAddr5 = publicationInfosAddr5.map((info) =>
-    //       info.videoId.toNumber()
-    //     );
-    //     expect(videoIdsAddr5).to.deep.equal([1]); // addr3 just minted and conntected token 7
-
-    //     // addr4 doesnt own any tokens and has nothing connected
-    //     const publicationInfosAddr6 = await clubcast
-    //       .connect(addr4)
-    //       .listPublications(erc721Mock.address, addr4.address);
-
-    //     const videoIdsAddr6 = publicationInfosAddr6.map((info) =>
-    //       info.videoId.toNumber()
-    //     );
-
-    //     expect(videoIdsAddr6).to.deep.equal([69]); //  just minted and conntected token 7
-    //   });
+      const addr4Md5HashesClub = addr4ClubPublications.map(
+        (info) => info.md5Hash
+      );
+      expect(addr4VideoIdsClub).to.deep.equal([3, 4, 6]);
+      expect(addr4Md5HashesClub).to.deep.equal([
+        "md5Hash3",
+        "md5Hash4",
+        "md5Hash6",
+      ]);
+    });
   });
 });

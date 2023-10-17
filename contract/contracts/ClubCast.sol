@@ -50,19 +50,21 @@ contract ClubCast is Ownable {
 
     modifier onlyClubOwner(string memory _clubId) {
         address owner = getClubOwner(_clubId);
-        require(owner == msg.sender, "You must be the owner of the club");
-
         address _erc721Address = getClubErc721(_clubId);
         IERC721 erc721 = IERC721(_erc721Address);
-        require(erc721.owner() == msg.sender, "You must be the owner of the ERC721 contract");
+        require(
+            owner == msg.sender && erc721.owner() == msg.sender,
+            "You must be the owner of the club and the ERC721 contract"
+        );
         _;
     }
 
     modifier onlyClubMember(string memory _clubId, address requester) {
+        address owner = getClubOwner(_clubId);
         address _erc721Address = getClubErc721(_clubId);
         IERC721 erc721 = IERC721(_erc721Address);
         uint256 tokenId = userClubTokenMappings[requester][_clubId];
-        require(erc721.ownerOf(tokenId) == requester, "You must be the owner of the token");
+        require(requester == owner || erc721.ownerOf(tokenId) == requester, "You are not a club member");
         _;
     }
 
@@ -82,7 +84,11 @@ contract ClubCast is Ownable {
         return clubs[_clubId];
     }
 
-    function createClub(string memory _clubId, address _erc721Address, address _governanceAddress) external {
+    function createClub(
+        string memory _clubId,
+        address _erc721Address,
+        address _governanceAddress
+    ) external onlyERC721Owner(_erc721Address) {
         IERC721 erc721 = IERC721(_erc721Address);
         Club memory newClub = Club({
             clubId: _clubId,
