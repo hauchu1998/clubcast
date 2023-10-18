@@ -1,14 +1,18 @@
 import { useAsync } from "react-async-hook";
 import {
-  fetchClubs,
+  fetchClub,
+  fetchAllClubs,
   fetchUserPersonalClubs,
   fetchUserSubscribedClubs,
 } from "@/firebase/getClubs";
 import { useAccount } from "wagmi";
+import { getDatabase, ref } from "firebase/database";
+import app from "@/firebase/index";
+import { useQuery } from "@tanstack/react-query";
 
-export const useGetClubs = (id: string) => {
+export const useGetClub = (id: string) => {
   return useAsync(async () => {
-    return fetchClubs(id);
+    return fetchClub(id);
   }, [id]);
 };
 
@@ -26,4 +30,14 @@ export const useGetUserSubscribedClubs = () => {
     if (address === undefined) throw new Error("Address is undefined");
     return fetchUserSubscribedClubs(address);
   }, [address]);
+};
+
+export const useGetAllClubs = () => {
+  const defRef = ref(getDatabase(app), "clubs");
+  const enabled = defRef !== undefined;
+  return useQuery({
+    enabled,
+    queryKey: ["all", "clubs"],
+    queryFn: fetchAllClubs,
+  });
 };

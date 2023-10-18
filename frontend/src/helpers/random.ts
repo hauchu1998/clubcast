@@ -1,2 +1,2 @@
 import { randomBytes } from "crypto";
-export const generateRandomNumber = () => randomBytes(16).toString("hex");
+export const generateRandomId = () => randomBytes(16).toString("hex");

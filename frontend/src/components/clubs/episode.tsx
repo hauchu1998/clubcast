@@ -2,14 +2,16 @@ import Blockies from "react-blockies";
 import { Episode } from "@/types/club";
 import { AiOutlineMessage } from "react-icons/ai";
 import { PiHeartBreak, PiHeart } from "react-icons/pi";
+import { useGetEpisode } from "@/hooks/useGetEpisode";
 
 interface EpisodeContentProps {
+  videoId: string;
   hostAddress: string;
-  episode: Episode;
   css?: string;
 }
 
-const EpisodeContent = ({ episode, hostAddress, css }: EpisodeContentProps) => {
+const EpisodeContent = ({ videoId, hostAddress, css }: EpisodeContentProps) => {
+  const { result: episode } = useGetEpisode(videoId);
   return (
     <div className="mt-5 border border-gray-300 pt-5">
       <div className="flex gap-3 px-5">
