@@ -9,6 +9,7 @@ import { useAccount } from "wagmi";
 import { getDatabase, ref } from "firebase/database";
 import app from "@/firebase/index";
 import { useQuery } from "@tanstack/react-query";
+import { Club } from "@/types/club";
 
 export const useGetClub = (id: string) => {
   return useAsync(async () => {
@@ -18,18 +19,32 @@ export const useGetClub = (id: string) => {
 
 export const useGetUserPersonalClubs = () => {
   const { address } = useAccount();
-  return useAsync(async () => {
-    if (address === undefined) throw new Error("Address is undefined");
-    return fetchUserPersonalClubs(address);
-  }, [address]);
+  const defRef = ref(getDatabase(app), "clubs");
+  const enabled = defRef !== undefined && address !== undefined;
+  return useQuery({
+    enabled,
+    queryKey: [address, "personal", "clubs"],
+    queryFn: async () => fetchUserPersonalClubs(address as string),
+  });
 };
 
 export const useGetUserSubscribedClubs = () => {
   const { address } = useAccount();
-  return useAsync(async () => {
-    if (address === undefined) throw new Error("Address is undefined");
-    return fetchUserSubscribedClubs(address);
-  }, [address]);
+  const defRef = ref(getDatabase(app), `users/${address}/subscriptions`);
+  const enabled = defRef !== undefined && address !== undefined;
+  return useQuery({
+    enabled,
+    queryKey: [address, "subscribed", "clubs"],
+    queryFn: async () => {
+      const clubIds = await fetchUserSubscribedClubs(address as string);
+      const clubs: Club[] = await Promise.all(
+        clubIds.map(async (id: string) => {
+          return fetchClub(id);
+        })
+      );
+      return clubs;
+    },
+  });
 };
 
 export const useGetAllClubs = () => {
