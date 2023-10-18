@@ -4,6 +4,10 @@ import Blockies from "react-blockies";
 import { isValidLongWalletAddress } from "@/helpers/address";
 import { address } from "@/types/address";
 import ClubList from "@/components/clubs/clubList";
+import {
+  useGetUserPersonalClubs,
+  useGetUserSubscribedClubs,
+} from "@/hooks/useGetClubs";
 
 const Dashboard = () => {
   const { address: walletAddress, isConnected } = useAccount();
@@ -12,6 +16,8 @@ const Dashboard = () => {
     enabled: isValidLongWalletAddress(walletAddress as address),
     chainId: 1,
   });
+  const { data: personalClubs } = useGetUserPersonalClubs();
+  const { data: subscribedClubs } = useGetUserSubscribedClubs();
   const router = useRouter();
 
   return (
@@ -47,8 +53,12 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="h-[calc(100vh-14rem)] p-3">
-        <ClubList section="personal" />
-        <ClubList section="subscribed" />
+        <div className="w-full h-1/2">
+          <ClubList section="personal" clubs={personalClubs} />
+        </div>
+        <div className="w-full h-1/2">
+          <ClubList section="subscribed" clubs={subscribedClubs} />
+        </div>
       </div>
     </div>
   );

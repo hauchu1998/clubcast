@@ -10,13 +10,13 @@ interface ClubCardProps {
 const ClubCardContent = ({ club, css }: ClubCardProps) => {
   return (
     <Link
-      className={`${css} h-[70%] flex flex-col items-center`}
+      className={`${css} flex flex-col items-center`}
       href={`/club/${club.id}`}
     >
       <Image
         src={club.image}
         alt="Club Logo"
-        className="w-52 h-52 object-contain"
+        className="w-52 h-52 object-cover"
         width={200}
         height={200}
       />
