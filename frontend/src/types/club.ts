@@ -1,3 +1,5 @@
+import { address } from "./address";
+
 export interface ClubCard {
   id: string;
   name: string;
@@ -25,9 +27,7 @@ interface Comment {
 
 export interface Club extends ClubCard {
   owner: string;
-  daoAddress: string;
   chainId: number;
-  episodes: Episode[];
 }
 
 export enum Vote {
@@ -45,4 +45,10 @@ export interface Proposal {
   abstain: number;
   no: number;
   user: Vote;
+}
+
+export interface Publication {
+  videoId: string;
+  publisher: address;
+  md5Hash: string;
 }
