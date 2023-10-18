@@ -30,7 +30,7 @@ export const useGetUserPersonalClubs = () => {
 
 export const useGetUserSubscribedClubs = () => {
   const { address } = useAccount();
-  const defRef = ref(getDatabase(app), `users/${address}/subscriptions`);
+  const defRef = ref(getDatabase(app), `subscriptions/${address}`);
   const enabled = defRef !== undefined && address !== undefined;
   return useQuery({
     enabled,

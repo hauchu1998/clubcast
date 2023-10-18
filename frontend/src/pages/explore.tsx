@@ -6,7 +6,6 @@ import { useGetAllClubs } from "@/hooks/useGetClubs";
 
 const Explore = () => {
   const { data: allClubs } = useGetAllClubs();
-  console.log(allClubs);
   return (
     <div className="w-full flex flex-col items-center px-10">
       <div

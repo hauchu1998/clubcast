@@ -20,7 +20,7 @@ const ClubCardContent = ({ club, css }: ClubCardProps) => {
         width={200}
         height={200}
       />
-      <div className="px-2">
+      <div className="px-2 w-52">
         <div className="w-full mt-1 font-bold text-xl">{club.name}</div>
         <div className="w-full h-16 mt-1 font-semibold break-words scrollbar">
           {club.description}

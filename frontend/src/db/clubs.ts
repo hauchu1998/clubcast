@@ -8,33 +8,33 @@ export const club: Club = {
   image:
     "https://pbs.twimg.com/profile_images/1333830155287097349/rGY9wviF_400x400.jpg",
   owner: "0x8F0D0011c2D3B6597Fa958bF2E551a69762c07Ab",
-  daoAddress: "",
   chainId: 534351,
-  episodes: [
-    {
-      id: "ghuiiia",
-      title: "Crypto Analysis - ApeCoin",
-      description:
-        "ApeCoin raise its value recently, lets see what's going on and what will happen in the following days.",
-      contentUrl: "https://www.youtube.com/watch?v=TUFr3rfxSlY",
-      createdAt: "2021-10-01",
-      likes: 100,
-      dislikes: 3,
-      comments: [],
-    },
-    {
-      id: "ghuiidfreia",
-      title: "Scroll Workshop",
-      description:
-        "In this workshop participants will get an opportunity to take a look at the scroll architecture of a zk rollup and deploy smartcontracts to interact with the bridge.",
-      contentUrl: "https://www.youtube.com/watch?v=qFM6GKG9dpg",
-      createdAt: "2022-12-01",
-      likes: 150,
-      dislikes: 7,
-      comments: [],
-    },
-  ],
 };
+
+export const episodes = [
+  {
+    id: "ghuiiia",
+    title: "Crypto Analysis - ApeCoin",
+    description:
+      "ApeCoin raise its value recently, lets see what's going on and what will happen in the following days.",
+    contentUrl: "https://www.youtube.com/watch?v=TUFr3rfxSlY",
+    createdAt: "2021-10-01",
+    likes: 100,
+    dislikes: 3,
+    comments: [],
+  },
+  {
+    id: "ghuiidfreia",
+    title: "Scroll Workshop",
+    description:
+      "In this workshop participants will get an opportunity to take a look at the scroll architecture of a zk rollup and deploy smartcontracts to interact with the bridge.",
+    contentUrl: "https://www.youtube.com/watch?v=qFM6GKG9dpg",
+    createdAt: "2022-12-01",
+    likes: 150,
+    dislikes: 7,
+    comments: [],
+  },
+];
 
 export const personalClubs: ClubCard[] = [
   {

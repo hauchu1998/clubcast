@@ -111,7 +111,7 @@ const NewClub = () => {
     [erc721Address, maxMembers, address, signer]
   );
 
-  const createClub = useCallback(async () => {
+  const handleCreateClub = useCallback(async () => {
     if (!clubName || !description || !erc721Address || !governanceAddress) {
       alert("Please fill all the fields");
       return;
@@ -272,7 +272,7 @@ const NewClub = () => {
       </div>
       <button
         className={`${bangers.className} mt-5 bg-black px-5 py-1.5 text-3xl text-white rounded-lg`}
-        onClick={createClub}
+        onClick={handleCreateClub}
       >
         Create
       </button>

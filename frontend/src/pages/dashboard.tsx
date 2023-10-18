@@ -9,8 +9,10 @@ import {
   useGetUserSubscribedClubs,
 } from "@/hooks/useGetClubs";
 
+import { personalClubs as pC, subscribedClubs as sC } from "@/db/clubs";
+
 const Dashboard = () => {
-  const { address: walletAddress, isConnected } = useAccount();
+  const { address: walletAddress } = useAccount();
   const { data: ensName } = useEnsName({
     address: walletAddress as address,
     enabled: isValidLongWalletAddress(walletAddress as address),
@@ -18,7 +20,6 @@ const Dashboard = () => {
   });
   const { data: personalClubs } = useGetUserPersonalClubs();
   const { data: subscribedClubs } = useGetUserSubscribedClubs();
-  const router = useRouter();
 
   return (
     <div className="w-full py-3">
