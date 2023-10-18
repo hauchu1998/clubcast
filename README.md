@@ -11,3 +11,10 @@ Here's what our team is working on so far:
 And I prob need Scroll Sepolia network ETH token to access my contract.
 
 Public URL: https://ethglobal.com/showcase/undefined-2gr03
+
+## Contracts
+
+1. Scroll Sepolia
+   - [ClubCast Contract](https://sepolia-blockscout.scroll.io/address/0x15505951A1d909058dFA87041B68e0f621555570#code)
+   - [ERC721](https://sepolia-blockscout.scroll.io/address/0xA6c5bD390E92616CA1efE23ABA568e69C4B44FEB#code)
+   - [Governance](https://sepolia-blockscout.scroll.io/address/0xb93C0282aA1c42cD4b567d1c0bC4Ee398845993a#code)
