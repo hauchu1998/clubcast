@@ -18,17 +18,17 @@ export const queryClient = new QueryClient({
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <XMTPProvider
-        contentTypeConfigs={contentTypeConfigs}
-        dbVersion={DB_VERSION}
-      >
-        <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <WagmiConfig config={wagmiConfig}>
+        <XMTPProvider
+          contentTypeConfigs={contentTypeConfigs}
+          dbVersion={DB_VERSION}
+        >
           <BaseApp>
             <Component {...pageProps} />
           </BaseApp>
-        </QueryClientProvider>
-      </XMTPProvider>
-    </WagmiConfig>
+        </XMTPProvider>
+      </WagmiConfig>
+    </QueryClientProvider>
   );
 }

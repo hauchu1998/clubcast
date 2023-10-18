@@ -1,5 +1,5 @@
 import { PrivyWagmiConnector } from "@privy-io/wagmi-connector";
-import { configureChains, createConfig } from "wagmi";
+import { configureChains, createConfig, createStorage } from "wagmi";
 import { EthereumClient, w3mProvider } from "@web3modal/ethereum";
 import { infuraProvider } from "wagmi/providers/infura";
 import { publicProvider } from "wagmi/providers/public";
@@ -44,9 +44,20 @@ export const connectors = [
   //   }),
 ];
 
+export const noopStorage = {
+  getItem: (_key: string) => "",
+  setItem: (_key: string, _value: string) => null,
+  removeItem: (_key: string) => null,
+};
+
+const storage = createStorage({
+  storage: noopStorage,
+});
+
 export const wagmiConfig = createConfig({
   autoConnect: false,
   connectors: connectors,
   publicClient,
+  storage,
 });
 export const ethereumClient = new EthereumClient(wagmiConfig, chains);
