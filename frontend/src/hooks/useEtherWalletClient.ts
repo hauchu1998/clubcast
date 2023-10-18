@@ -1,29 +1,32 @@
-import { ZERO_ADDRESS, SCROLL_ID, SEPOLIA_ID } from "@/constants/networks";
-import { useWalletClient } from "wagmi";
+import { ZERO_ADDRESS } from "@/constants/networks";
+import { type WalletClient, useNetwork, useAccount } from "wagmi";
+import { getWalletClient } from "@wagmi/core";
+import { providers, Signer } from "ethers";
+import { useIsConnected } from "./useIsConnected";
+import { useAsync } from "react-async-hook";
 
 const useEtherWalletClient = () => {
-  const { data, isLoading, error } = useWalletClient({ chainId: SCROLL_ID });
+  const isConnect = useIsConnected();
+  const { address } = useAccount();
+  const { chain } = useNetwork();
 
-  const ethersWalletClient = {
-    getAddress: async () => {
-      const address = data?.account.address || ZERO_ADDRESS;
-      return address;
-    },
-    signMessage: async (message: any) => {
-      const signature = await data?.signMessage(message);
-      return signature || "";
-    },
-  };
+  function walletClientToSigner(walletClient: WalletClient) {
+    const { account, chain, transport } = walletClient;
+    const network = {
+      chainId: chain.id,
+      name: chain.name,
+      ensAddress: chain.contracts?.ensRegistry?.address,
+    };
+    const provider = new providers.Web3Provider(transport, network);
+    const currSigner = provider.getSigner(account.address);
+    return currSigner as Signer;
+  }
 
-  const { signMessage, ...rest } = data || {};
-  const mergedWalletClient = {
-    data: {
-      ...ethersWalletClient,
-      ...rest,
-    },
-  };
-
-  return { signer: mergedWalletClient.data, isLoading, error };
+  return useAsync(async () => {
+    const walletClient = await getWalletClient({ chainId: chain?.id });
+    if (!walletClient) return undefined;
+    return walletClientToSigner(walletClient);
+  }, [isConnect, chain, address]);
 };
 
 export default useEtherWalletClient;
