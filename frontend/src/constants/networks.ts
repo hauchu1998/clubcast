@@ -16,19 +16,12 @@ export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 export const chains = [
   mainnet,
   scrollSepolia,
-  sepolia,
   polygonMumbai,
   baseGoerli,
   mantleTestnet,
 ];
 
 export const networksIcon: { [key: string]: string } = {
-  "43114": "https://cryptologos.cc/logos/avalanche-avax-logo.png",
-  "11155111":
-    "https://img.foresightnews.pro/202302/842-1676968867373.png?x-oss-process=style/article_avatar",
-  "5": "https://w7.pngwing.com/pngs/268/1013/png-transparent-ethereum-eth-hd-logo-thumbnail.png",
-  "59140":
-    "https://pbs.twimg.com/profile_images/1639402103486521344/erDLnbwE_400x400.jpg",
   "80001":
     "https://seeklogo.com/images/P/polygon-matic-logo-1DFDA3A3A8-seeklogo.com.png",
   "534351":
