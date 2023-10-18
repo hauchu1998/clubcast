@@ -39,7 +39,7 @@ const ClubIntro = ({ club, css }: ClubIntroProps) => {
     <div className={`pl-10 pt-10  pb-3 ${css}`}>
       <div className="flex gap-3 items-center">
         <Image
-          className="border-4 border-purple-500"
+          className="border-4 border-purple-500 w-52 h-52"
           src={club.image}
           alt="club profile"
           width={200}

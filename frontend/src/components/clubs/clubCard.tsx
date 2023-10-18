@@ -16,7 +16,7 @@ const ClubCardContent = ({ club, css }: ClubCardProps) => {
       <Image
         src={club.image}
         alt="Club Logo"
-        className="w-full"
+        className="w-52 h-52 object-contain"
         width={200}
         height={200}
       />

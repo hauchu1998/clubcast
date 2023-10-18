@@ -40,9 +40,9 @@ const ClubPage = () => {
             </div>
           ) : (
             <EpisodeController
+              clubId={id as string}
               isHost={isHost}
               hostAddress={club.owner}
-              episodes={club.episodes}
             />
           )}
         </div>
