@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { ethers, BigNumber } from "ethers";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { generateRandomId } from "@/helpers/random";
 import {
   ClubCast__factory,
@@ -55,7 +55,7 @@ const NewClub = () => {
     args: [clubId, erc721Address as address, governanceAddress as address],
   });
 
-  const { write: writeCreateClub } = useContractWrite(config);
+  const { write: writeCreateClub, isSuccess } = useContractWrite(config);
 
   const handleImageUploaded = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedImage(e.target.files?.[0] || null);
@@ -131,8 +131,6 @@ const NewClub = () => {
       };
       writeCreateClub?.();
       await createClubApi(club);
-      setIsLoading(false);
-      router.push(`/club/${clubId}`);
     } catch (error: any) {
       alert(error.message);
       setIsLoading(false);
@@ -148,8 +146,14 @@ const NewClub = () => {
     selectedImage,
     erc721Address,
     governanceAddress,
-    router,
   ]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      setIsLoading(false);
+      router.push(`/club/${clubId}`);
+    }
+  }, [isSuccess, router, clubId]);
 
   //text-[#B52F6B]
   return (

@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 // import { club } from "@/db/clubs";
 import ProposalController from "@/components/clubs/proposalController";
 import EpisodeController from "@/components/clubs/episodeController";
-import { useCallback, useMemo, useState } from "react";
+import { use, useCallback, useEffect, useMemo, useState } from "react";
 import {
   useAccount,
   useContractWrite,
@@ -56,7 +56,7 @@ const ClubPage = () => {
     args: [id as string],
   });
 
-  const { write } = useContractWrite(config);
+  const { write, isSuccess } = useContractWrite(config);
 
   const handleJoinClub = useCallback(async () => {
     try {
@@ -64,16 +64,21 @@ const ClubPage = () => {
       if (id && write) {
         write();
         await joinClubApi(address as string, id as string);
-        setIsMember(true);
       } else {
         throw new Error("check if the write function or id is defined");
       }
-      setIsLoading(false);
     } catch (e) {
       console.log(e);
       setIsLoading(false);
     }
   }, [id, write, address]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      setIsLoading(false);
+      setIsMember(true);
+    }
+  }, [isSuccess]);
 
   if (loading) return <div>Loading...</div>;
 
