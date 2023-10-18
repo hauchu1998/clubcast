@@ -47,7 +47,6 @@ const ClubPage = () => {
     abi: ClubCast__factory.abi,
     functionName: "getUserClubIds",
     args: [user as address],
-    // watch: true,
   });
 
   const { config, error } = usePrepareContractWrite({
@@ -63,8 +62,9 @@ const ClubPage = () => {
     try {
       setIsLoading(true);
       if (id && write) {
-        // write();
+        write();
         await joinClubApi(address as string, id as string);
+        setIsMember(true);
       } else {
         throw new Error("check if the write function or id is defined");
       }
