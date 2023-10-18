@@ -1,6 +1,7 @@
 import { bangers } from "@/styles/fonts";
 import { personalClubs, subscribedClubs } from "@/db/clubs";
 import ClubCard from "./clubCard";
+import Link from "next/link";
 
 interface ClubListProps {
   section: string;
@@ -15,9 +16,12 @@ const ClubList = ({ section }: ClubListProps) => {
       <div className="absolute top-0 w-full px-5 flex justify-between items-center border-b border-black">
         <div className={`text-3xl ${bangers.className}`}>{title}</div>
         {section === "personal" && (
-          <button className="px-3 py-0.5 rounded-full bg-black text-white font-bold">
+          <Link
+            className="px-3 py-0.5 rounded-full bg-black text-white font-bold"
+            href="/club/new"
+          >
             Create
-          </button>
+          </Link>
         )}
       </div>
       <div className="h-full w-full px-5 flex items-center gap-5 overflow-auto">
