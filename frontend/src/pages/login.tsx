@@ -14,13 +14,14 @@ const Login = () => {
   const router = useRouter();
   const [steps, setSteps] = useState<number>(0);
   const isConnected = useIsConnected();
-  const { signer } = useEtherWalletClient();
+  const { result: signer } = useEtherWalletClient();
   const { initialize } = useClient();
   const { connect, connectors, error, isLoading, pendingConnector } =
     useConnect();
 
   const handleInitXmtp = useCallback(async () => {
-    const keys = await Client.getKeys(signer);
+    if (!signer || !isConnected) return;
+    const keys = await Client.getKeys(signer!);
     await initialize({
       keys,
       signer,
@@ -31,7 +32,7 @@ const Login = () => {
       },
     });
     setSteps(2);
-  }, [initialize, signer]);
+  }, [initialize, signer, isConnected]);
 
   const walletConnect = (connector: any) => {
     connect({ connector });

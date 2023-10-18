@@ -1,19 +1,18 @@
 import Image from "next/image";
 import { networksIcon } from "@/constants/networks";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { set } from "date-fns";
 import { useNetwork, useSwitchNetwork } from "wagmi";
 
 const ChainDropDown = () => {
   const [isShow, setIsShow] = useState(false);
-  const [chainId, setChainId] = useState("80001");
-  const [icon, setIcon] = useState(networksIcon["80001"]);
   const { chain } = useNetwork();
+  const icon = useMemo(() => {
+    return networksIcon[chain!.id];
+  }, [chain]);
   const { switchNetwork } = useSwitchNetwork();
 
   const handleChainChange = (chainId: string) => {
-    setChainId(chainId);
-    setIcon(networksIcon[chainId]);
     if (chain?.id !== Number(chainId)) {
       switchNetwork?.(Number(chainId));
     }
@@ -24,7 +23,7 @@ const ChainDropDown = () => {
       <div>
         <button
           type="button"
-          className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-color px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-color px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-black"
           id="menu-button"
           aria-expanded="true"
           aria-haspopup="true"
