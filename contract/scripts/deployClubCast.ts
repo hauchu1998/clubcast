@@ -4,15 +4,11 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 async function main() {
   let clubcast: Contract;
-  let owner: SignerWithAddress;
-
-  [owner] = await ethers.getSigners();
-
   const ClubCast = await ethers.getContractFactory("ClubCast");
   // Requires the tip token to be passed in during deployment
 
-  const USDC = "0xa0d71b9877f44c744546d649147e3f1e70a93760";
-  clubcast = await ClubCast.deploy(USDC);
+  const USDT_SCROLL_SEPOLIA = "0xffd2ece82f7959ae184d10fe17865d27b4f0fb94";
+  clubcast = await ClubCast.deploy(USDT_SCROLL_SEPOLIA);
   await clubcast.deployed();
   console.log(`Clubcast Deployed to -> ${clubcast.address}`);
 }
