@@ -3,12 +3,12 @@ import { useRouter } from "next/router";
 import { Club } from "@/types/club";
 import { networksIcon } from "@/constants/networks";
 import { bangers } from "@/styles/fonts";
-import { BiMessageDetail, BiCopy } from "react-icons/bi";
+import { BiMessageDetail, BiCopy, BiGlobe } from "react-icons/bi";
 import { TbPigMoney } from "react-icons/tb";
-import { FiShare } from "react-icons/fi";
 import { IconButton, Tooltip } from "@mui/material";
 import { useInboxStore } from "@/store/inbox";
 import { useConversation } from "@xmtp/react-sdk";
+import Link from "next/link";
 
 interface ClubIntroProps {
   club: Club;
@@ -82,8 +82,13 @@ const ClubIntro = ({ club, css }: ClubIntroProps) => {
               </IconButton>
             </Tooltip>
             <Tooltip title="share">
-              <IconButton onClick={() => {}}>
-                <FiShare className="text-green-500 text-3xl" />
+              <IconButton>
+                <Link
+                  href="https://sepolia-blockscout.scroll.io/address/0xF2A81D5fd465239542A9C66289A99305e1f645Cf#code"
+                  target="_blank"
+                >
+                  <BiGlobe className="text-green-500 text-3xl" />
+                </Link>
               </IconButton>
             </Tooltip>
           </div>
