@@ -113,10 +113,8 @@ const ClubPage = () => {
               <SwitchNetworkButton chainId={club.chainId} />
             </div>
           ) : isLoading ? (
-            <div className="w-full h-full flex justify-start items-center">
-              <div className="w-full flex gap-3 justify-center text-xl text-purple-500">
-                Loading <Spinner />
-              </div>
+            <div className="w-full h-full flex justify-start items-center text-2xl text-purple-500">
+              Loading <Spinner />
             </div>
           ) : !isMember && !isHost ? (
             <div className="w-full h-full flex justify-start items-center">
