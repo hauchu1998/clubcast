@@ -2,13 +2,8 @@ import { useRouter } from "next/router";
 // import { club } from "@/db/clubs";
 import ProposalController from "@/components/clubs/proposalController";
 import EpisodeController from "@/components/clubs/episodeController";
-import { use, useCallback, useEffect, useMemo, useState } from "react";
-import {
-  useAccount,
-  useContractWrite,
-  useNetwork,
-  usePrepareContractWrite,
-} from "wagmi";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useAccount, useNetwork } from "wagmi";
 import SwitchNetworkButton from "@/components/switchNetworkButton";
 import ClubIntro from "@/components/clubs/clubIntro";
 import { useGetClub } from "@/hooks/useGetClubs";
@@ -18,6 +13,7 @@ import { address } from "@/types/address";
 import { ClubCast__factory } from "@/typechain-types";
 import Spinner from "@/components/spinner";
 import { joinClubApi } from "@/firebase/joinClubs";
+import useJoinClub from "@/hooks/useJoinClub";
 
 const ClubPage = () => {
   const router = useRouter();
@@ -29,6 +25,7 @@ const ClubPage = () => {
   const { address: user } = useAccount();
   const { clubCastAddress } = useClubCastContract();
   const [isLoading, setIsLoading] = useState(false);
+  const { writeJoinClub, isSuccess } = useJoinClub(id as string);
   const isHost = useMemo(() => {
     if (address && club) {
       return address === club.owner;
@@ -49,20 +46,11 @@ const ClubPage = () => {
     args: [user as address],
   });
 
-  const { config, error } = usePrepareContractWrite({
-    address: (process.env.NEXT_PUBLIC_SCROLL_CLUBCAST_ADDRESS as address) || "",
-    abi: ClubCast__factory.abi,
-    functionName: "joinClub",
-    args: [id as string],
-  });
-
-  const { write, isSuccess } = useContractWrite(config);
-
   const handleJoinClub = useCallback(async () => {
     try {
       setIsLoading(true);
-      if (id && write) {
-        write();
+      if (id && writeJoinClub) {
+        writeJoinClub();
         await joinClubApi(address as string, id as string);
       } else {
         throw new Error("check if the write function or id is defined");
@@ -71,7 +59,7 @@ const ClubPage = () => {
       console.log(e);
       setIsLoading(false);
     }
-  }, [id, write, address]);
+  }, [id, writeJoinClub, address]);
 
   useEffect(() => {
     if (isSuccess) {

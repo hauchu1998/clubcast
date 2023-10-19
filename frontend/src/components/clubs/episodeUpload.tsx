@@ -8,7 +8,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RiVideoUploadLine } from "react-icons/ri";
 import Spinner from "../spinner";
 import { useAccount } from "wagmi";
-import { add } from "date-fns";
 import { AiOutlineClose } from "react-icons/ai";
 
 interface EpisodeUploadProps {
