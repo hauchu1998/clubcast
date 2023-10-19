@@ -28,7 +28,7 @@ type MessageContentProps = {
 };
 
 const incomingMessageBackgroundStyles = "bg-black text-[#fff7e8] rounded-br-lg";
-const outgoingMessageBackgroundStyles = "bg-colors text-black rounded-bl-lg";
+const outgoingMessageBackgroundStyles = "bg-color text-black rounded-bl-lg";
 const errorMessageBackgroundStyles =
   "bg-transparent rounded-bl-lg border-gray-200 border";
 

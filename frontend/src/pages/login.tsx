@@ -51,7 +51,7 @@ const Login = () => {
 
   return (
     <div
-      className={`fixed top-0 left-0 flex w-screen h-screen flex-col items-center justify-center p-24 z-50 bg-colors`}
+      className={`fixed top-0 left-0 flex w-screen h-screen flex-col items-center justify-center p-24 z-50 bg-color`}
     >
       <Image
         src="/logo4.png"

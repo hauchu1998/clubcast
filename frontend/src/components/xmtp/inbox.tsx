@@ -58,7 +58,7 @@ const Inbox = ({ width }: InboxProps) => {
       className={`fixed top-[4.5rem] right-0 ${width} h-[calc(100vh-4.5rem)] border-l border-black py-2`}
     >
       <div
-        className={`fixed top-[4.5rem] right-0 flex justify-between items-center gap-3 px-3 bg-colors ${width} h-[5.5rem] border-l border-b border-black`}
+        className={`fixed top-[4.5rem] right-0 flex justify-between items-center gap-3 px-3 bg-color ${width} h-[5.5rem] border-l border-b border-black`}
       >
         <button
           className={`${mode === "chats" ? "invisible" : "visible"} `}

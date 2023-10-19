@@ -16,6 +16,6 @@ export const recipientPillInputStyle = (userIsSender: boolean) =>
     "text-center",
     "select-none",
     "border-black",
-    userIsSender ? "bg-colors" : "bg-black",
+    userIsSender ? "bg-color" : "bg-black",
     userIsSender ? "text-black" : "text-[#fff7e8]"
   );

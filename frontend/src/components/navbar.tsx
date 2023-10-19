@@ -50,7 +50,7 @@ const Navbar = () => {
   }, [isConnected, router]);
 
   return (
-    <div className="fixed top-0 w-full flex justify-between items-center gap-5 px-10 text-xl border-b border-black h-[4.5rem] bg-colors">
+    <div className="fixed top-0 w-full flex justify-between items-center gap-5 px-10 text-xl border-b border-black h-[4.5rem] bg-color">
       <Image
         src="/logo4.png"
         alt="Padcast Logo"

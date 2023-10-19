@@ -50,9 +50,7 @@ const ChatHeader = () => {
   );
 
   if (mode === "chats") {
-    return (
-      <div className="text-3xl text-center font-bold bg-colors">Inbox</div>
-    );
+    return <div className="text-3xl text-center font-bold bg-color">Inbox</div>;
   }
 
   if (mode === "room" && selectedConversation) {
@@ -76,7 +74,7 @@ const ChatHeader = () => {
 
   if (mode === "new") {
     return (
-      <div className="flex gap-2 w-full bg-colors">
+      <div className="flex gap-2 w-full bg-color">
         <span className="font-bold text-lg">To:</span>
         <div className="w-full">
           <input
