@@ -9,10 +9,11 @@ export interface ClubCard {
 
 export interface Episode {
   id: string;
+  publisher: string;
+  createdAt: string;
   title: string;
   description: string;
-  contentUrl: string;
-  createdAt: string;
+  ipfsUrl: string;
   likes: number;
   dislikes: number;
 }
@@ -44,10 +45,4 @@ export interface Proposal {
   abstain: number;
   no: number;
   user: Vote;
-}
-
-export interface Publication {
-  videoId: string;
-  publisher: address;
-  md5Hash: string;
 }

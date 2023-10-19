@@ -1,9 +1,9 @@
 import { uploadEpisodeApi } from "@/firebase/uploadEpisode";
 import { generateRandomId } from "@/helpers/random";
 import { useMediaUploaded } from "@/hooks/useMediaUploaded";
-import useUpoadEpisode from "@/hooks/useUploadEpisode";
+import useUploadEpisode from "@/hooks/useUploadEpisode";
 import { bangers } from "@/styles/fonts";
-import { Episode, Publication } from "@/types/club";
+import { Episode } from "@/types/club";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RiVideoUploadLine } from "react-icons/ri";
 import Spinner from "../spinner";
@@ -29,28 +29,27 @@ const EpisodeUpload = ({ clubId, setEpisodes }: EpisodeUploadProps) => {
     setDescription,
     ipfsUrl,
     setIpfsUrl,
-    writePublishVideo,
+    handlePublishEpisode,
     isSuccess,
-  } = useUpoadEpisode(clubId, videoId);
+  } = useUploadEpisode(clubId, videoId);
+
+  const handleUploadToIpfs = useCallback(async () => {
+    if (media) {
+      setIsLoading(true);
+      const ipfsUrl = await handleMediaUpload();
+      setIpfsUrl(ipfsUrl);
+      setIsLoading(false);
+    }
+  }, [media, handleMediaUpload, setIpfsUrl, setIsLoading]);
 
   const handleEpisodeUploaded = useCallback(async () => {
     if (!title || !description || !media) return;
     try {
       setIsLoading(true);
-      const ipfsUrl = await handleMediaUpload();
-      setIpfsUrl(ipfsUrl);
-      writePublishVideo?.();
-      const createdAt = new Date().toLocaleDateString();
-      const episode: Episode = {
-        id: videoId,
-        title,
-        description,
-        contentUrl: ipfsUrl,
-        createdAt,
-        likes: 0,
-        dislikes: 0,
-      };
+      const episode: Episode = await handlePublishEpisode();
       await uploadEpisodeApi(episode);
+      // setEpisodes((prev: Episode[]) => [...prev, episode]);
+      // setIsLoading(false);
     } catch (error: any) {
       alert(error.message);
       setIsLoading(false);
@@ -59,25 +58,15 @@ const EpisodeUpload = ({ clubId, setEpisodes }: EpisodeUploadProps) => {
     title,
     description,
     media,
-    videoId,
-    writePublishVideo,
-    setIpfsUrl,
+    handlePublishEpisode,
     setIsLoading,
-    handleMediaUpload,
+    // setEpisodes,
   ]);
 
   useEffect(() => {
     if (isSuccess) {
       setOpenModal(false);
       setIsLoading(false);
-      setEpisodes((prev: Publication[]) => [
-        ...prev,
-        {
-          videoId,
-          publisher: address,
-          md5Hash: ipfsUrl,
-        },
-      ]);
     }
   }, [isSuccess, address, ipfsUrl, videoId, setEpisodes]);
 
@@ -147,6 +136,11 @@ const EpisodeUpload = ({ clubId, setEpisodes }: EpisodeUploadProps) => {
                     />
                   </video>
                 )}
+                {ipfsUrl && (
+                  <div className="w-full text-center text-cyan-500 break-words">
+                    ipfs url: {ipfsUrl}
+                  </div>
+                )}
                 <input
                   className="w-52 truncate"
                   type="file"
@@ -157,7 +151,17 @@ const EpisodeUpload = ({ clubId, setEpisodes }: EpisodeUploadProps) => {
                   accept="image/*, video/*"
                   hidden
                 />
-                {media && title && description && (
+                {media && !ipfsUrl && (
+                  <div className="w-full flex justify-center">
+                    <button
+                      className={`${bangers.className} mt-5 px-3 py-1 bg-black text-white text-2xl rounded-lg`}
+                      onClick={handleUploadToIpfs}
+                    >
+                      Upload to IPFS
+                    </button>
+                  </div>
+                )}
+                {title && description && ipfsUrl && (
                   <div className="w-full flex justify-center">
                     <button
                       className={`${bangers.className} mt-5 px-3 py-1 bg-black text-white text-2xl rounded-lg`}

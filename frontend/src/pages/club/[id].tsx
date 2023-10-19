@@ -3,17 +3,18 @@ import { useRouter } from "next/router";
 import ProposalController from "@/components/clubs/proposalController";
 import EpisodeController from "@/components/clubs/episodeController";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount, useContractReads, useNetwork } from "wagmi";
 import SwitchNetworkButton from "@/components/switchNetworkButton";
 import ClubIntro from "@/components/clubs/clubIntro";
 import { useGetClub } from "@/hooks/useGetClubs";
-import { useContractRead } from "wagmi";
 import { useClubCastContract } from "@/hooks/useClubCastContract";
 import { address } from "@/types/address";
 import { ClubCast__factory } from "@/typechain-types";
 import Spinner from "@/components/spinner";
 import { joinClubApi } from "@/firebase/joinClubs";
 import useJoinClub from "@/hooks/useJoinClub";
+import { governance } from "@/typechain-types/@openzeppelin/contracts";
+import { set } from "date-fns";
 
 const ClubPage = () => {
   const router = useRouter();
@@ -23,6 +24,9 @@ const ClubPage = () => {
   const { address } = useAccount();
   const [isMember, setIsMember] = useState(false);
   const { address: user } = useAccount();
+  const [clubMembers, setClubMembers] = useState<address[]>([]);
+  const [clubErc721, setClubErc721] = useState<address>();
+  const [clubGovernance, setClubGovernance] = useState<address>();
   const { clubCastAddress } = useClubCastContract();
   const [isLoading, setIsLoading] = useState(false);
   const { writeJoinClub, isSuccess } = useJoinClub(id as string);
@@ -34,16 +38,40 @@ const ClubPage = () => {
     }
   }, [address, club]);
 
-  useContractRead({
-    address: clubCastAddress as address,
+  useContractReads({
     enabled: clubCastAddress ? true : false,
-    onSuccess: async ([clubIds, _]: string[]) => {
-      const isMember = clubIds.includes(id as string);
+    onSuccess: async (data) => {
+      const members = data[0].result as address[];
+      const isMember = members.includes(user as address);
       setIsMember(isMember);
+      setClubMembers(members);
+
+      const erc721Address = data[1].result as address;
+      setClubErc721(erc721Address);
+
+      const governanceAddress = data[2].result as address;
+      setClubGovernance(governanceAddress);
     },
-    abi: ClubCast__factory.abi,
-    functionName: "getUserClubIds",
-    args: [user as address],
+    contracts: [
+      {
+        address: clubCastAddress as address,
+        abi: ClubCast__factory.abi,
+        functionName: "getClubMembers",
+        args: [id as string],
+      },
+      {
+        address: clubCastAddress as address,
+        abi: ClubCast__factory.abi,
+        functionName: "getClubErc721",
+        args: [id as string],
+      },
+      {
+        address: clubCastAddress as address,
+        abi: ClubCast__factory.abi,
+        functionName: "getClubGovernance",
+        args: [id as string],
+      },
+    ],
   });
 
   const handleJoinClub = useCallback(async () => {

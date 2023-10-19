@@ -1,7 +1,7 @@
-import { Publication } from "@/types/club";
+import { Episode } from "@/types/club";
 import EpisodeContent from "./episode";
-import { useCallback, useState } from "react";
-import { useAccount, useContractRead, useNetwork } from "wagmi";
+import { useState } from "react";
+import { useAccount, useContractRead } from "wagmi";
 import { useClubCastContract } from "@/hooks/useClubCastContract";
 import { ClubCast__factory } from "@/typechain-types";
 import { address } from "@/types/address";
@@ -19,17 +19,18 @@ const EpisodeController = ({
   hostAddress,
 }: EpisodeControllerProps) => {
   const { address: user } = useAccount();
-  const [episodes, setEpisodes] = useState<Publication[]>([]);
+  const [episodes, setEpisodes] = useState<Episode[]>([]);
   const { clubCastAddress: contractAddress } = useClubCastContract();
 
   useContractRead({
     address: contractAddress as `0x${string}`,
     enabled: contractAddress ? true : false,
-    onSuccess: async (data: Publication[]) => {
+    onSuccess: async (data: Episode[]) => {
+      console.log(data);
       setEpisodes(data);
     },
     abi: ClubCast__factory.abi,
-    functionName: "listPublications",
+    functionName: "getClubEpisodes",
     args: [clubId, user as address],
   });
 
@@ -39,8 +40,8 @@ const EpisodeController = ({
         {isHost && <EpisodeUpload clubId={clubId} setEpisodes={setEpisodes} />}
         {episodes.map((episode) => (
           <EpisodeContent
-            key={episode.videoId}
-            videoId={episode.videoId}
+            key={episode.id}
+            episode={episode}
             hostAddress={hostAddress}
           />
         ))}

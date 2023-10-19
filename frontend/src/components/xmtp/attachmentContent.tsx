@@ -106,11 +106,6 @@ const AttachmentContent = ({ message }: RemoteAttachmentMessageTileProps) => {
               <a href={blobUrl}>Download Instead</a>
             </object>
           ) : contentType === "image" ? (
-            // <img
-            //   src={blobUrl}
-            //   className="max-h-80 rounded-lg"
-            //   alt={remoteAttachmentData.filename}
-            // />
             <Image
               loader={() => blobUrl}
               src={blobUrl}

@@ -42,7 +42,7 @@ const NewClub = () => {
     []
   );
   const [isLoading, setIsLoading] = useState(false);
-  const inputFileRef = useRef<HTMLInputElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const {
     erc721Address,
     setErc721Address,
@@ -152,6 +152,8 @@ const NewClub = () => {
   }, [isSuccess, router, clubId]);
 
   //text-[#B52F6B]
+  // 0xfAAB5F8F4Da7AAB77Fc58da4ed8cDd992Ab0552D
+  // 0xD58cbA9E0F268F738C3FE4AE3a5dcF88d842b286
   return (
     <div className="w-full h-[calc(100vh-5.5rem)] flex flex-col items-center">
       <div className={`mt-5 ${bangers.className} text-5xl text-cyan-500`}>
@@ -173,15 +175,15 @@ const NewClub = () => {
               className="w-52 truncate"
               type="file"
               id="club-image"
-              ref={inputFileRef}
+              ref={inputRef}
               onChange={handleMediaChange}
               aria-label={"File picker"}
               accept="image/*"
               hidden
             />
             <button
-              className={`${bangers.className} px-2 py-1 bg-black text-white text-lg rounded-lg`}
-              onClick={() => inputFileRef.current?.click()}
+              className={`${bangers.className} px-2 py-1 bg-black text-white text-lg rounded-lg hover:bg-cyan-500`}
+              onClick={() => inputRef.current?.click()}
             >
               Upload Image
             </button>
@@ -192,7 +194,6 @@ const NewClub = () => {
               type="text"
               className="w-full bg-transparent px-3 py-1 text-lg border border-black rounded-lg"
               placeholder="Enter Club Name"
-              ref={inputFileRef}
               value={clubName}
               onChange={(e) => setClubName(e.target.value)}
             />

@@ -44,34 +44,57 @@ export type ClubStructOutput = [string, string, string, string, BigNumber] & {
 };
 
 export declare namespace ClubCast {
-  export type PublicationStruct = {
-    videoId: PromiseOrValue<BigNumberish>;
+  export type EpisodeStruct = {
+    id: PromiseOrValue<string>;
     publisher: PromiseOrValue<string>;
-    md5Hash: PromiseOrValue<string>;
+    createdAt: PromiseOrValue<string>;
+    title: PromiseOrValue<string>;
+    description: PromiseOrValue<string>;
+    ipfsUrl: PromiseOrValue<string>;
+    likes: PromiseOrValue<BigNumberish>;
+    dislikes: PromiseOrValue<BigNumberish>;
   };
 
-  export type PublicationStructOutput = [BigNumber, string, string] & {
-    videoId: BigNumber;
+  export type EpisodeStructOutput = [
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    BigNumber,
+    BigNumber
+  ] & {
+    id: string;
     publisher: string;
-    md5Hash: string;
+    createdAt: string;
+    title: string;
+    description: string;
+    ipfsUrl: string;
+    likes: BigNumber;
+    dislikes: BigNumber;
   };
 }
 
 export interface ClubCastInterface extends utils.Interface {
   functions: {
+    "DislikeEpisode(string,string)": FunctionFragment;
+    "clubMembers(string,uint256)": FunctionFragment;
     "clubs(string)": FunctionFragment;
     "createClub(string,address,address)": FunctionFragment;
+    "episodes(string,uint256)": FunctionFragment;
+    "getClubEpisodes(string,address)": FunctionFragment;
     "getClubErc721(string)": FunctionFragment;
     "getClubGovernance(string)": FunctionFragment;
     "getClubInfo(string)": FunctionFragment;
+    "getClubMembers(string)": FunctionFragment;
     "getClubOwner(string)": FunctionFragment;
-    "getPublicationCount(string)": FunctionFragment;
+    "getEpisodeCount(string)": FunctionFragment;
     "getUserClubIds(address)": FunctionFragment;
     "joinClub(string)": FunctionFragment;
-    "listPublications(string,address)": FunctionFragment;
+    "likeEpisode(string,string)": FunctionFragment;
     "owner()": FunctionFragment;
-    "publications(string,uint256)": FunctionFragment;
-    "publishVideo(string,uint256,string)": FunctionFragment;
+    "publishEpisode(string,string,string,string,string,string)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "tipContentCreator(uint256,string)": FunctionFragment;
     "tippingToken()": FunctionFragment;
@@ -84,19 +107,23 @@ export interface ClubCastInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "DislikeEpisode"
+      | "clubMembers"
       | "clubs"
       | "createClub"
+      | "episodes"
+      | "getClubEpisodes"
       | "getClubErc721"
       | "getClubGovernance"
       | "getClubInfo"
+      | "getClubMembers"
       | "getClubOwner"
-      | "getPublicationCount"
+      | "getEpisodeCount"
       | "getUserClubIds"
       | "joinClub"
-      | "listPublications"
+      | "likeEpisode"
       | "owner"
-      | "publications"
-      | "publishVideo"
+      | "publishEpisode"
       | "renounceOwnership"
       | "tipContentCreator"
       | "tippingToken"
@@ -108,6 +135,14 @@ export interface ClubCastInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "DislikeEpisode",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "clubMembers",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "clubs",
     values: [PromiseOrValue<string>]
   ): string;
@@ -118,6 +153,14 @@ export interface ClubCastInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<string>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "episodes",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getClubEpisodes",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getClubErc721",
@@ -132,11 +175,15 @@ export interface ClubCastInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getClubMembers",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getClubOwner",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getPublicationCount",
+    functionFragment: "getEpisodeCount",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -148,19 +195,18 @@ export interface ClubCastInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "listPublications",
+    functionFragment: "likeEpisode",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "publications",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "publishVideo",
+    functionFragment: "publishEpisode",
     values: [
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
       PromiseOrValue<string>
     ]
   ): string;
@@ -197,8 +243,21 @@ export interface ClubCastInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "DislikeEpisode",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "clubMembers",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "clubs", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "createClub", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "episodes", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getClubEpisodes",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getClubErc721",
     data: BytesLike
@@ -212,11 +271,15 @@ export interface ClubCastInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getClubMembers",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getClubOwner",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getPublicationCount",
+    functionFragment: "getEpisodeCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -225,16 +288,12 @@ export interface ClubCastInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "joinClub", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "listPublications",
+    functionFragment: "likeEpisode",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "publications",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "publishVideo",
+    functionFragment: "publishEpisode",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -269,14 +328,14 @@ export interface ClubCastInterface extends utils.Interface {
 
   events: {
     "NewClub(string,address,address,address)": EventFragment;
-    "NewPublication(uint256,string,address,string)": EventFragment;
+    "NewEpisode(string,string,address,string)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Tipped(address,string,uint256)": EventFragment;
     "Withdrawn(address,string,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "NewClub"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewPublication"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewEpisode"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Tipped"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawn"): EventFragment;
@@ -295,18 +354,18 @@ export type NewClubEvent = TypedEvent<
 
 export type NewClubEventFilter = TypedEventFilter<NewClubEvent>;
 
-export interface NewPublicationEventObject {
-  videoId: BigNumber;
+export interface NewEpisodeEventObject {
+  episodeId: string;
   clubId: string;
   publisher: string;
-  md5Hash: string;
+  ipfsUrl: string;
 }
-export type NewPublicationEvent = TypedEvent<
-  [BigNumber, string, string, string],
-  NewPublicationEventObject
+export type NewEpisodeEvent = TypedEvent<
+  [string, string, string, string],
+  NewEpisodeEventObject
 >;
 
-export type NewPublicationEventFilter = TypedEventFilter<NewPublicationEvent>;
+export type NewEpisodeEventFilter = TypedEventFilter<NewEpisodeEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -371,6 +430,18 @@ export interface ClubCast extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    DislikeEpisode(
+      clubId: PromiseOrValue<string>,
+      episodeId: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    clubMembers(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     clubs(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -391,6 +462,29 @@ export interface ClubCast extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    episodes(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, string, string, string, string, BigNumber, BigNumber] & {
+        id: string;
+        publisher: string;
+        createdAt: string;
+        title: string;
+        description: string;
+        ipfsUrl: string;
+        likes: BigNumber;
+        dislikes: BigNumber;
+      }
+    >;
+
+    getClubEpisodes(
+      _clubId: PromiseOrValue<string>,
+      _requester: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[ClubCast.EpisodeStructOutput[]]>;
+
     getClubErc721(
       _clubId: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -406,12 +500,17 @@ export interface ClubCast extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[ClubStructOutput]>;
 
+    getClubMembers(
+      _clubId: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
+
     getClubOwner(
       _clubId: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    getPublicationCount(
+    getEpisodeCount(
       _clubId: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -426,30 +525,21 @@ export interface ClubCast extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    listPublications(
-      _clubId: PromiseOrValue<string>,
-      _requester: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[ClubCast.PublicationStructOutput[]]>;
+    likeEpisode(
+      clubId: PromiseOrValue<string>,
+      episodeId: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    publications(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, string, string] & {
-        videoId: BigNumber;
-        publisher: string;
-        md5Hash: string;
-      }
-    >;
-
-    publishVideo(
+    publishEpisode(
       _clubId: PromiseOrValue<string>,
-      _videoId: PromiseOrValue<BigNumberish>,
-      _md5Hash: PromiseOrValue<string>,
+      _episodeId: PromiseOrValue<string>,
+      _createdAt: PromiseOrValue<string>,
+      _title: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      _ipfsUrl: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -493,6 +583,18 @@ export interface ClubCast extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  DislikeEpisode(
+    clubId: PromiseOrValue<string>,
+    episodeId: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  clubMembers(
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   clubs(
     arg0: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -513,6 +615,29 @@ export interface ClubCast extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  episodes(
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, string, string, string, string, string, BigNumber, BigNumber] & {
+      id: string;
+      publisher: string;
+      createdAt: string;
+      title: string;
+      description: string;
+      ipfsUrl: string;
+      likes: BigNumber;
+      dislikes: BigNumber;
+    }
+  >;
+
+  getClubEpisodes(
+    _clubId: PromiseOrValue<string>,
+    _requester: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<ClubCast.EpisodeStructOutput[]>;
+
   getClubErc721(
     _clubId: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -528,12 +653,17 @@ export interface ClubCast extends BaseContract {
     overrides?: CallOverrides
   ): Promise<ClubStructOutput>;
 
+  getClubMembers(
+    _clubId: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
+
   getClubOwner(
     _clubId: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string>;
 
-  getPublicationCount(
+  getEpisodeCount(
     _clubId: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -548,30 +678,21 @@ export interface ClubCast extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  listPublications(
-    _clubId: PromiseOrValue<string>,
-    _requester: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<ClubCast.PublicationStructOutput[]>;
+  likeEpisode(
+    clubId: PromiseOrValue<string>,
+    episodeId: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  publications(
-    arg0: PromiseOrValue<string>,
-    arg1: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, string, string] & {
-      videoId: BigNumber;
-      publisher: string;
-      md5Hash: string;
-    }
-  >;
-
-  publishVideo(
+  publishEpisode(
     _clubId: PromiseOrValue<string>,
-    _videoId: PromiseOrValue<BigNumberish>,
-    _md5Hash: PromiseOrValue<string>,
+    _episodeId: PromiseOrValue<string>,
+    _createdAt: PromiseOrValue<string>,
+    _title: PromiseOrValue<string>,
+    _description: PromiseOrValue<string>,
+    _ipfsUrl: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -615,6 +736,18 @@ export interface ClubCast extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    DislikeEpisode(
+      clubId: PromiseOrValue<string>,
+      episodeId: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    clubMembers(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     clubs(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -635,6 +768,29 @@ export interface ClubCast extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    episodes(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, string, string, string, string, BigNumber, BigNumber] & {
+        id: string;
+        publisher: string;
+        createdAt: string;
+        title: string;
+        description: string;
+        ipfsUrl: string;
+        likes: BigNumber;
+        dislikes: BigNumber;
+      }
+    >;
+
+    getClubEpisodes(
+      _clubId: PromiseOrValue<string>,
+      _requester: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<ClubCast.EpisodeStructOutput[]>;
+
     getClubErc721(
       _clubId: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -650,12 +806,17 @@ export interface ClubCast extends BaseContract {
       overrides?: CallOverrides
     ): Promise<ClubStructOutput>;
 
+    getClubMembers(
+      _clubId: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
+
     getClubOwner(
       _clubId: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    getPublicationCount(
+    getEpisodeCount(
       _clubId: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -670,30 +831,21 @@ export interface ClubCast extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    listPublications(
-      _clubId: PromiseOrValue<string>,
-      _requester: PromiseOrValue<string>,
+    likeEpisode(
+      clubId: PromiseOrValue<string>,
+      episodeId: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<ClubCast.PublicationStructOutput[]>;
+    ): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
-    publications(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, string, string] & {
-        videoId: BigNumber;
-        publisher: string;
-        md5Hash: string;
-      }
-    >;
-
-    publishVideo(
+    publishEpisode(
       _clubId: PromiseOrValue<string>,
-      _videoId: PromiseOrValue<BigNumberish>,
-      _md5Hash: PromiseOrValue<string>,
+      _episodeId: PromiseOrValue<string>,
+      _createdAt: PromiseOrValue<string>,
+      _title: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      _ipfsUrl: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -749,18 +901,18 @@ export interface ClubCast extends BaseContract {
       governanceAddress?: null
     ): NewClubEventFilter;
 
-    "NewPublication(uint256,string,address,string)"(
-      videoId?: PromiseOrValue<BigNumberish> | null,
+    "NewEpisode(string,string,address,string)"(
+      episodeId?: PromiseOrValue<string> | null,
       clubId?: PromiseOrValue<string> | null,
       publisher?: null,
-      md5Hash?: null
-    ): NewPublicationEventFilter;
-    NewPublication(
-      videoId?: PromiseOrValue<BigNumberish> | null,
+      ipfsUrl?: null
+    ): NewEpisodeEventFilter;
+    NewEpisode(
+      episodeId?: PromiseOrValue<string> | null,
       clubId?: PromiseOrValue<string> | null,
       publisher?: null,
-      md5Hash?: null
-    ): NewPublicationEventFilter;
+      ipfsUrl?: null
+    ): NewEpisodeEventFilter;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: PromiseOrValue<string> | null,
@@ -795,6 +947,18 @@ export interface ClubCast extends BaseContract {
   };
 
   estimateGas: {
+    DislikeEpisode(
+      clubId: PromiseOrValue<string>,
+      episodeId: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    clubMembers(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     clubs(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -805,6 +969,18 @@ export interface ClubCast extends BaseContract {
       _erc721Address: PromiseOrValue<string>,
       _governanceAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    episodes(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getClubEpisodes(
+      _clubId: PromiseOrValue<string>,
+      _requester: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getClubErc721(
@@ -822,12 +998,17 @@ export interface ClubCast extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getClubMembers(
+      _clubId: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getClubOwner(
       _clubId: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getPublicationCount(
+    getEpisodeCount(
       _clubId: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -842,24 +1023,21 @@ export interface ClubCast extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    listPublications(
-      _clubId: PromiseOrValue<string>,
-      _requester: PromiseOrValue<string>,
-      overrides?: CallOverrides
+    likeEpisode(
+      clubId: PromiseOrValue<string>,
+      episodeId: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    publications(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    publishVideo(
+    publishEpisode(
       _clubId: PromiseOrValue<string>,
-      _videoId: PromiseOrValue<BigNumberish>,
-      _md5Hash: PromiseOrValue<string>,
+      _episodeId: PromiseOrValue<string>,
+      _createdAt: PromiseOrValue<string>,
+      _title: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      _ipfsUrl: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -904,6 +1082,18 @@ export interface ClubCast extends BaseContract {
   };
 
   populateTransaction: {
+    DislikeEpisode(
+      clubId: PromiseOrValue<string>,
+      episodeId: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    clubMembers(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     clubs(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -914,6 +1104,18 @@ export interface ClubCast extends BaseContract {
       _erc721Address: PromiseOrValue<string>,
       _governanceAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    episodes(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getClubEpisodes(
+      _clubId: PromiseOrValue<string>,
+      _requester: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getClubErc721(
@@ -931,12 +1133,17 @@ export interface ClubCast extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getClubMembers(
+      _clubId: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getClubOwner(
       _clubId: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getPublicationCount(
+    getEpisodeCount(
       _clubId: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -951,24 +1158,21 @@ export interface ClubCast extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    listPublications(
-      _clubId: PromiseOrValue<string>,
-      _requester: PromiseOrValue<string>,
-      overrides?: CallOverrides
+    likeEpisode(
+      clubId: PromiseOrValue<string>,
+      episodeId: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    publications(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    publishVideo(
+    publishEpisode(
       _clubId: PromiseOrValue<string>,
-      _videoId: PromiseOrValue<BigNumberish>,
-      _md5Hash: PromiseOrValue<string>,
+      _episodeId: PromiseOrValue<string>,
+      _createdAt: PromiseOrValue<string>,
+      _title: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      _ipfsUrl: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

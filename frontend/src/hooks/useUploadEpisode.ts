@@ -1,5 +1,6 @@
 import { ClubCast__factory } from "@/typechain-types";
 import { address } from "@/types/address";
+import { Episode } from "@/types/club";
 import { useState } from "react";
 import {
   useContractWrite,
@@ -7,21 +8,39 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 
-const useUpoadEpisode = (clubId: string, videoId: string) => {
-  const [ipfsUrl, setIpfsUrl] = useState("");
+const useUpoadEpisode = (clubId: string, id: string) => {
+  const [createdAt, setCreatedAt] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [ipfsUrl, setIpfsUrl] = useState("");
+
   const { config } = usePrepareContractWrite({
     address: (process.env.NEXT_PUBLIC_SCROLL_CLUBCAST_ADDRESS as address) || "",
     abi: ClubCast__factory.abi,
-    functionName: "publishVideo",
-    args: [clubId, BigInt("10"), ipfsUrl],
-    // args: [clubId, BigInt(videoId), ipfsUrl],
+    functionName: "publishEpisode",
+    args: [clubId, id, createdAt, title, description, ipfsUrl],
   });
-  const { data, write: writePublishVideo } = useContractWrite(config);
+  const { data, write: writePublishEpisode } = useContractWrite(config);
   const { isSuccess } = useWaitForTransaction({
     hash: data?.hash as `0x${string}`,
   });
+
+  const handlePublishEpisode = async () => {
+    const timestamp = new Date();
+    setCreatedAt(
+      `${timestamp.toLocaleDateString()} ${timestamp.toLocaleTimeString()}`
+    );
+    writePublishEpisode?.();
+    return {
+      id,
+      title,
+      description,
+      ipfsUrl,
+      createdAt: `${timestamp.toLocaleDateString()} ${timestamp.toLocaleTimeString()}`,
+      likes: 0,
+      dislikes: 0,
+    } as Episode;
+  };
 
   return {
     title,
@@ -30,7 +49,7 @@ const useUpoadEpisode = (clubId: string, videoId: string) => {
     setDescription,
     ipfsUrl,
     setIpfsUrl,
-    writePublishVideo,
+    handlePublishEpisode,
     isSuccess,
   };
 };

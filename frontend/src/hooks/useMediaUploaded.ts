@@ -13,6 +13,7 @@ export const useMediaUploaded = () => {
 
   const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMedia(e.target.files?.[0] || null);
+    e.target.value = "";
   };
 
   const handleMediaUpload = async () => {
@@ -30,10 +31,12 @@ export const useMediaUploaded = () => {
   };
 
   useEffect(() => {
+    console.log(media);
     if (!media) {
       return;
     }
     if (media.size >= MAX_FILE_SIZE) {
+      alert("File size too large");
       return;
     }
     const fileReader = new FileReader();
@@ -45,6 +48,7 @@ export const useMediaUploaded = () => {
       }
 
       const upload = new Upload(media.name, new Uint8Array(data));
+      console.log(upload);
       setMediaBytes(upload);
     });
 

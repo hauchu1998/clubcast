@@ -5,18 +5,17 @@ import { PiHeartBreak, PiHeart } from "react-icons/pi";
 import { useGetEpisode } from "@/hooks/useGetEpisode";
 
 interface EpisodeContentProps {
-  videoId: string;
+  episode: Episode;
   hostAddress: string;
 }
 
-const EpisodeContent = ({ videoId, hostAddress }: EpisodeContentProps) => {
-  console.log(videoId);
+const EpisodeContent = ({ episode, hostAddress }: EpisodeContentProps) => {
   // const { result: episode, loading } = useGetEpisode(videoId);
-  const { result: episode, loading } = useGetEpisode(
-    "60a18ab29606a170e45ba7f3c96e1815"
-  );
+  // const { result: episode, loading } = useGetEpisode(
+  //   "60a18ab29606a170e45ba7f3c96e1815"
+  // );
 
-  if (loading || !episode) return <div>Loading...</div>;
+  // if (loading || !episode) return <div>Loading...</div>;
   return (
     <div className="mt-5 border border-gray-300 pt-5">
       <div className="flex gap-3 px-5">
@@ -39,7 +38,7 @@ const EpisodeContent = ({ videoId, hostAddress }: EpisodeContentProps) => {
 
       <iframe
         className="mt-5 w-full"
-        src={episode.contentUrl.replace("watch?v=", "embed/")}
+        src={episode.ipfsUrl.replace("watch?v=", "embed/")}
         height="400px"
       />
       <div className="mt-3 flex gap-3 px-5">
