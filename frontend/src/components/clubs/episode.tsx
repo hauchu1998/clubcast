@@ -16,6 +16,7 @@ const EpisodeContent = ({ episode, hostAddress }: EpisodeContentProps) => {
   // );
 
   // if (loading || !episode) return <div>Loading...</div>;
+  console.log(episode);
   return (
     <div className="mt-5 border border-gray-300 pt-5">
       <div className="flex gap-3 px-5">
@@ -44,11 +45,11 @@ const EpisodeContent = ({ episode, hostAddress }: EpisodeContentProps) => {
       <div className="mt-3 flex gap-3 px-5">
         <button className="text-pink-500 text-lg flex items-center gap-2 rounded-full hover:font-bold">
           <PiHeartBreak />
-          {episode.dislikes}
+          {Number(episode.dislikes)}
         </button>
         <button className="text-cyan-500 text-xl flex items-center gap-2 rounded-full  hover:font-bold">
           <PiHeart />
-          {episode.likes}
+          {Number(episode.likes)}
         </button>
         <button className="text-purple-500 text-xl flex items-center gap-2 rounded-full  hover:font-bold">
           <AiOutlineMessage />0{/* {episode.comments.length} */}
