@@ -15,7 +15,6 @@ export interface Episode {
   createdAt: string;
   likes: number;
   dislikes: number;
-  comments: Comment[];
 }
 
 interface Comment {

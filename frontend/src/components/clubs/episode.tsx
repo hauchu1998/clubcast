@@ -7,11 +7,16 @@ import { useGetEpisode } from "@/hooks/useGetEpisode";
 interface EpisodeContentProps {
   videoId: string;
   hostAddress: string;
-  css?: string;
 }
 
-const EpisodeContent = ({ videoId, hostAddress, css }: EpisodeContentProps) => {
-  const { result: episode } = useGetEpisode(videoId);
+const EpisodeContent = ({ videoId, hostAddress }: EpisodeContentProps) => {
+  console.log(videoId);
+  // const { result: episode, loading } = useGetEpisode(videoId);
+  const { result: episode, loading } = useGetEpisode(
+    "60a18ab29606a170e45ba7f3c96e1815"
+  );
+
+  if (loading || !episode) return <div>Loading...</div>;
   return (
     <div className="mt-5 border border-gray-300 pt-5">
       <div className="flex gap-3 px-5">
@@ -47,8 +52,7 @@ const EpisodeContent = ({ videoId, hostAddress, css }: EpisodeContentProps) => {
           {episode.likes}
         </button>
         <button className="text-purple-500 text-xl flex items-center gap-2 rounded-full  hover:font-bold">
-          <AiOutlineMessage />
-          {episode.comments.length}
+          <AiOutlineMessage />0{/* {episode.comments.length} */}
         </button>
       </div>
       <div className="mt-3 px-5 py-2 border-t border-gray-300">

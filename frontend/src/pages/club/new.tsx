@@ -1,18 +1,12 @@
 import Image from "next/image";
 import { ethers, BigNumber } from "ethers";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { generateRandomId } from "@/helpers/random";
 import {
-  ClubCast__factory,
   ClubCastGovernor__factory,
   ERC721Mock__factory,
 } from "@/typechain-types";
-import {
-  useAccount,
-  useContractWrite,
-  useNetwork,
-  usePrepareContractWrite,
-} from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { address } from "@/types/address";
 import { Club } from "@/types/club";
 import { createClubApi } from "@/firebase/createClubs";
@@ -21,8 +15,10 @@ import ChainDropDown from "@/components/chainDropDown";
 import Spinner from "@/components/spinner";
 import useEtherWalletClient from "@/hooks/useEtherWalletClient";
 import { useRouter } from "next/router";
+import { useMediaUploaded } from "@/hooks/useMediaUploaded";
+import useCreateClub from "@/hooks/useCreateClub";
 
-const defaultImageUrl = [
+const defaultImageUrls = [
   "https://cdn.pixabay.com/photo/2022/10/03/12/03/microphone-7495739_1280.jpg",
   "https://cdn.pixabay.com/photo/2020/04/15/14/45/microphone-5046876_1280.jpg",
   "https://cdn.pixabay.com/photo/2023/03/25/20/30/podcast-7876792_640.jpg",
@@ -37,29 +33,24 @@ const NewClub = () => {
   const { address } = useAccount();
   const { result: signer } = useEtherWalletClient();
   const { chain } = useNetwork();
-  const [erc721Address, setErc721Address] = useState("");
-  const [governanceAddress, setGovernanceAddress] = useState("");
   const [clubName, setClubName] = useState("");
   const [maxMembers, setMaxMembers] = useState<number>();
   const [description, setDescription] = useState("");
-  const [selectedImage, setSelectedImage] = useState<File | null>(null); // [TODO] change to blob
-  const [imageUrl, setImageUrl] = useState(
-    defaultImageUrl[Math.floor(Math.random() * defaultImageUrl.length)]
+  const { media, handleMediaChange, handleMediaUpload } = useMediaUploaded();
+  const defaultImg = useMemo(
+    () => defaultImageUrls[Math.floor(Math.random() * defaultImageUrls.length)],
+    []
   );
   const [isLoading, setIsLoading] = useState(false);
-
-  const { config, error } = usePrepareContractWrite({
-    address: (process.env.NEXT_PUBLIC_SCROLL_CLUBCAST_ADDRESS as address) || "",
-    abi: ClubCast__factory.abi,
-    functionName: "createClub",
-    args: [clubId, erc721Address as address, governanceAddress as address],
-  });
-
-  const { write: writeCreateClub, isSuccess } = useContractWrite(config);
-
-  const handleImageUploaded = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedImage(e.target.files?.[0] || null);
-  };
+  const inputFileRef = useRef<HTMLInputElement | null>(null);
+  const {
+    erc721Address,
+    setErc721Address,
+    governanceAddress,
+    setGovernanceAddress,
+    writeCreateClub,
+    isSuccess,
+  } = useCreateClub(clubId);
 
   const deployContract = useCallback(
     async (mode: string) => {
@@ -108,7 +99,14 @@ const NewClub = () => {
         setIsLoading(false);
       }
     },
-    [erc721Address, maxMembers, address, signer]
+    [
+      erc721Address,
+      maxMembers,
+      address,
+      signer,
+      setErc721Address,
+      setGovernanceAddress,
+    ]
   );
 
   const handleCreateClub = useCallback(async () => {
@@ -118,16 +116,14 @@ const NewClub = () => {
     }
     try {
       setIsLoading(true);
-      // const signer = window.ethereum?.getSigner();
+      const ipfsUrl = await handleMediaUpload();
       const club: Club = {
         id: clubId,
         owner: address as address,
         name: clubName,
         description,
         chainId: chain?.id as number,
-        image: selectedImage
-          ? URL.createObjectURL(selectedImage as Blob)
-          : imageUrl,
+        image: ipfsUrl ?? defaultImg,
       };
       writeCreateClub?.();
       await createClubApi(club);
@@ -139,13 +135,13 @@ const NewClub = () => {
     clubId,
     clubName,
     description,
-    imageUrl,
+    defaultImg,
     address,
     chain?.id,
     writeCreateClub,
-    selectedImage,
     erc721Address,
     governanceAddress,
+    handleMediaUpload,
   ]);
 
   useEffect(() => {
@@ -164,25 +160,31 @@ const NewClub = () => {
       <div className="font-semibold">club ID: {clubId}</div>
       <div className="mt-10 w-[50%]">
         <div className="w-full flex gap-5">
-          <div className="flex flex-col items-center">
+          <div className="w-52 flex flex-col items-center">
             <Image
-              src={
-                selectedImage ? URL.createObjectURL(selectedImage) : imageUrl
-              }
+              src={media ? URL.createObjectURL(media) : defaultImg}
               alt="club image"
-              className="w-52 h-52 border-2 border-purple-50 object-cover"
+              className="w-full h-52 border-2 border-purple-50 object-cover"
               width={200}
               height={200}
             />
-            <div className="text-sm text-pink-500">{`NOTE: Image should < 5MB`}</div>
+            <div className="w-52 text-sm text-center text-pink-500">{`NOTE: Image should < 5MB`}</div>
             <input
               className="w-52 truncate"
               type="file"
               id="club-image"
-              onChange={handleImageUploaded}
+              ref={inputFileRef}
+              onChange={handleMediaChange}
               aria-label={"File picker"}
               accept="image/*"
+              hidden
             />
+            <button
+              className={`${bangers.className} px-2 py-1 bg-black text-white text-lg rounded-lg`}
+              onClick={() => inputFileRef.current?.click()}
+            >
+              Upload Image
+            </button>
           </div>
           <div className="w-full ">
             <div className={`${bangers.className} text-3xl`}>Club Name</div>
@@ -190,6 +192,7 @@ const NewClub = () => {
               type="text"
               className="w-full bg-transparent px-3 py-1 text-lg border border-black rounded-lg"
               placeholder="Enter Club Name"
+              ref={inputFileRef}
               value={clubName}
               onChange={(e) => setClubName(e.target.value)}
             />

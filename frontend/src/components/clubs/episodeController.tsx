@@ -1,10 +1,11 @@
 import { Publication } from "@/types/club";
 import EpisodeContent from "./episode";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useAccount, useContractRead, useNetwork } from "wagmi";
 import { useClubCastContract } from "@/hooks/useClubCastContract";
 import { ClubCast__factory } from "@/typechain-types";
 import { address } from "@/types/address";
+import EpisodeUpload from "./episodeUpload";
 
 interface EpisodeControllerProps {
   clubId: string;
@@ -35,11 +36,7 @@ const EpisodeController = ({
   return (
     <div className="mt-5 w-full h-full px-3 scrollbar flex justify-center">
       <div className="w-[90%] pr-20">
-        {isHost && (
-          <button className="mt-5 w-full h-20 border-4 border-purple-500 border-dashed text-center text-5xl font-bold text-purple-500">
-            +
-          </button>
-        )}
+        {isHost && <EpisodeUpload clubId={clubId} setEpisodes={setEpisodes} />}
         {episodes.map((episode) => (
           <EpisodeContent
             key={episode.videoId}

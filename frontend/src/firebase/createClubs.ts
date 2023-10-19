@@ -2,7 +2,6 @@ import { getDatabase, set, ref } from "firebase/database";
 import { Club } from "@/types/club";
 import { queryClient } from "@/pages/_app";
 import app from "./index";
-import { useAccount } from "wagmi";
 
 export const createClubApi = async (club: Club) => {
   const db = getDatabase(app);

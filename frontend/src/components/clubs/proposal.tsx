@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Proposal, Vote } from "@/types/club";
 import { shortAddress } from "@xmtp/react-components";
+import { AiOutlineClose } from "react-icons/ai";
 import PieChart from "./pieChart";
 
 interface PropoaslProps {
@@ -76,12 +77,15 @@ const ProposalContent = ({ proposal }: PropoaslProps) => {
       </div>
 
       {isShow && (
-        <div
-          className="fixed w-screen h-screen top-0 left-0 flex items-center justify-center"
-          onClick={handleCloseModal}
-        >
+        <div className="fixed w-screen h-screen top-0 left-0 flex items-center justify-center">
           <div className="w-[40%] bg-white scrollbar rounded-lg border-2 border-purple-500">
-            <div className="w-full py-2 rounded-t-lg bg-purple-500 flex flex-col items-center text-white ">
+            <div className="relative w-full py-2 rounded-t-lg bg-purple-500 flex flex-col items-center text-white ">
+              <button
+                className="absolute top-5 right-5 text-white text-xl"
+                onClick={handleCloseModal}
+              >
+                <AiOutlineClose />
+              </button>
               <div className="text-xl  font-semibold">
                 Proposal: {proposal.title} {}
               </div>
