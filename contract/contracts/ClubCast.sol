@@ -15,22 +15,27 @@ struct Club {
 }
 
 contract ClubCast is Ownable {
-    struct Publication {
-        string videoId;
+    struct Episode {
+        string id;
         address publisher;
+        string createdAt;
+        string title;
+        string description;
         string ipfsUrl;
+        uint64 likes;
+        uint64 dislikes;
     }
 
     IERC20 public tippingToken;
 
-    event NewPublication(string indexed videoId, string indexed clubId, address publisher, string ipfsUrl);
+    event NewEpisode(string indexed episodeId, string indexed clubId, address publisher, string ipfsUrl);
     event NewClub(string indexed clubId, address indexed creator, address erc721Address, address governanceAddress);
     event Tipped(address indexed tipper, string indexed clubId, uint256 amount);
     event Withdrawn(address indexed creator, string indexed clubId, uint256 amount);
 
     mapping(address => mapping(string => uint256)) public userClubTokenMappings;
     mapping(address => string[]) public userClubIds;
-    mapping(string => Publication[]) public publications;
+    mapping(string => Episode[]) public episodes;
     mapping(string => Club) public clubs;
     mapping(string => address[]) public clubMembers;
     mapping(string => uint256) public tips;
@@ -98,15 +103,47 @@ contract ClubCast is Ownable {
         emit NewClub(_clubId, msg.sender, _erc721Address, _governanceAddress);
     }
 
-    function publishVideo(
+    function publishEpisode(
         string memory _clubId,
-        string memory _videoId,
+        string memory _episodeId,
+        string memory _createdAt,
+        string memory _title,
+        string memory _description,
         string memory _ipfsUrl
     ) external onlyClubOwner(_clubId) {
-        Publication memory newPublication = Publication({videoId: _videoId, publisher: msg.sender, ipfsUrl: _ipfsUrl});
+        Episode memory newEpisode = Episode({
+            id: _episodeId,
+            publisher: msg.sender,
+            createdAt: _createdAt,
+            title: _title,
+            description: _description,
+            ipfsUrl: _ipfsUrl,
+            likes: 0,
+            dislikes: 0
+        });
 
-        publications[_clubId].push(newPublication);
-        emit NewPublication(_videoId, _clubId, msg.sender, _ipfsUrl);
+        episodes[_clubId].push(newEpisode);
+        emit NewEpisode(_episodeId, _clubId, msg.sender, _ipfsUrl);
+    }
+
+    function likeEpisode(string memory clubId, string memory episodeId) external onlyClubMember(clubId, msg.sender) {
+        Episode[] storage clubEpisodes = episodes[clubId];
+        for (uint256 i = 0; i < clubEpisodes.length; i++) {
+            if (keccak256(abi.encodePacked(clubEpisodes[i].id)) == keccak256(abi.encodePacked(episodeId))) {
+                clubEpisodes[i].likes += 1;
+                break;
+            }
+        }
+    }
+
+    function DislikeEpisode(string memory clubId, string memory episodeId) external onlyClubMember(clubId, msg.sender) {
+        Episode[] storage clubEpisodes = episodes[clubId];
+        for (uint256 i = 0; i < clubEpisodes.length; i++) {
+            if (keccak256(abi.encodePacked(clubEpisodes[i].id)) == keccak256(abi.encodePacked(episodeId))) {
+                clubEpisodes[i].likes -= 1;
+                break;
+            }
+        }
     }
 
     function joinClub(string memory _clubId) external returns (uint256 _tokenId) {
@@ -124,15 +161,15 @@ contract ClubCast is Ownable {
         return clubMembers[_clubId];
     }
 
-    function getPublicationCount(string memory _clubId) public view returns (uint256) {
-        return publications[_clubId].length;
+    function getEpisodeCount(string memory _clubId) public view returns (uint256) {
+        return episodes[_clubId].length;
     }
 
-    function listPublications(
+    function getClubEpisodes(
         string memory _clubId,
         address _requester
-    ) external view onlyClubMember(_clubId, _requester) returns (Publication[] memory) {
-        return publications[_clubId];
+    ) external view onlyClubMember(_clubId, _requester) returns (Episode[] memory) {
+        return episodes[_clubId];
     }
 
     function tipContentCreator(uint256 _amount, string memory _clubId) external {

@@ -8,9 +8,8 @@ import {
   ClubCastGovernor,
 } from "../typechain-types";
 import { randomBytes } from "crypto";
-import { token } from "../typechain-types/@openzeppelin/contracts";
 
-export const generateRandomNumber = () => randomBytes(16).toString("hex");
+export const generateRandomId = () => randomBytes(16).toString("hex");
 
 describe("clubcast", function () {
   let owner: SignerWithAddress;
@@ -66,9 +65,11 @@ describe("clubcast", function () {
   };
 
   describe("Publishing videos", function () {
-    const clubId = generateRandomNumber();
-    it("should return 0 when no publications are present", async function () {
-      const count = await clubcast.getPublicationCount(erc721Mock.address);
+    const clubId = generateRandomId();
+    const episodeId = generateRandomId();
+    const episodeId2 = generateRandomId();
+    it("should return 0 when no episodes are present", async function () {
+      const count = await clubcast.getEpisodeCount(erc721Mock.address);
       expect(count.toNumber()).to.equal(0);
     });
 
@@ -91,17 +92,47 @@ describe("clubcast", function () {
     });
 
     it("Should publish a video and emit event", async function () {
-      await expect(clubcast.publishVideo(clubId, 30, "md5Hash"))
-        .to.emit(clubcast, "NewPublication")
-        .withArgs(30, clubId, owner.address, "md5Hash");
+      const title = "episode1";
+      const description = "description1";
+      const ipfsUrl =
+        "https://ipfs.io/ipfs/bafybeifpliuby6upaubuhgrn77cqdwxe47wb4iojeikxnxxv24mfr36w3y/IoT_Nexus_100.mp4";
+      const timestamp = new Date();
+      const createAt = `${timestamp.toLocaleDateString} ${timestamp.toLocaleTimeString}`;
+      await expect(
+        clubcast.publishEpisode(
+          clubId,
+          episodeId,
+          createAt,
+          title,
+          description,
+          ipfsUrl
+        )
+      )
+        .to.emit(clubcast, "NewEpisode")
+        .withArgs(episodeId, clubId, owner.address, ipfsUrl);
 
-      const count = await clubcast.getPublicationCount(clubId);
+      const count = await clubcast.getEpisodeCount(clubId);
       expect(count.toNumber()).to.equal(1);
     });
 
     it("Should fail if not the owner of the club", async function () {
+      const title2 = "episode2";
+      const description2 = "description2";
+      const ipfsUrl2 =
+        "https://ipfs.io/ipfs/bafybeifpliuby6upaubuhgrn77cqdwxe47wb4iojeikxnxxv24mfr36w3y/IoT_Nexus_100.mp4";
+      const timestamp = new Date();
+      const createAt = `${timestamp.toLocaleDateString} ${timestamp.toLocaleTimeString}`;
       await expect(
-        clubcast.connect(addr1).publishVideo(clubId, 2, "md5Hash2")
+        clubcast
+          .connect(addr1)
+          .publishEpisode(
+            clubId,
+            createAt,
+            episodeId2,
+            title2,
+            description2,
+            ipfsUrl2
+          )
       ).to.be.revertedWith(
         "You must be the owner of the club and the ERC721 contract"
       );
@@ -112,7 +143,7 @@ describe("clubcast", function () {
         // First approve the tokens
         await erc20Mock.connect(owner).approve(clubcast.address, 100);
 
-        const count = await clubcast.getPublicationCount(clubId);
+        const count = await clubcast.getEpisodeCount(clubId);
         // Then tip
         await expect(clubcast.connect(owner).tipContentCreator(50, clubId))
           .to.emit(clubcast, "Tipped")
@@ -141,33 +172,53 @@ describe("clubcast", function () {
         const [clubIds, clubTokens] = await clubcast.getUserClubIds(
           addr2.address
         );
+        const members = await clubcast.getClubMembers(clubId);
         const mappedClubTokens = clubTokens.map((token) => token.toNumber());
         expect(clubIds).to.include.members([clubId]);
         expect(mappedClubTokens).to.include.members([0]);
+        expect(members).to.include.members([addr2.address]);
       });
     });
 
     describe("Listing Publications (Once Added Mappings)", function () {
       it("Should get the correct publication count", async function () {
-        const count = await clubcast.getPublicationCount(clubId);
+        const count = await clubcast.getEpisodeCount(clubId);
         expect(count.toNumber()).to.equal(1);
       });
 
       it("Should list publications correctly", async function () {
         const publicationInfos = await clubcast
           .connect(addr2)
-          .listPublications(clubId, addr2.address);
-
-        expect(publicationInfos[0].videoId).to.equal(30);
+          .getClubEpisodes(clubId, addr2.address);
+        expect(publicationInfos[0].id).to.equal(episodeId);
         expect(publicationInfos[0].publisher).to.equal(owner.address);
-        expect(publicationInfos[0].md5Hash).to.equal("md5Hash");
+        expect(publicationInfos[0].ipfsUrl).to.equal(
+          "https://ipfs.io/ipfs/bafybeifpliuby6upaubuhgrn77cqdwxe47wb4iojeikxnxxv24mfr36w3y/IoT_Nexus_100.mp4"
+        );
       });
     });
   });
   describe("Multi-user Publication Filtering", function () {
+    const episodeId = generateRandomId();
+    const title = "episode";
+    const description = "description";
+    const ipfsUrl =
+      "https://ipfs.io/ipfs/bafybeifpliuby6upaubuhgrn77cqdwxe47wb4iojeikxnxxv24mfr36w3y/IoT_Nexus_100.mp4";
+
+    const episodeId2 = generateRandomId();
+    const title2 = "episode2";
+    const description2 = "description2";
+    const ipfsUrl2 =
+      "https://ipfs.io/ipfs/bafybeifpliuby6upaubuhgrn77cqdwxe47wb4iojeikxnxxv24mfr36w3y/IoT_Nexus_100.mp4";
+
+    const episodeId3 = generateRandomId();
+    const title3 = "episode3";
+    const description3 = "description3";
+    const ipfsUrl3 =
+      "https://ipfs.io/ipfs/bafybeifpliuby6upaubuhgrn77cqdwxe47wb4iojeikxnxxv24mfr36w3y/IoT_Nexus_100.mp4";
     it("Should carry out a set of more complex minting, connecting and publishing patterns", async function () {
-      const clubId = generateRandomNumber();
-      const clubId2 = generateRandomNumber();
+      const clubId = generateRandomId();
+      const clubId2 = generateRandomId();
       await clubcast
         .connect(owner)
         .createClub(clubId, erc721Mock.address, governance.address);
@@ -179,60 +230,63 @@ describe("clubcast", function () {
       await clubcast.connect(addr3).joinClub(clubId2);
       await clubcast.connect(addr4).joinClub(clubId);
 
+      const members = await clubcast.getClubMembers(clubId);
+      expect(members).to.include.members([addr3.address, addr4.address]);
+
+      const timestamp = new Date();
+      const createAt = `${timestamp.toLocaleDateString} ${timestamp.toLocaleTimeString}`;
+
       // Publish videos targeting specific tokens
-      await clubcast.publishVideo(clubId, 3, "md5Hash3");
-      await clubcast.publishVideo(clubId, 4, "md5Hash4");
-      await clubcast.connect(addr2).publishVideo(clubId2, 5, "md5Hash5");
-      const count = await clubcast.getPublicationCount(clubId);
+      await clubcast.publishEpisode(
+        clubId,
+        episodeId,
+        createAt,
+        title,
+        description,
+        ipfsUrl
+      );
+      await clubcast.publishEpisode(
+        clubId,
+        episodeId2,
+        createAt,
+        title2,
+        description2,
+        ipfsUrl2
+      );
+      await clubcast
+        .connect(addr2)
+        .publishEpisode(
+          clubId2,
+          episodeId3,
+          createAt,
+          title3,
+          description3,
+          ipfsUrl3
+        );
+      const count = await clubcast.getEpisodeCount(clubId);
       expect(count.toNumber()).to.equal(2);
 
-      const count2 = await clubcast.getPublicationCount(clubId2);
+      const count2 = await clubcast.getEpisodeCount(clubId2);
       expect(count2.toNumber()).to.equal(1);
-
-      await clubcast.publishVideo(clubId, 6, "md5Hash6");
-      const countAfterNextPublish = await clubcast.getPublicationCount(clubId);
-      expect(countAfterNextPublish.toNumber()).to.equal(3);
 
       const addr3ClubPublications = await clubcast
         .connect(addr3)
-        .listPublications(clubId, addr3.address);
+        .getClubEpisodes(clubId, addr3.address);
+
+      const videoIds = addr3ClubPublications.map((info) => info.id);
+      const ipfsUrls = addr3ClubPublications.map((info) => info.ipfsUrl);
+      expect(videoIds).to.deep.equal([episodeId, episodeId2]);
+      expect(ipfsUrls).to.deep.equal([ipfsUrl, ipfsUrl2]);
 
       const addr3Club2Publications = await clubcast
         .connect(addr3)
-        .listPublications(clubId2, addr3.address);
-
-      const videoIdsClub = addr3ClubPublications.map((info) =>
-        info.videoId.toNumber()
-      );
-      const md5HashesClub = addr3ClubPublications.map((info) => info.md5Hash);
-      expect(videoIdsClub).to.deep.equal([3, 4, 6]);
-      expect(md5HashesClub).to.deep.equal(["md5Hash3", "md5Hash4", "md5Hash6"]);
-
-      const videoIdsClub2 = addr3Club2Publications.map((info) =>
-        info.videoId.toNumber()
-      );
-      expect(videoIdsClub2).to.deep.equal([5]);
+        .getClubEpisodes(clubId2, addr3.address);
+      const videoIds2 = addr3Club2Publications.map((info) => info.id);
+      expect(videoIds2).to.deep.equal([episodeId3]);
 
       await expect(
-        clubcast.connect(addr4).listPublications(clubId2, addr4.address)
+        clubcast.connect(addr4).getClubEpisodes(clubId2, addr4.address)
       ).to.be.rejectedWith("You are not a club member");
-
-      const addr4ClubPublications = await clubcast
-        .connect(addr4)
-        .listPublications(clubId, addr4.address);
-      const addr4VideoIdsClub = addr4ClubPublications.map((info) =>
-        info.videoId.toNumber()
-      );
-
-      const addr4Md5HashesClub = addr4ClubPublications.map(
-        (info) => info.md5Hash
-      );
-      expect(addr4VideoIdsClub).to.deep.equal([3, 4, 6]);
-      expect(addr4Md5HashesClub).to.deep.equal([
-        "md5Hash3",
-        "md5Hash4",
-        "md5Hash6",
-      ]);
     });
   });
 });
