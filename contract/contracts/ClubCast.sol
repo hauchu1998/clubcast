@@ -14,20 +14,16 @@ struct Club {
     uint256 maxMember;
 }
 
-struct Audience {
-    uint256 tokenId;
-}
-
 contract ClubCast is Ownable {
     struct Publication {
-        uint256 videoId;
+        string videoId;
         address publisher;
-        string md5Hash;
+        string ipfsUrl;
     }
 
     IERC20 public tippingToken;
 
-    event NewPublication(uint256 indexed videoId, string indexed clubId, address publisher, string md5Hash);
+    event NewPublication(string indexed videoId, string indexed clubId, address publisher, string ipfsUrl);
     event NewClub(string indexed clubId, address indexed creator, address erc721Address, address governanceAddress);
     event Tipped(address indexed tipper, string indexed clubId, uint256 amount);
     event Withdrawn(address indexed creator, string indexed clubId, uint256 amount);
@@ -36,6 +32,7 @@ contract ClubCast is Ownable {
     mapping(address => string[]) public userClubIds;
     mapping(string => Publication[]) public publications;
     mapping(string => Club) public clubs;
+    mapping(string => address[]) public clubMembers;
     mapping(string => uint256) public tips;
 
     constructor(address _tippingTokenAddress) Ownable(msg.sender) {
@@ -103,13 +100,13 @@ contract ClubCast is Ownable {
 
     function publishVideo(
         string memory _clubId,
-        uint256 _videoId,
-        string memory _md5Hash
+        string memory _videoId,
+        string memory _ipfsUrl
     ) external onlyClubOwner(_clubId) {
-        Publication memory newPublication = Publication({videoId: _videoId, publisher: msg.sender, md5Hash: _md5Hash});
+        Publication memory newPublication = Publication({videoId: _videoId, publisher: msg.sender, ipfsUrl: _ipfsUrl});
 
         publications[_clubId].push(newPublication);
-        emit NewPublication(_videoId, _clubId, msg.sender, _md5Hash);
+        emit NewPublication(_videoId, _clubId, msg.sender, _ipfsUrl);
     }
 
     function joinClub(string memory _clubId) external returns (uint256 _tokenId) {
@@ -120,6 +117,11 @@ contract ClubCast is Ownable {
         require(erc721.ownerOf(_tokenId) == msg.sender, "Caller must be the owner of the token");
         userClubTokenMappings[msg.sender][_clubId] = _tokenId;
         userClubIds[msg.sender].push(_clubId);
+        clubMembers[_clubId].push(msg.sender);
+    }
+
+    function getClubMembers(string memory _clubId) public view returns (address[] memory) {
+        return clubMembers[_clubId];
     }
 
     function getPublicationCount(string memory _clubId) public view returns (uint256) {
