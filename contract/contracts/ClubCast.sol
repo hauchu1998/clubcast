@@ -92,6 +92,8 @@ contract ClubCast is Ownable {
         address _governanceAddress
     ) external onlyERC721Owner(_erc721Address) {
         IERC721 erc721 = IERC721(_erc721Address);
+        erc721.publicMint(msg.sender);
+        erc721.delegate(msg.sender);
         Club memory newClub = Club({
             clubId: _clubId,
             owner: msg.sender,
