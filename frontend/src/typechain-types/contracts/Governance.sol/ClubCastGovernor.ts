@@ -34,7 +34,6 @@ export interface ClubCastGovernorInterface extends utils.Interface {
     "CLOCK_MODE()": FunctionFragment;
     "COUNTING_MODE()": FunctionFragment;
     "EXTENDED_BALLOT_TYPEHASH()": FunctionFragment;
-    "cancel(uint256)": FunctionFragment;
     "cancel(address[],uint256[],bytes[],bytes32)": FunctionFragment;
     "castVote(uint256,uint8)": FunctionFragment;
     "castVoteBySig(uint256,uint8,address,bytes)": FunctionFragment;
@@ -42,9 +41,9 @@ export interface ClubCastGovernorInterface extends utils.Interface {
     "castVoteWithReasonAndParams(uint256,uint8,string,bytes)": FunctionFragment;
     "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes)": FunctionFragment;
     "clock()": FunctionFragment;
+    "doNothing()": FunctionFragment;
     "eip712Domain()": FunctionFragment;
     "execute(address[],uint256[],bytes[],bytes32)": FunctionFragment;
-    "execute(uint256)": FunctionFragment;
     "getVotes(address,uint256)": FunctionFragment;
     "getVotesWithParams(address,uint256,bytes)": FunctionFragment;
     "hasVoted(uint256,address)": FunctionFragment;
@@ -54,10 +53,7 @@ export interface ClubCastGovernorInterface extends utils.Interface {
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
-    "proposalCount()": FunctionFragment;
     "proposalDeadline(uint256)": FunctionFragment;
-    "proposalDetails(uint256)": FunctionFragment;
-    "proposalDetailsAt(uint256)": FunctionFragment;
     "proposalEta(uint256)": FunctionFragment;
     "proposalNeedsQueuing(uint256)": FunctionFragment;
     "proposalProposer(uint256)": FunctionFragment;
@@ -66,7 +62,6 @@ export interface ClubCastGovernorInterface extends utils.Interface {
     "proposalVotes(uint256)": FunctionFragment;
     "propose(address[],uint256[],bytes[],string)": FunctionFragment;
     "queue(address[],uint256[],bytes[],bytes32)": FunctionFragment;
-    "queue(uint256)": FunctionFragment;
     "quorum(uint256)": FunctionFragment;
     "quorumDenominator()": FunctionFragment;
     "quorumNumerator(uint256)": FunctionFragment;
@@ -90,17 +85,16 @@ export interface ClubCastGovernorInterface extends utils.Interface {
       | "CLOCK_MODE"
       | "COUNTING_MODE"
       | "EXTENDED_BALLOT_TYPEHASH"
-      | "cancel(uint256)"
-      | "cancel(address[],uint256[],bytes[],bytes32)"
+      | "cancel"
       | "castVote"
       | "castVoteBySig"
       | "castVoteWithReason"
       | "castVoteWithReasonAndParams"
       | "castVoteWithReasonAndParamsBySig"
       | "clock"
+      | "doNothing"
       | "eip712Domain"
-      | "execute(address[],uint256[],bytes[],bytes32)"
-      | "execute(uint256)"
+      | "execute"
       | "getVotes"
       | "getVotesWithParams"
       | "hasVoted"
@@ -110,10 +104,7 @@ export interface ClubCastGovernorInterface extends utils.Interface {
       | "onERC1155BatchReceived"
       | "onERC1155Received"
       | "onERC721Received"
-      | "proposalCount"
       | "proposalDeadline"
-      | "proposalDetails"
-      | "proposalDetailsAt"
       | "proposalEta"
       | "proposalNeedsQueuing"
       | "proposalProposer"
@@ -121,8 +112,7 @@ export interface ClubCastGovernorInterface extends utils.Interface {
       | "proposalThreshold"
       | "proposalVotes"
       | "propose"
-      | "queue(address[],uint256[],bytes[],bytes32)"
-      | "queue(uint256)"
+      | "queue"
       | "quorum"
       | "quorumDenominator"
       | "quorumNumerator(uint256)"
@@ -157,11 +147,7 @@ export interface ClubCastGovernorInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "cancel(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "cancel(address[],uint256[],bytes[],bytes32)",
+    functionFragment: "cancel",
     values: [
       PromiseOrValue<string>[],
       PromiseOrValue<BigNumberish>[],
@@ -211,22 +197,19 @@ export interface ClubCastGovernorInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "clock", values?: undefined): string;
+  encodeFunctionData(functionFragment: "doNothing", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "eip712Domain",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "execute(address[],uint256[],bytes[],bytes32)",
+    functionFragment: "execute",
     values: [
       PromiseOrValue<string>[],
       PromiseOrValue<BigNumberish>[],
       PromiseOrValue<BytesLike>[],
       PromiseOrValue<BytesLike>
     ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "execute(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getVotes",
@@ -288,19 +271,7 @@ export interface ClubCastGovernorInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "proposalCount",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "proposalDeadline",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "proposalDetails",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "proposalDetailsAt",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -337,17 +308,13 @@ export interface ClubCastGovernorInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "queue(address[],uint256[],bytes[],bytes32)",
+    functionFragment: "queue",
     values: [
       PromiseOrValue<string>[],
       PromiseOrValue<BigNumberish>[],
       PromiseOrValue<BytesLike>[],
       PromiseOrValue<BytesLike>
     ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "queue(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "quorum",
@@ -421,14 +388,7 @@ export interface ClubCastGovernorInterface extends utils.Interface {
     functionFragment: "EXTENDED_BALLOT_TYPEHASH",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "cancel(uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "cancel(address[],uint256[],bytes[],bytes32)",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "cancel", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "castVote", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "castVoteBySig",
@@ -447,18 +407,12 @@ export interface ClubCastGovernorInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "clock", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "doNothing", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "eip712Domain",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "execute(address[],uint256[],bytes[],bytes32)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "execute(uint256)",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getVotes", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getVotesWithParams",
@@ -484,19 +438,7 @@ export interface ClubCastGovernorInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "proposalCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "proposalDeadline",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "proposalDetails",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "proposalDetailsAt",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -524,14 +466,7 @@ export interface ClubCastGovernorInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "propose", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "queue(address[],uint256[],bytes[],bytes32)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "queue(uint256)",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "queue", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "quorum", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "quorumDenominator",
@@ -786,12 +721,7 @@ export interface ClubCastGovernor extends BaseContract {
 
     EXTENDED_BALLOT_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
 
-    "cancel(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "cancel(address[],uint256[],bytes[],bytes32)"(
+    cancel(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
@@ -840,6 +770,8 @@ export interface ClubCastGovernor extends BaseContract {
 
     clock(overrides?: CallOverrides): Promise<[number]>;
 
+    doNothing(overrides?: CallOverrides): Promise<[boolean]>;
+
     eip712Domain(
       overrides?: CallOverrides
     ): Promise<
@@ -854,16 +786,11 @@ export interface ClubCastGovernor extends BaseContract {
       }
     >;
 
-    "execute(address[],uint256[],bytes[],bytes32)"(
+    execute(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
       descriptionHash: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "execute(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -927,22 +854,10 @@ export interface ClubCastGovernor extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    proposalCount(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     proposalDeadline(
       proposalId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    proposalDetails(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string[], BigNumber[], string[], string]>;
-
-    proposalDetailsAt(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, string[], BigNumber[], string[], string]>;
 
     proposalEta(
       proposalId: PromiseOrValue<BigNumberish>,
@@ -950,7 +865,7 @@ export interface ClubCastGovernor extends BaseContract {
     ): Promise<[BigNumber]>;
 
     proposalNeedsQueuing(
-      proposalId: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -985,16 +900,11 @@ export interface ClubCastGovernor extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "queue(address[],uint256[],bytes[],bytes32)"(
+    queue(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
       descriptionHash: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "queue(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1066,12 +976,7 @@ export interface ClubCastGovernor extends BaseContract {
 
   EXTENDED_BALLOT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-  "cancel(uint256)"(
-    proposalId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "cancel(address[],uint256[],bytes[],bytes32)"(
+  cancel(
     targets: PromiseOrValue<string>[],
     values: PromiseOrValue<BigNumberish>[],
     calldatas: PromiseOrValue<BytesLike>[],
@@ -1120,6 +1025,8 @@ export interface ClubCastGovernor extends BaseContract {
 
   clock(overrides?: CallOverrides): Promise<number>;
 
+  doNothing(overrides?: CallOverrides): Promise<boolean>;
+
   eip712Domain(
     overrides?: CallOverrides
   ): Promise<
@@ -1134,16 +1041,11 @@ export interface ClubCastGovernor extends BaseContract {
     }
   >;
 
-  "execute(address[],uint256[],bytes[],bytes32)"(
+  execute(
     targets: PromiseOrValue<string>[],
     values: PromiseOrValue<BigNumberish>[],
     calldatas: PromiseOrValue<BytesLike>[],
     descriptionHash: PromiseOrValue<BytesLike>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "execute(uint256)"(
-    proposalId: PromiseOrValue<BigNumberish>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1207,22 +1109,10 @@ export interface ClubCastGovernor extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  proposalCount(overrides?: CallOverrides): Promise<BigNumber>;
-
   proposalDeadline(
     proposalId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  proposalDetails(
-    proposalId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<[string[], BigNumber[], string[], string]>;
-
-  proposalDetailsAt(
-    index: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, string[], BigNumber[], string[], string]>;
 
   proposalEta(
     proposalId: PromiseOrValue<BigNumberish>,
@@ -1230,7 +1120,7 @@ export interface ClubCastGovernor extends BaseContract {
   ): Promise<BigNumber>;
 
   proposalNeedsQueuing(
-    proposalId: PromiseOrValue<BigNumberish>,
+    arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -1265,16 +1155,11 @@ export interface ClubCastGovernor extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "queue(address[],uint256[],bytes[],bytes32)"(
+  queue(
     targets: PromiseOrValue<string>[],
     values: PromiseOrValue<BigNumberish>[],
     calldatas: PromiseOrValue<BytesLike>[],
     descriptionHash: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "queue(uint256)"(
-    proposalId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1346,12 +1231,7 @@ export interface ClubCastGovernor extends BaseContract {
 
     EXTENDED_BALLOT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-    "cancel(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "cancel(address[],uint256[],bytes[],bytes32)"(
+    cancel(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
@@ -1400,6 +1280,8 @@ export interface ClubCastGovernor extends BaseContract {
 
     clock(overrides?: CallOverrides): Promise<number>;
 
+    doNothing(overrides?: CallOverrides): Promise<boolean>;
+
     eip712Domain(
       overrides?: CallOverrides
     ): Promise<
@@ -1414,18 +1296,13 @@ export interface ClubCastGovernor extends BaseContract {
       }
     >;
 
-    "execute(address[],uint256[],bytes[],bytes32)"(
+    execute(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
       descriptionHash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    "execute(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     getVotes(
       account: PromiseOrValue<string>,
@@ -1487,22 +1364,10 @@ export interface ClubCastGovernor extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    proposalCount(overrides?: CallOverrides): Promise<BigNumber>;
-
     proposalDeadline(
       proposalId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    proposalDetails(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string[], BigNumber[], string[], string]>;
-
-    proposalDetailsAt(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, string[], BigNumber[], string[], string]>;
 
     proposalEta(
       proposalId: PromiseOrValue<BigNumberish>,
@@ -1510,7 +1375,7 @@ export interface ClubCastGovernor extends BaseContract {
     ): Promise<BigNumber>;
 
     proposalNeedsQueuing(
-      proposalId: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1545,18 +1410,13 @@ export interface ClubCastGovernor extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "queue(address[],uint256[],bytes[],bytes32)"(
+    queue(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
       descriptionHash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    "queue(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     quorum(
       blockNumber: PromiseOrValue<BigNumberish>,
@@ -1738,12 +1598,7 @@ export interface ClubCastGovernor extends BaseContract {
 
     EXTENDED_BALLOT_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "cancel(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "cancel(address[],uint256[],bytes[],bytes32)"(
+    cancel(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
@@ -1792,18 +1647,15 @@ export interface ClubCastGovernor extends BaseContract {
 
     clock(overrides?: CallOverrides): Promise<BigNumber>;
 
+    doNothing(overrides?: CallOverrides): Promise<BigNumber>;
+
     eip712Domain(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "execute(address[],uint256[],bytes[],bytes32)"(
+    execute(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
       descriptionHash: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "execute(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1867,20 +1719,8 @@ export interface ClubCastGovernor extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    proposalCount(overrides?: CallOverrides): Promise<BigNumber>;
-
     proposalDeadline(
       proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    proposalDetails(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    proposalDetailsAt(
-      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1890,7 +1730,7 @@ export interface ClubCastGovernor extends BaseContract {
     ): Promise<BigNumber>;
 
     proposalNeedsQueuing(
-      proposalId: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1919,16 +1759,11 @@ export interface ClubCastGovernor extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "queue(address[],uint256[],bytes[],bytes32)"(
+    queue(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
       descriptionHash: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "queue(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2003,12 +1838,7 @@ export interface ClubCastGovernor extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "cancel(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "cancel(address[],uint256[],bytes[],bytes32)"(
+    cancel(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
@@ -2057,18 +1887,15 @@ export interface ClubCastGovernor extends BaseContract {
 
     clock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    doNothing(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     eip712Domain(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "execute(address[],uint256[],bytes[],bytes32)"(
+    execute(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
       descriptionHash: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "execute(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2132,20 +1959,8 @@ export interface ClubCastGovernor extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    proposalCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     proposalDeadline(
       proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    proposalDetails(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    proposalDetailsAt(
-      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2155,7 +1970,7 @@ export interface ClubCastGovernor extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     proposalNeedsQueuing(
-      proposalId: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2184,16 +1999,11 @@ export interface ClubCastGovernor extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "queue(address[],uint256[],bytes[],bytes32)"(
+    queue(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
       descriptionHash: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "queue(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

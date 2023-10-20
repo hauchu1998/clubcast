@@ -26,15 +26,14 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../../../../common";
+} from "../../common";
 
-export interface GovernorStorageInterface extends utils.Interface {
+export interface GovInterface extends utils.Interface {
   functions: {
     "BALLOT_TYPEHASH()": FunctionFragment;
     "CLOCK_MODE()": FunctionFragment;
     "COUNTING_MODE()": FunctionFragment;
     "EXTENDED_BALLOT_TYPEHASH()": FunctionFragment;
-    "cancel(uint256)": FunctionFragment;
     "cancel(address[],uint256[],bytes[],bytes32)": FunctionFragment;
     "castVote(uint256,uint8)": FunctionFragment;
     "castVoteBySig(uint256,uint8,address,bytes)": FunctionFragment;
@@ -42,9 +41,9 @@ export interface GovernorStorageInterface extends utils.Interface {
     "castVoteWithReasonAndParams(uint256,uint8,string,bytes)": FunctionFragment;
     "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes)": FunctionFragment;
     "clock()": FunctionFragment;
+    "doNothing()": FunctionFragment;
     "eip712Domain()": FunctionFragment;
     "execute(address[],uint256[],bytes[],bytes32)": FunctionFragment;
-    "execute(uint256)": FunctionFragment;
     "getVotes(address,uint256)": FunctionFragment;
     "getVotesWithParams(address,uint256,bytes)": FunctionFragment;
     "hasVoted(uint256,address)": FunctionFragment;
@@ -54,22 +53,27 @@ export interface GovernorStorageInterface extends utils.Interface {
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
-    "proposalCount()": FunctionFragment;
     "proposalDeadline(uint256)": FunctionFragment;
-    "proposalDetails(uint256)": FunctionFragment;
-    "proposalDetailsAt(uint256)": FunctionFragment;
     "proposalEta(uint256)": FunctionFragment;
     "proposalNeedsQueuing(uint256)": FunctionFragment;
     "proposalProposer(uint256)": FunctionFragment;
     "proposalSnapshot(uint256)": FunctionFragment;
     "proposalThreshold()": FunctionFragment;
+    "proposalVotes(uint256)": FunctionFragment;
     "propose(address[],uint256[],bytes[],string)": FunctionFragment;
     "queue(address[],uint256[],bytes[],bytes32)": FunctionFragment;
-    "queue(uint256)": FunctionFragment;
     "quorum(uint256)": FunctionFragment;
+    "quorumDenominator()": FunctionFragment;
+    "quorumNumerator(uint256)": FunctionFragment;
+    "quorumNumerator()": FunctionFragment;
     "relay(address,uint256,bytes)": FunctionFragment;
+    "setProposalThreshold(uint256)": FunctionFragment;
+    "setVotingDelay(uint48)": FunctionFragment;
+    "setVotingPeriod(uint32)": FunctionFragment;
     "state(uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "token()": FunctionFragment;
+    "updateQuorumNumerator(uint256)": FunctionFragment;
     "version()": FunctionFragment;
     "votingDelay()": FunctionFragment;
     "votingPeriod()": FunctionFragment;
@@ -81,17 +85,16 @@ export interface GovernorStorageInterface extends utils.Interface {
       | "CLOCK_MODE"
       | "COUNTING_MODE"
       | "EXTENDED_BALLOT_TYPEHASH"
-      | "cancel(uint256)"
-      | "cancel(address[],uint256[],bytes[],bytes32)"
+      | "cancel"
       | "castVote"
       | "castVoteBySig"
       | "castVoteWithReason"
       | "castVoteWithReasonAndParams"
       | "castVoteWithReasonAndParamsBySig"
       | "clock"
+      | "doNothing"
       | "eip712Domain"
-      | "execute(address[],uint256[],bytes[],bytes32)"
-      | "execute(uint256)"
+      | "execute"
       | "getVotes"
       | "getVotesWithParams"
       | "hasVoted"
@@ -101,22 +104,27 @@ export interface GovernorStorageInterface extends utils.Interface {
       | "onERC1155BatchReceived"
       | "onERC1155Received"
       | "onERC721Received"
-      | "proposalCount"
       | "proposalDeadline"
-      | "proposalDetails"
-      | "proposalDetailsAt"
       | "proposalEta"
       | "proposalNeedsQueuing"
       | "proposalProposer"
       | "proposalSnapshot"
       | "proposalThreshold"
+      | "proposalVotes"
       | "propose"
-      | "queue(address[],uint256[],bytes[],bytes32)"
-      | "queue(uint256)"
+      | "queue"
       | "quorum"
+      | "quorumDenominator"
+      | "quorumNumerator(uint256)"
+      | "quorumNumerator()"
       | "relay"
+      | "setProposalThreshold"
+      | "setVotingDelay"
+      | "setVotingPeriod"
       | "state"
       | "supportsInterface"
+      | "token"
+      | "updateQuorumNumerator"
       | "version"
       | "votingDelay"
       | "votingPeriod"
@@ -139,11 +147,7 @@ export interface GovernorStorageInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "cancel(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "cancel(address[],uint256[],bytes[],bytes32)",
+    functionFragment: "cancel",
     values: [
       PromiseOrValue<string>[],
       PromiseOrValue<BigNumberish>[],
@@ -193,22 +197,19 @@ export interface GovernorStorageInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "clock", values?: undefined): string;
+  encodeFunctionData(functionFragment: "doNothing", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "eip712Domain",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "execute(address[],uint256[],bytes[],bytes32)",
+    functionFragment: "execute",
     values: [
       PromiseOrValue<string>[],
       PromiseOrValue<BigNumberish>[],
       PromiseOrValue<BytesLike>[],
       PromiseOrValue<BytesLike>
     ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "execute(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getVotes",
@@ -270,19 +271,7 @@ export interface GovernorStorageInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "proposalCount",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "proposalDeadline",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "proposalDetails",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "proposalDetailsAt",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -306,6 +295,10 @@ export interface GovernorStorageInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "proposalVotes",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "propose",
     values: [
       PromiseOrValue<string>[],
@@ -315,7 +308,7 @@ export interface GovernorStorageInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "queue(address[],uint256[],bytes[],bytes32)",
+    functionFragment: "queue",
     values: [
       PromiseOrValue<string>[],
       PromiseOrValue<BigNumberish>[],
@@ -324,12 +317,20 @@ export interface GovernorStorageInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "queue(uint256)",
+    functionFragment: "quorum",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "quorum",
+    functionFragment: "quorumDenominator",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "quorumNumerator(uint256)",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "quorumNumerator()",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "relay",
@@ -340,12 +341,29 @@ export interface GovernorStorageInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "setProposalThreshold",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setVotingDelay",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setVotingPeriod",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "state",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(functionFragment: "token", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "updateQuorumNumerator",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "version", values?: undefined): string;
   encodeFunctionData(
@@ -370,14 +388,7 @@ export interface GovernorStorageInterface extends utils.Interface {
     functionFragment: "EXTENDED_BALLOT_TYPEHASH",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "cancel(uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "cancel(address[],uint256[],bytes[],bytes32)",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "cancel", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "castVote", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "castVoteBySig",
@@ -396,18 +407,12 @@ export interface GovernorStorageInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "clock", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "doNothing", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "eip712Domain",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "execute(address[],uint256[],bytes[],bytes32)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "execute(uint256)",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getVotes", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getVotesWithParams",
@@ -433,19 +438,7 @@ export interface GovernorStorageInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "proposalCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "proposalDeadline",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "proposalDetails",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "proposalDetailsAt",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -468,20 +461,46 @@ export interface GovernorStorageInterface extends utils.Interface {
     functionFragment: "proposalThreshold",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "proposalVotes",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "propose", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "queue(address[],uint256[],bytes[],bytes32)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "queue(uint256)",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "queue", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "quorum", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "quorumDenominator",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "quorumNumerator(uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "quorumNumerator()",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "relay", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setProposalThreshold",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setVotingDelay",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setVotingPeriod",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "state", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "updateQuorumNumerator",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "version", data: BytesLike): Result;
@@ -500,8 +519,12 @@ export interface GovernorStorageInterface extends utils.Interface {
     "ProposalCreated(uint256,address,address[],uint256[],string[],bytes[],uint256,uint256,string)": EventFragment;
     "ProposalExecuted(uint256)": EventFragment;
     "ProposalQueued(uint256,uint256)": EventFragment;
+    "ProposalThresholdSet(uint256,uint256)": EventFragment;
+    "QuorumNumeratorUpdated(uint256,uint256)": EventFragment;
     "VoteCast(address,uint256,uint8,uint256,string)": EventFragment;
     "VoteCastWithParams(address,uint256,uint8,uint256,string,bytes)": EventFragment;
+    "VotingDelaySet(uint256,uint256)": EventFragment;
+    "VotingPeriodSet(uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "EIP712DomainChanged"): EventFragment;
@@ -509,8 +532,12 @@ export interface GovernorStorageInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ProposalCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProposalExecuted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProposalQueued"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProposalThresholdSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "QuorumNumeratorUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VoteCast"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VoteCastWithParams"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "VotingDelaySet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "VotingPeriodSet"): EventFragment;
 }
 
 export interface EIP712DomainChangedEventObject {}
@@ -583,6 +610,30 @@ export type ProposalQueuedEvent = TypedEvent<
 
 export type ProposalQueuedEventFilter = TypedEventFilter<ProposalQueuedEvent>;
 
+export interface ProposalThresholdSetEventObject {
+  oldProposalThreshold: BigNumber;
+  newProposalThreshold: BigNumber;
+}
+export type ProposalThresholdSetEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  ProposalThresholdSetEventObject
+>;
+
+export type ProposalThresholdSetEventFilter =
+  TypedEventFilter<ProposalThresholdSetEvent>;
+
+export interface QuorumNumeratorUpdatedEventObject {
+  oldQuorumNumerator: BigNumber;
+  newQuorumNumerator: BigNumber;
+}
+export type QuorumNumeratorUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  QuorumNumeratorUpdatedEventObject
+>;
+
+export type QuorumNumeratorUpdatedEventFilter =
+  TypedEventFilter<QuorumNumeratorUpdatedEvent>;
+
 export interface VoteCastEventObject {
   voter: string;
   proposalId: BigNumber;
@@ -613,12 +664,34 @@ export type VoteCastWithParamsEvent = TypedEvent<
 export type VoteCastWithParamsEventFilter =
   TypedEventFilter<VoteCastWithParamsEvent>;
 
-export interface GovernorStorage extends BaseContract {
+export interface VotingDelaySetEventObject {
+  oldVotingDelay: BigNumber;
+  newVotingDelay: BigNumber;
+}
+export type VotingDelaySetEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  VotingDelaySetEventObject
+>;
+
+export type VotingDelaySetEventFilter = TypedEventFilter<VotingDelaySetEvent>;
+
+export interface VotingPeriodSetEventObject {
+  oldVotingPeriod: BigNumber;
+  newVotingPeriod: BigNumber;
+}
+export type VotingPeriodSetEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  VotingPeriodSetEventObject
+>;
+
+export type VotingPeriodSetEventFilter = TypedEventFilter<VotingPeriodSetEvent>;
+
+export interface Gov extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: GovernorStorageInterface;
+  interface: GovInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -648,12 +721,7 @@ export interface GovernorStorage extends BaseContract {
 
     EXTENDED_BALLOT_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
 
-    "cancel(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "cancel(address[],uint256[],bytes[],bytes32)"(
+    cancel(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
@@ -702,6 +770,8 @@ export interface GovernorStorage extends BaseContract {
 
     clock(overrides?: CallOverrides): Promise<[number]>;
 
+    doNothing(overrides?: CallOverrides): Promise<[boolean]>;
+
     eip712Domain(
       overrides?: CallOverrides
     ): Promise<
@@ -716,16 +786,11 @@ export interface GovernorStorage extends BaseContract {
       }
     >;
 
-    "execute(address[],uint256[],bytes[],bytes32)"(
+    execute(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
       descriptionHash: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "execute(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -789,22 +854,10 @@ export interface GovernorStorage extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    proposalCount(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     proposalDeadline(
       proposalId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    proposalDetails(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string[], BigNumber[], string[], string]>;
-
-    proposalDetailsAt(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, string[], BigNumber[], string[], string]>;
 
     proposalEta(
       proposalId: PromiseOrValue<BigNumberish>,
@@ -828,6 +881,17 @@ export interface GovernorStorage extends BaseContract {
 
     proposalThreshold(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    proposalVotes(
+      proposalId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        againstVotes: BigNumber;
+        forVotes: BigNumber;
+        abstainVotes: BigNumber;
+      }
+    >;
+
     propose(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
@@ -836,7 +900,7 @@ export interface GovernorStorage extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "queue(address[],uint256[],bytes[],bytes32)"(
+    queue(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
@@ -844,21 +908,40 @@ export interface GovernorStorage extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "queue(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     quorum(
+      blockNumber: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    quorumDenominator(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "quorumNumerator(uint256)"(
       timepoint: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    "quorumNumerator()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     relay(
       target: PromiseOrValue<string>,
       value: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setProposalThreshold(
+      newProposalThreshold: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setVotingDelay(
+      newVotingDelay: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setVotingPeriod(
+      newVotingPeriod: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     state(
@@ -870,6 +953,13 @@ export interface GovernorStorage extends BaseContract {
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    token(overrides?: CallOverrides): Promise<[string]>;
+
+    updateQuorumNumerator(
+      newQuorumNumerator: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     version(overrides?: CallOverrides): Promise<[string]>;
 
@@ -886,12 +976,7 @@ export interface GovernorStorage extends BaseContract {
 
   EXTENDED_BALLOT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-  "cancel(uint256)"(
-    proposalId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "cancel(address[],uint256[],bytes[],bytes32)"(
+  cancel(
     targets: PromiseOrValue<string>[],
     values: PromiseOrValue<BigNumberish>[],
     calldatas: PromiseOrValue<BytesLike>[],
@@ -940,6 +1025,8 @@ export interface GovernorStorage extends BaseContract {
 
   clock(overrides?: CallOverrides): Promise<number>;
 
+  doNothing(overrides?: CallOverrides): Promise<boolean>;
+
   eip712Domain(
     overrides?: CallOverrides
   ): Promise<
@@ -954,16 +1041,11 @@ export interface GovernorStorage extends BaseContract {
     }
   >;
 
-  "execute(address[],uint256[],bytes[],bytes32)"(
+  execute(
     targets: PromiseOrValue<string>[],
     values: PromiseOrValue<BigNumberish>[],
     calldatas: PromiseOrValue<BytesLike>[],
     descriptionHash: PromiseOrValue<BytesLike>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "execute(uint256)"(
-    proposalId: PromiseOrValue<BigNumberish>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1027,22 +1109,10 @@ export interface GovernorStorage extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  proposalCount(overrides?: CallOverrides): Promise<BigNumber>;
-
   proposalDeadline(
     proposalId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  proposalDetails(
-    proposalId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<[string[], BigNumber[], string[], string]>;
-
-  proposalDetailsAt(
-    index: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, string[], BigNumber[], string[], string]>;
 
   proposalEta(
     proposalId: PromiseOrValue<BigNumberish>,
@@ -1066,6 +1136,17 @@ export interface GovernorStorage extends BaseContract {
 
   proposalThreshold(overrides?: CallOverrides): Promise<BigNumber>;
 
+  proposalVotes(
+    proposalId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      againstVotes: BigNumber;
+      forVotes: BigNumber;
+      abstainVotes: BigNumber;
+    }
+  >;
+
   propose(
     targets: PromiseOrValue<string>[],
     values: PromiseOrValue<BigNumberish>[],
@@ -1074,7 +1155,7 @@ export interface GovernorStorage extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "queue(address[],uint256[],bytes[],bytes32)"(
+  queue(
     targets: PromiseOrValue<string>[],
     values: PromiseOrValue<BigNumberish>[],
     calldatas: PromiseOrValue<BytesLike>[],
@@ -1082,21 +1163,40 @@ export interface GovernorStorage extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "queue(uint256)"(
-    proposalId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   quorum(
+    blockNumber: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  quorumDenominator(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "quorumNumerator(uint256)"(
     timepoint: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  "quorumNumerator()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   relay(
     target: PromiseOrValue<string>,
     value: PromiseOrValue<BigNumberish>,
     data: PromiseOrValue<BytesLike>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setProposalThreshold(
+    newProposalThreshold: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setVotingDelay(
+    newVotingDelay: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setVotingPeriod(
+    newVotingPeriod: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   state(
@@ -1108,6 +1208,13 @@ export interface GovernorStorage extends BaseContract {
     interfaceId: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  token(overrides?: CallOverrides): Promise<string>;
+
+  updateQuorumNumerator(
+    newQuorumNumerator: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   version(overrides?: CallOverrides): Promise<string>;
 
@@ -1124,12 +1231,7 @@ export interface GovernorStorage extends BaseContract {
 
     EXTENDED_BALLOT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-    "cancel(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "cancel(address[],uint256[],bytes[],bytes32)"(
+    cancel(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
@@ -1178,6 +1280,8 @@ export interface GovernorStorage extends BaseContract {
 
     clock(overrides?: CallOverrides): Promise<number>;
 
+    doNothing(overrides?: CallOverrides): Promise<boolean>;
+
     eip712Domain(
       overrides?: CallOverrides
     ): Promise<
@@ -1192,18 +1296,13 @@ export interface GovernorStorage extends BaseContract {
       }
     >;
 
-    "execute(address[],uint256[],bytes[],bytes32)"(
+    execute(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
       descriptionHash: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    "execute(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     getVotes(
       account: PromiseOrValue<string>,
@@ -1265,22 +1364,10 @@ export interface GovernorStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    proposalCount(overrides?: CallOverrides): Promise<BigNumber>;
-
     proposalDeadline(
       proposalId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    proposalDetails(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string[], BigNumber[], string[], string]>;
-
-    proposalDetailsAt(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, string[], BigNumber[], string[], string]>;
 
     proposalEta(
       proposalId: PromiseOrValue<BigNumberish>,
@@ -1304,6 +1391,17 @@ export interface GovernorStorage extends BaseContract {
 
     proposalThreshold(overrides?: CallOverrides): Promise<BigNumber>;
 
+    proposalVotes(
+      proposalId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        againstVotes: BigNumber;
+        forVotes: BigNumber;
+        abstainVotes: BigNumber;
+      }
+    >;
+
     propose(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
@@ -1312,7 +1410,7 @@ export interface GovernorStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "queue(address[],uint256[],bytes[],bytes32)"(
+    queue(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
@@ -1320,20 +1418,39 @@ export interface GovernorStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "queue(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     quorum(
+      blockNumber: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    quorumDenominator(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "quorumNumerator(uint256)"(
       timepoint: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    "quorumNumerator()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     relay(
       target: PromiseOrValue<string>,
       value: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setProposalThreshold(
+      newProposalThreshold: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setVotingDelay(
+      newVotingDelay: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setVotingPeriod(
+      newVotingPeriod: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1346,6 +1463,13 @@ export interface GovernorStorage extends BaseContract {
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    token(overrides?: CallOverrides): Promise<string>;
+
+    updateQuorumNumerator(
+      newQuorumNumerator: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     version(overrides?: CallOverrides): Promise<string>;
 
@@ -1396,6 +1520,24 @@ export interface GovernorStorage extends BaseContract {
       etaSeconds?: null
     ): ProposalQueuedEventFilter;
 
+    "ProposalThresholdSet(uint256,uint256)"(
+      oldProposalThreshold?: null,
+      newProposalThreshold?: null
+    ): ProposalThresholdSetEventFilter;
+    ProposalThresholdSet(
+      oldProposalThreshold?: null,
+      newProposalThreshold?: null
+    ): ProposalThresholdSetEventFilter;
+
+    "QuorumNumeratorUpdated(uint256,uint256)"(
+      oldQuorumNumerator?: null,
+      newQuorumNumerator?: null
+    ): QuorumNumeratorUpdatedEventFilter;
+    QuorumNumeratorUpdated(
+      oldQuorumNumerator?: null,
+      newQuorumNumerator?: null
+    ): QuorumNumeratorUpdatedEventFilter;
+
     "VoteCast(address,uint256,uint8,uint256,string)"(
       voter?: PromiseOrValue<string> | null,
       proposalId?: null,
@@ -1427,6 +1569,24 @@ export interface GovernorStorage extends BaseContract {
       reason?: null,
       params?: null
     ): VoteCastWithParamsEventFilter;
+
+    "VotingDelaySet(uint256,uint256)"(
+      oldVotingDelay?: null,
+      newVotingDelay?: null
+    ): VotingDelaySetEventFilter;
+    VotingDelaySet(
+      oldVotingDelay?: null,
+      newVotingDelay?: null
+    ): VotingDelaySetEventFilter;
+
+    "VotingPeriodSet(uint256,uint256)"(
+      oldVotingPeriod?: null,
+      newVotingPeriod?: null
+    ): VotingPeriodSetEventFilter;
+    VotingPeriodSet(
+      oldVotingPeriod?: null,
+      newVotingPeriod?: null
+    ): VotingPeriodSetEventFilter;
   };
 
   estimateGas: {
@@ -1438,12 +1598,7 @@ export interface GovernorStorage extends BaseContract {
 
     EXTENDED_BALLOT_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "cancel(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "cancel(address[],uint256[],bytes[],bytes32)"(
+    cancel(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
@@ -1492,18 +1647,15 @@ export interface GovernorStorage extends BaseContract {
 
     clock(overrides?: CallOverrides): Promise<BigNumber>;
 
+    doNothing(overrides?: CallOverrides): Promise<BigNumber>;
+
     eip712Domain(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "execute(address[],uint256[],bytes[],bytes32)"(
+    execute(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
       descriptionHash: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "execute(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1567,20 +1719,8 @@ export interface GovernorStorage extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    proposalCount(overrides?: CallOverrides): Promise<BigNumber>;
-
     proposalDeadline(
       proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    proposalDetails(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    proposalDetailsAt(
-      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1606,6 +1746,11 @@ export interface GovernorStorage extends BaseContract {
 
     proposalThreshold(overrides?: CallOverrides): Promise<BigNumber>;
 
+    proposalVotes(
+      proposalId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     propose(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
@@ -1614,7 +1759,7 @@ export interface GovernorStorage extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "queue(address[],uint256[],bytes[],bytes32)"(
+    queue(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
@@ -1622,21 +1767,40 @@ export interface GovernorStorage extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "queue(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    quorum(
+      blockNumber: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    quorum(
+    quorumDenominator(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "quorumNumerator(uint256)"(
       timepoint: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    "quorumNumerator()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     relay(
       target: PromiseOrValue<string>,
       value: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setProposalThreshold(
+      newProposalThreshold: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setVotingDelay(
+      newVotingDelay: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setVotingPeriod(
+      newVotingPeriod: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     state(
@@ -1647,6 +1811,13 @@ export interface GovernorStorage extends BaseContract {
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    token(overrides?: CallOverrides): Promise<BigNumber>;
+
+    updateQuorumNumerator(
+      newQuorumNumerator: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     version(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1667,12 +1838,7 @@ export interface GovernorStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "cancel(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "cancel(address[],uint256[],bytes[],bytes32)"(
+    cancel(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
@@ -1721,18 +1887,15 @@ export interface GovernorStorage extends BaseContract {
 
     clock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    doNothing(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     eip712Domain(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "execute(address[],uint256[],bytes[],bytes32)"(
+    execute(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
       descriptionHash: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "execute(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1796,20 +1959,8 @@ export interface GovernorStorage extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    proposalCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     proposalDeadline(
       proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    proposalDetails(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    proposalDetailsAt(
-      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1835,6 +1986,11 @@ export interface GovernorStorage extends BaseContract {
 
     proposalThreshold(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    proposalVotes(
+      proposalId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     propose(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
@@ -1843,7 +1999,7 @@ export interface GovernorStorage extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "queue(address[],uint256[],bytes[],bytes32)"(
+    queue(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       calldatas: PromiseOrValue<BytesLike>[],
@@ -1851,13 +2007,19 @@ export interface GovernorStorage extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "queue(uint256)"(
-      proposalId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    quorum(
+      blockNumber: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    quorum(
+    quorumDenominator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "quorumNumerator(uint256)"(
       timepoint: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "quorumNumerator()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1868,6 +2030,21 @@ export interface GovernorStorage extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    setProposalThreshold(
+      newProposalThreshold: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setVotingDelay(
+      newVotingDelay: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setVotingPeriod(
+      newVotingPeriod: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     state(
       proposalId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1876,6 +2053,13 @@ export interface GovernorStorage extends BaseContract {
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    updateQuorumNumerator(
+      newQuorumNumerator: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     version(overrides?: CallOverrides): Promise<PopulatedTransaction>;

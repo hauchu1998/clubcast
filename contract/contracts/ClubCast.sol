@@ -150,6 +150,7 @@ contract ClubCast is Ownable {
         address _erc721Address = getClubErc721(_clubId);
         IERC721 erc721 = IERC721(_erc721Address);
         _tokenId = erc721.publicMint(msg.sender);
+        erc721.delegate(msg.sender);
 
         require(erc721.ownerOf(_tokenId) == msg.sender, "Caller must be the owner of the token");
         userClubTokenMappings[msg.sender][_clubId] = _tokenId;

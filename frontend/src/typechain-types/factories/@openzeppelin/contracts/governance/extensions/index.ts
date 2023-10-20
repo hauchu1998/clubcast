@@ -3,6 +3,5 @@
 /* eslint-disable */
 export { GovernorCountingSimple__factory } from "./GovernorCountingSimple__factory";
 export { GovernorSettings__factory } from "./GovernorSettings__factory";
-export { GovernorStorage__factory } from "./GovernorStorage__factory";
 export { GovernorVotes__factory } from "./GovernorVotes__factory";
 export { GovernorVotesQuorumFraction__factory } from "./GovernorVotesQuorumFraction__factory";

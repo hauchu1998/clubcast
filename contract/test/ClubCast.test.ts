@@ -8,6 +8,7 @@ import {
   ClubCastGovernor,
 } from "../typechain-types";
 import { randomBytes } from "crypto";
+import { moveBlocks } from "./utils/moveBlocks";
 
 export const generateRandomId = () => randomBytes(16).toString("hex");
 
@@ -57,8 +58,18 @@ describe("clubcast", function () {
     erc20Mock = await ERC20Mock.deploy(owner.address, "Token", "TOKEN");
     await erc20Mock.deployed();
 
-    governance = await ClubCastGovernor.deploy(erc721Mock.address, 0, 4);
-    governance2 = await ClubCastGovernor.deploy(erc721Mock2.address, 0, 4);
+    governance = await ClubCastGovernor.deploy(
+      erc721Mock.address,
+      "ClubCastGovernance",
+      0,
+      4
+    );
+    governance2 = await ClubCastGovernor.deploy(
+      erc721Mock2.address,
+      "ClubCastGovernance",
+      0,
+      4
+    );
 
     clubcast = await Clubcast.deploy(erc20Mock.address);
     await clubcast.deployed();
@@ -287,6 +298,29 @@ describe("clubcast", function () {
       await expect(
         clubcast.connect(addr4).getClubEpisodes(clubId2, addr4.address)
       ).to.be.rejectedWith("You are not a club member");
+    });
+  });
+
+  describe("Governance", async function () {
+    const clubId = generateRandomId();
+    await clubcast.createClub(clubId, erc721Mock.address, governance.address);
+    await clubcast.connect(addr1).joinClub(clubId);
+    await clubcast.connect(addr2).joinClub(clubId);
+    const call = governance.interface.encodeFunctionData("doNothing");
+
+    it("should be able to create a propose", async () => {
+      const proposal = await governance
+        .connect(addr1)
+        .propose(
+          [governance.address],
+          ["0"],
+          [call.toString()],
+          "call for do nothing"
+        );
+      const proposeReceipt = await proposal.wait(1);
+      const proposalId = proposeReceipt.events![0].args!.proposalId;
+      await moveBlocks(2);
+      expect(await governance.state(proposalId)).to.equal(1);
     });
   });
 });

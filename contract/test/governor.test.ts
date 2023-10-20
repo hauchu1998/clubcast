@@ -14,7 +14,6 @@ import { moveBlocks } from "./utils/moveBlocks";
 describe("governance", async () => {
   const deploySettings = async () => {
     const [owner, addr1, addr2, addr3, addr4] = await ethers.getSigners();
-
     const ERC721Mock = await ethers.getContractFactory("ERC721Mock");
     const ClubCastGovernor = await ethers.getContractFactory(
       "ClubCastGovernor"
@@ -37,21 +36,21 @@ describe("governance", async () => {
     await governance.deployed();
 
     await erc721Mock.publicMint(owner.address);
-    await erc721Mock.publicMint(owner.address);
+    // await erc721Mock.publicMint(owner.address);
     await erc721Mock.publicMint(addr1.address);
-    await erc721Mock.publicMint(addr1.address);
+    // await erc721Mock.publicMint(addr1.address);
     await erc721Mock.publicMint(addr2.address);
-    await erc721Mock.publicMint(addr2.address);
+    // await erc721Mock.publicMint(addr2.address);
     await erc721Mock.publicMint(addr3.address);
-    await erc721Mock.publicMint(addr3.address);
+    // await erc721Mock.publicMint(addr3.address);
     await erc721Mock.publicMint(addr4.address);
-    await erc721Mock.publicMint(addr4.address);
+    // await erc721Mock.publicMint(addr4.address);
 
     const call = governance.interface.encodeFunctionData("doNothing");
 
     // await erc721Mock.transferOwnership(governance.address);
     await erc721Mock.connect(addr1).delegate(addr1.address);
-    await erc721Mock.connect(addr2).delegate(addr1.address);
+    // await erc721Mock.connect(addr2).delegate(addr1.address);
 
     return {
       erc721Mock,
@@ -67,9 +66,9 @@ describe("governance", async () => {
   it("Should set the right tokenId", async () => {
     const { erc721Mock, owner, addr1 } = await loadFixture(deploySettings);
     const nftCount = await erc721Mock.balanceOf(owner.address);
-    expect(nftCount).to.equal(2);
+    expect(nftCount).to.equal(1);
     expect(await erc721Mock.ownerOf(0)).to.equal(owner.address);
-    expect(await erc721Mock.ownerOf(3)).to.equal(addr1.address);
+    // expect(await erc721Mock.ownerOf(3)).to.equal(addr1.address);
   });
 
   it("Should set the right token address", async () => {
