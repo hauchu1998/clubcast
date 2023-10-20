@@ -87,6 +87,7 @@ const NewClub = () => {
           );
           const contract = await governorFactory.deploy(
             erc721Address,
+            `${clubName} Governance`,
             BigNumber.from("0"),
             BigNumber.from("4")
           ); // ERC721, proposal thresold, quorum
@@ -100,6 +101,7 @@ const NewClub = () => {
       }
     },
     [
+      clubName,
       erc721Address,
       maxMembers,
       address,

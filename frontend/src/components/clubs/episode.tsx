@@ -10,12 +10,6 @@ interface EpisodeContentProps {
 }
 
 const EpisodeContent = ({ episode, hostAddress }: EpisodeContentProps) => {
-  // const { result: episode, loading } = useGetEpisode(videoId);
-  // const { result: episode, loading } = useGetEpisode(
-  //   "60a18ab29606a170e45ba7f3c96e1815"
-  // );
-
-  // if (loading || !episode) return <div>Loading...</div>;
   console.log(episode);
   return (
     <div className="mt-5 border border-gray-300 pt-5">
@@ -38,9 +32,11 @@ const EpisodeContent = ({ episode, hostAddress }: EpisodeContentProps) => {
       </div>
 
       <iframe
-        className="mt-5 w-full"
-        src={episode.ipfsUrl.replace("watch?v=", "embed/")}
-        height="400px"
+        className="mt-5 overflow-hidden"
+        src={episode.ipfsUrl}
+        scrolling="no"
+        height="500px"
+        width="100%"
       />
       <div className="mt-3 flex gap-3 px-5">
         <button className="text-pink-500 text-lg flex items-center gap-2 rounded-full hover:font-bold">

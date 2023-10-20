@@ -104,7 +104,10 @@ const ClubPage = () => {
         <div className="w-[40%] h-full">
           <ClubIntro club={club} css="h-[40%] scrollbar " />
           {chain?.id === club.chainId && (isMember || isHost) && (
-            <ProposalController css="h-[60%]" />
+            <ProposalController
+              governanceAddress={clubGovernance as address}
+              css="h-[60%]"
+            />
           )}
         </div>
         <div className="w-[60%] h-full ">

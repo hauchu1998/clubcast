@@ -6,12 +6,16 @@ import { Web3Storage } from "web3.storage";
 
 export const useMediaUploaded = () => {
   const [media, setMedia] = useState<File | null>(null);
+  const [mediaUrl, setMediaUrl] = useState<string | null>(null);
   const [mediaBytes, setMediaBytes] = useState<Upload | null>(null);
   const web3Storage = new Web3Storage({
     token: process.env.NEXT_PUBLIC_WEB3_STORAGE_TOKEN || "",
   });
 
   const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0].type.includes("image")) {
+      setMediaUrl(URL.createObjectURL(e.target.files?.[0]));
+    }
     setMedia(e.target.files?.[0] || null);
     e.target.value = "";
   };
@@ -31,7 +35,6 @@ export const useMediaUploaded = () => {
   };
 
   useEffect(() => {
-    console.log(media);
     if (!media) {
       return;
     }
@@ -55,5 +58,5 @@ export const useMediaUploaded = () => {
     fileReader.readAsArrayBuffer(media);
     fileReader.removeEventListener("load", () => {});
   }, [media]);
-  return { media, setMedia, handleMediaUpload, handleMediaChange };
+  return { media, setMedia, mediaUrl, handleMediaUpload, handleMediaChange };
 };

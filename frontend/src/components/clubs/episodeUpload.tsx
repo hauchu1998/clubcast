@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { uploadEpisodeApi } from "@/firebase/uploadEpisode";
 import { generateRandomId } from "@/helpers/random";
 import { useMediaUploaded } from "@/hooks/useMediaUploaded";
@@ -21,7 +22,8 @@ const EpisodeUpload = ({ clubId, setEpisodes }: EpisodeUploadProps) => {
   const { address } = useAccount();
   const videoId = useMemo(() => generateRandomId(), []);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
-  const { media, handleMediaChange, handleMediaUpload } = useMediaUploaded();
+  const { media, mediaUrl, handleMediaChange, handleMediaUpload } =
+    useMediaUploaded();
   const {
     title,
     setTitle,
@@ -122,7 +124,7 @@ const EpisodeUpload = ({ clubId, setEpisodes }: EpisodeUploadProps) => {
                   </button>
                 </div>
 
-                {media && (
+                {media && media.type.includes("video") && (
                   <video
                     key={media.name}
                     className="w-full"
@@ -135,6 +137,15 @@ const EpisodeUpload = ({ clubId, setEpisodes }: EpisodeUploadProps) => {
                       type={media.type}
                     />
                   </video>
+                )}
+                {media && media.type.includes("image") && (
+                  <Image
+                    src={mediaUrl || ""}
+                    className="w-full"
+                    width={500}
+                    height={500}
+                    alt="image preview"
+                  />
                 )}
                 {ipfsUrl && (
                   <div className="w-full text-center text-cyan-500 break-words">
