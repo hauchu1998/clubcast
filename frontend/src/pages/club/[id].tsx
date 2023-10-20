@@ -106,6 +106,7 @@ const ClubPage = () => {
           {chain?.id === club.chainId && (isMember || isHost) && (
             <ProposalController
               governanceAddress={clubGovernance as address}
+              isMember={isMember}
               css="h-[60%]"
             />
           )}

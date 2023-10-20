@@ -50,7 +50,7 @@ const EpisodeUpload = ({ clubId, setEpisodes }: EpisodeUploadProps) => {
       setIsLoading(true);
       const episode: Episode = await handlePublishEpisode();
       await uploadEpisodeApi(episode);
-      // setEpisodes((prev: Episode[]) => [...prev, episode]);
+      setEpisodes((prev: Episode[]) => [episode, ...prev]);
       // setIsLoading(false);
     } catch (error: any) {
       alert(error.message);
@@ -62,7 +62,7 @@ const EpisodeUpload = ({ clubId, setEpisodes }: EpisodeUploadProps) => {
     media,
     handlePublishEpisode,
     setIsLoading,
-    // setEpisodes,
+    setEpisodes,
   ]);
 
   useEffect(() => {

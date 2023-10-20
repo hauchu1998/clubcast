@@ -1,7 +1,15 @@
 import { bangers } from "@/styles/fonts";
 import ProposalContent from "./proposal";
 import { Proposal } from "@/types/club";
+import { address } from "@/types/address";
+import { IoMdAdd } from "react-icons/io";
+import { useState } from "react";
+import ProposalModal from "./proposalModal";
+import { useContractEvent } from "wagmi";
+import { ClubCastGovernor__factory } from "@/typechain-types";
 interface ProposalControllerProps {
+  governanceAddress: address;
+  isMember: boolean;
   css: string;
 }
 
@@ -32,12 +40,31 @@ const governanceProposals: Proposal[] = [
   },
 ];
 
-const ProposalController = ({ css }: ProposalControllerProps) => {
+const ProposalController = ({
+  governanceAddress,
+  isMember,
+  css,
+}: ProposalControllerProps) => {
+  const [proposal, setProposals] = useState<Proposal[]>(governanceProposals);
+  useContractEvent({
+    address: governanceAddress,
+    abi: ClubCastGovernor__factory.abi,
+    eventName: "ProposalCreated",
+    listener(log) {
+      console.log(log);
+    },
+  });
+
   return (
-    <div className={`${css} w-full pl-10 `}>
-      <div className={`${bangers.className} text-center text-2xl`}>
+    <div className={`${css} relative w-full pl-10 `}>
+      <div className={`${bangers.className} text-center text-3xl`}>
         Proposals
       </div>
+      <ProposalModal
+        isMember={isMember}
+        governanceAddress={governanceAddress}
+        setProposals={setProposals}
+      />
       <div className="w-full h-full scrollbar">
         {
           // @ts-ignore

@@ -53,7 +53,7 @@ const ProposalContent = ({ proposal }: PropoaslProps) => {
     <div className="mt-2 w-full">
       <div
         key={proposal.id}
-        className="h-20 border border-purple-500 px-3 py-3 flex flex-col rounded-lg bg-[#f5eae8] hover:cursor-pointer"
+        className="h-20 border-2 border-purple-500 px-3 py-3 flex flex-col rounded-lg bg-[#f5eae8] hover:cursor-pointer"
         onClick={() => setIsShow(true)}
       >
         <div className="flex justify-between ">
@@ -78,7 +78,7 @@ const ProposalContent = ({ proposal }: PropoaslProps) => {
 
       {isShow && (
         <div className="fixed w-screen h-screen top-0 left-0 flex items-center justify-center">
-          <div className="w-[40%] bg-white scrollbar rounded-lg border-2 border-purple-500">
+          <div className="w-[40%] bg-color scrollbar rounded-lg border-2 border-purple-500">
             <div className="relative w-full py-2 rounded-t-lg bg-purple-500 flex flex-col items-center text-white ">
               <button
                 className="absolute top-5 right-5 text-white text-xl"
