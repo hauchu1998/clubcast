@@ -6,12 +6,14 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from "wagmi";
+import { useClubCastContract } from "./useClubCastContract";
 
 const useCreateClub = (clubId: string) => {
   const [erc721Address, setErc721Address] = useState("");
   const [governanceAddress, setGovernanceAddress] = useState("");
+  const { clubCastAddress } = useClubCastContract();
   const { config } = usePrepareContractWrite({
-    address: (process.env.NEXT_PUBLIC_SCROLL_CLUBCAST_ADDRESS as address) || "",
+    address: (clubCastAddress as address) || "",
     abi: ClubCast__factory.abi,
     functionName: "createClub",
     args: [clubId, erc721Address as address, governanceAddress as address],

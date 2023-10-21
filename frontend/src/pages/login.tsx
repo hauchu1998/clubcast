@@ -22,32 +22,27 @@ const Login = () => {
   const handleInitXmtp = useCallback(async () => {
     if (!signer || !isConnected) return;
     const keys = await Client.getKeys(signer!);
-    await initialize({
-      keys,
-      signer,
-      options: {
-        // persistConversations: false,
-        env: "production",
-        appVersion: getAppVersion(),
-      },
-    });
-    setSteps(2);
-  }, [initialize, signer, isConnected]);
+    try {
+      await initialize({
+        keys,
+        signer,
+        options: {
+          // persistConversations: false,
+          env: "production",
+          appVersion: getAppVersion(),
+        },
+      });
+      setSteps(2);
+      router.replace("/dashboard");
+    } catch (e) {
+      console.log(e);
+    }
+  }, [initialize, signer, isConnected, router]);
 
   const walletConnect = (connector: any) => {
     connect({ connector });
     setSteps(1);
   };
-
-  useEffect(() => {
-    // console.log(isConnected, steps);
-    if (isConnected && steps === 0) {
-      setSteps(1);
-    }
-    if (isConnected && steps === 2) {
-      router.replace("/dashboard");
-    }
-  }, [isConnected, router, steps]);
 
   return (
     <div

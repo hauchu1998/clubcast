@@ -19,7 +19,7 @@ const useEtherWalletClient = () => {
     };
     const provider = new providers.Web3Provider(transport, network);
     const currSigner = provider.getSigner(account.address);
-    return currSigner as Signer;
+    return currSigner;
   }
 
   return useAsync(async () => {
