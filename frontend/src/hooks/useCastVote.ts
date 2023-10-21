@@ -8,10 +8,10 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from "wagmi";
-import { Vote } from "@/types/club";
+import { Vote } from "@/types/governance";
 
 const useCastVote = (governanceAddress: address, proposalId: string) => {
-  const [vote, setVote] = useState<Vote>(Vote.Abstain);
+  const [vote, setVote] = useState<Vote>();
   const { config } = usePrepareContractWrite({
     address: governanceAddress || "",
     enabled:
@@ -20,7 +20,7 @@ const useCastVote = (governanceAddress: address, proposalId: string) => {
       vote !== undefined,
     abi: ClubCastGovernor__factory.abi,
     functionName: "castVote",
-    args: [BigInt(proposalId), vote],
+    args: [BigInt(proposalId), Number(vote)],
   });
   const { data, write: writeCastVote } = useContractWrite(config);
   const { isSuccess } = useWaitForTransaction({

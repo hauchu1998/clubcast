@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { use, useCallback, useEffect, useMemo, useState } from "react";
 import { Proposal, Vote } from "@/types/governance";
 import { shortAddress } from "@xmtp/react-components";
 import { AiOutlineClose } from "react-icons/ai";
@@ -14,6 +14,9 @@ import {
 import { ClubCastGovernor__factory } from "@/typechain-types";
 import { set } from "date-fns";
 import Spinner from "../spinner";
+import { castVoteApi } from "@/firebase/castVote";
+import useGetUserVote from "@/hooks/useGetUserVote";
+import useGetAllVotes from "@/hooks/useGetAllVotes";
 
 interface PropoaslProps {
   governanceAddress: address;
@@ -29,11 +32,13 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
   const [proposer, setProposer] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
   const [alreadyVote, setAlreadyVote] = useState(true);
-  const [proposalVotes, setProposalVotes] = useState<number[]>();
+  // const [allVotes, setAllVotes] = useState<number[]>();
+  const { data: userVote } = useGetUserVote(governanceAddress, proposal.id);
+  const { data: allVotes } = useGetAllVotes(governanceAddress, proposal.id);
   const totalVotes = useMemo(() => {
-    if (!proposalVotes) return 0;
-    return proposalVotes.reduce((a, b) => a + b, 0);
-  }, [proposalVotes]);
+    if (!allVotes) return 0;
+    return allVotes.reduce((a, b) => a + b, 0);
+  }, [allVotes]);
   const [timeLeft, setTimeLeft] = useState(0);
   const { vote, setVote, isSuccess, writeCastVote } = useCastVote(
     governanceAddress,
@@ -51,7 +56,7 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
       const endTime = Number(data[2].result);
       setTimeLeft(((endTime - startTime) * 12) / (24 * 3600));
       setProposer(data[3].result as address);
-      setProposalVotes(data[4]?.result?.map((x: any) => Number(x)));
+      // setAllVotes(data[4]?.result?.map((x: any) => Number(x)));
     },
     contracts: [
       {
@@ -78,12 +83,12 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
         functionName: "proposalProposer",
         args: [BigInt(proposal.id)],
       },
-      {
-        address: governanceAddress as `0x${string}`,
-        abi: ClubCastGovernor__factory.abi,
-        functionName: "proposalVotes",
-        args: [BigInt(proposal.id)],
-      },
+      // {
+      //   address: governanceAddress as `0x${string}`,
+      //   abi: ClubCastGovernor__factory.abi,
+      //   functionName: "proposalVotes",
+      //   args: [BigInt(proposal.id)],
+      // },
     ],
   });
 
@@ -94,13 +99,24 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
     listener: async (log) => {
       const event = log[0];
       if (event.eventName === "VoteCast") {
-        const vote = {
-          governanceAddress,
-          proposalId: event.args.proposalId?.toString() || "",
-          voter: event.args.voter || "",
-          support: event.args.support,
-        };
-        console.log(event);
+        const proposalId = event.args.proposalId?.toString() || "";
+        const voter = event.args.voter || "";
+        const support = event.args.support;
+        if (
+          proposalId !== undefined &&
+          voter !== undefined &&
+          support !== undefined
+        ) {
+          await castVoteApi(governanceAddress, proposalId, voter, support);
+          // setProposalVotes((prev) =>
+          //   prev?.map((x, index) => {
+          //     if (index === support) {
+          //       return x + 1;
+          //     }
+          //     return x;
+          //   })
+          // );
+        }
       }
     },
   });
@@ -149,26 +165,16 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
           </div>
           <div className="font-semibold">
             <span className="text-red-500">
-              No:{" "}
-              {proposalVotes && totalVotes !== 0
-                ? proposalVotes[0] / totalVotes
-                : 0}
-              %
-            </span>{" "}
-            <span className="text-blue-500">
-              Abstain:{" "}
-              {proposalVotes && totalVotes !== 0
-                ? proposalVotes[2] / totalVotes
-                : 0}
-              %
+              No: {allVotes && totalVotes !== 0 ? allVotes[0] / totalVotes : 0}%
             </span>{" "}
             <span className="text-green-500">
-              Yes:{" "}
-              {proposalVotes && totalVotes !== 0
-                ? proposalVotes[1] / totalVotes
-                : 0}
+              Yes: {allVotes && totalVotes !== 0 ? allVotes[1] / totalVotes : 0}
               %
             </span>
+            <span className="text-blue-500">
+              Abstain:{" "}
+              {allVotes && totalVotes !== 0 ? allVotes[2] / totalVotes : 0}%
+            </span>{" "}
           </div>
         </div>
       </div>
@@ -200,7 +206,7 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
                 <div className="mt-5 w-full ">
                   {alreadyVote ? (
                     <div className="text-orange-600 font-medium">
-                      {/* you voted {getUserVote(proposal.user)} */}
+                      you voted {getUserVote(userVote)}
                     </div>
                   ) : (
                     <div>
@@ -217,16 +223,6 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
                         </button>
                         <button
                           className={`${
-                            vote === Vote.Abstain
-                              ? "bg-blue-500 text-white"
-                              : " text-blue-500"
-                          } border-2 border-blue-500 w-20 py-1 rounded-full font-semibold`}
-                          onClick={() => setVote(Vote.Abstain)}
-                        >
-                          Abstain
-                        </button>
-                        <button
-                          className={`${
                             vote === Vote.Yes
                               ? "bg-green-500 text-white"
                               : " text-green-500"
@@ -234,6 +230,16 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
                           onClick={() => setVote(Vote.Yes)}
                         >
                           Yes
+                        </button>
+                        <button
+                          className={`${
+                            vote === Vote.Abstain
+                              ? "bg-blue-500 text-white"
+                              : " text-blue-500"
+                          } border-2 border-blue-500 w-20 py-1 rounded-full font-semibold`}
+                          onClick={() => setVote(Vote.Abstain)}
+                        >
+                          Abstain
                         </button>
                       </div>
                       <div className="mt-5 flex flex-col items-center">
@@ -256,23 +262,23 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
               <div className="flex flex-col items-center pt-5">
                 <div className="w-2/3">
                   <PieChart
-                    yesVotes={proposalVotes?.[2] || 0}
-                    noVotes={proposalVotes?.[0] || 0}
-                    abstainVotes={proposalVotes?.[1] || 0}
+                    noVotes={allVotes?.[0] || 0}
+                    yesVotes={allVotes?.[1] || 0}
+                    abstainVotes={allVotes?.[2] || 0}
                   />
                 </div>
                 <div className="mt-5 grid grid-cols-3 gap-3 text-center">
                   <div className="text-red-500 font-semibold">
                     <div className="text-sm">No</div>
-                    <div className="text-lg">{proposalVotes?.[0]}</div>
-                  </div>
-                  <div className="text-blue-500 font-semibold">
-                    <div className="text-sm">Abstain</div>
-                    <div className="text-lg">{proposalVotes?.[1]}</div>
+                    <div className="text-lg">{allVotes?.[0]}</div>
                   </div>
                   <div className="text-green-500 font-semibold">
                     <div className="text-sm">Yes</div>
-                    <div className="text-lg">{proposalVotes?.[2] || 0}</div>
+                    <div className="text-lg">{allVotes?.[1] || 0}</div>
+                  </div>
+                  <div className="text-blue-500 font-semibold">
+                    <div className="text-sm">Abstain</div>
+                    <div className="text-lg">{allVotes?.[2]}</div>
                   </div>
                 </div>
               </div>
