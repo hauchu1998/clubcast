@@ -8,18 +8,32 @@ import { Episode } from "@/types/club";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RiVideoUploadLine } from "react-icons/ri";
 import Spinner from "../spinner";
-import { useAccount } from "wagmi";
+import { useAccount, useContractRead } from "wagmi";
 import { AiOutlineClose } from "react-icons/ai";
+import { polygonMumbai } from "viem/chains";
+import usePushProtocolAccount from "@/hooks/usePushProtocolAccount";
+import { address } from "@/types/address";
+import { useClubCastContract } from "@/hooks/useClubCastContract";
+import { ClubCast__factory } from "@/typechain-types";
+import useGetClubMembers from "@/hooks/useGetClubMembers";
 
 interface EpisodeUploadProps {
   clubId: string;
+  clubName: string;
   setEpisodes: Function;
 }
 
-const EpisodeUpload = ({ clubId, setEpisodes }: EpisodeUploadProps) => {
+const EpisodeUpload = ({
+  clubId,
+  clubName,
+  setEpisodes,
+}: EpisodeUploadProps) => {
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { chain, clubCastAddress } = useClubCastContract();
+  const members = useGetClubMembers(clubId);
   const { address } = useAccount();
+  // const { userPushAccount } = usePushProtocolAccount();
   const videoId = useMemo(() => generateRandomId(), []);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
   const { media, mediaUrl, handleMediaChange, handleMediaUpload } =
@@ -51,6 +65,14 @@ const EpisodeUpload = ({ clubId, setEpisodes }: EpisodeUploadProps) => {
       const episode: Episode = await handlePublishEpisode();
       await uploadEpisodeApi(episode);
       setEpisodes((prev: Episode[]) => [episode, ...prev]);
+      // if (chain?.id === polygonMumbai.id) {
+      //   await userPushAccount?.channel.send(members, {
+      //     notification: {
+      //       title: "New Episode",
+      //       body: `${clubName} has new episode, check it out!`,
+      //     },
+      //   });
+      // }
       // setIsLoading(false);
     } catch (error: any) {
       alert(error.message);
@@ -63,6 +85,10 @@ const EpisodeUpload = ({ clubId, setEpisodes }: EpisodeUploadProps) => {
     handlePublishEpisode,
     setIsLoading,
     setEpisodes,
+    // chain,
+    // clubName,
+    // members,
+    // userPushAccount,
   ]);
 
   useEffect(() => {

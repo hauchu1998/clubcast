@@ -1,18 +1,17 @@
 import Head from "next/head";
-import { useRouter } from "next/router";
+import Router from "next/router";
 import { useEffect } from "react";
 import { useAccount } from "wagmi";
 
 export default function IndexPage() {
-  const router = useRouter();
   const { isConnected } = useAccount();
 
   useEffect(() => {
     if (!isConnected) {
-      router.replace("/login");
+      Router.replace("/login");
     } else {
-      router.replace("/dashboard");
+      Router.replace("/dashboard");
     }
-  }, [isConnected, router]);
+  }, [isConnected]);
   return <div>Welcome</div>;
 }

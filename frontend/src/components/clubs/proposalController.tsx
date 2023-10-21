@@ -10,6 +10,7 @@ import { ClubCastGovernor__factory } from "@/typechain-types";
 import { createProposalApi } from "@/firebase/createProposal";
 import useGetAllProposals from "@/hooks/useGetAllProposals";
 import Spinner from "../spinner";
+import { club } from "@/db/clubs";
 interface ProposalControllerProps {
   governanceAddress: address;
   isMember: boolean;
@@ -32,6 +33,7 @@ const ProposalController = ({
     eventName: "ProposalCreated",
     listener: async (log) => {
       const event = log[0];
+      console.log("ProposalCreated", event);
       if (event.eventName === "ProposalCreated") {
         const { title, description } = JSON.parse(
           event.args.description as string
@@ -61,6 +63,8 @@ const ProposalController = ({
       </div>
       <ProposalModal
         isMember={isMember}
+        clubId={club.id}
+        clubName={club.name}
         governanceAddress={governanceAddress}
       />
       <div className="w-full h-full scrollbar">

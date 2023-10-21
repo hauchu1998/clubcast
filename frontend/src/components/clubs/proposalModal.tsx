@@ -1,21 +1,37 @@
 import { address } from "@/types/address";
-import { useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import Spinner from "../spinner";
 import { bangers } from "@/styles/fonts";
 import { AiOutlineClose } from "react-icons/ai";
 import useCreateProposal from "@/hooks/useCreateProposal";
 import { Proposal } from "@/types/governance";
+import { useClubCastContract } from "@/hooks/useClubCastContract";
+import { polygonMumbai } from "viem/chains";
+import usePushProtocolAccount from "@/hooks/usePushProtocolAccount";
+import { useContractRead } from "wagmi";
+import { ClubCast__factory } from "@/typechain-types";
+import useGetClubMembers from "@/hooks/useGetClubMembers";
 
 interface ProposalModalProps {
   governanceAddress: address;
+  clubId: string;
+  clubName: string;
   isMember: boolean;
 }
 
 // 0x250E633D64F5D4810438cDBE9367E1bE835f8fdB
-const ProposalModal = ({ governanceAddress, isMember }: ProposalModalProps) => {
+const ProposalModal = ({
+  governanceAddress,
+  isMember,
+  clubId,
+  clubName,
+}: ProposalModalProps) => {
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { chain, clubCastAddress } = useClubCastContract();
+  // const { userPushAccount } = usePushProtocolAccount();
+  const members = useGetClubMembers(clubId);
   const {
     proposalId,
     title,
@@ -35,11 +51,29 @@ const ProposalModal = ({ governanceAddress, isMember }: ProposalModalProps) => {
       console.log("creating proposal");
       setIsLoading(true);
       writeCreateProposal?.();
+      // if (chain?.id === polygonMumbai.id) {
+      //   await userPushAccount?.channel.send(members, {
+      //     notification: {
+      //       title: "New Proposal",
+      //       body: `${clubName} has new proposal, check it out!`,
+      //     },
+      //   });
+      // }
     } catch (error: any) {
       alert(error.message);
       setIsLoading(false);
     }
-  }, [title, description, callData, writeCreateProposal, setIsLoading]);
+  }, [
+    title,
+    description,
+    callData,
+    writeCreateProposal,
+    setIsLoading,
+    // chain,
+    // clubName,
+    // userPushAccount,
+    // members,
+  ]);
 
   useEffect(() => {
     if (isSuccess) {

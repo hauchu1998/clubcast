@@ -5,6 +5,7 @@ export const fetchAllClubs = async () => {
   const defRef = ref(getDatabase(app), "clubs");
   const snapshot = await get(defRef);
   const res = snapshot.val();
+  if (!res) return [];
   return Object.keys(res).map((key) => res[key]);
 };
 
@@ -18,6 +19,7 @@ export const fetchUserPersonalClubs = async (address: string) => {
   const defRef = ref(getDatabase(app), "clubs");
   const snapshot = await get(defRef);
   const res = snapshot.val();
+  if (!res) return [];
   return Object.keys(res)
     .map((key) => res[key])
     .filter((club) => club.owner === address);

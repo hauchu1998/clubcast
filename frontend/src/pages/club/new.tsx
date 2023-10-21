@@ -125,7 +125,7 @@ const NewClub = () => {
         name: clubName,
         description,
         chainId: chain?.id as number,
-        image: ipfsUrl ?? defaultImg,
+        image: ipfsUrl !== undefined ? ipfsUrl : defaultImg,
       };
       writeCreateClub?.();
       await createClubApi(club);

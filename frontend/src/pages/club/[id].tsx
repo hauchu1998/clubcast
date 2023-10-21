@@ -15,19 +15,25 @@ import { joinClubApi } from "@/firebase/joinClubs";
 import useJoinClub from "@/hooks/useJoinClub";
 import { governance } from "@/typechain-types/@openzeppelin/contracts";
 import { set } from "date-fns";
+import usePushProtocolAccount from "@/hooks/usePushProtocolAccount";
+import { polygonMumbai } from "viem/chains";
+import useGetClubMembers from "@/hooks/useGetClubMembers";
 
 const ClubPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const { result: club, loading } = useGetClub(id as string);
-  const { chain } = useNetwork();
   const { address } = useAccount();
-  const [isMember, setIsMember] = useState(false);
   const { address: user } = useAccount();
-  const [clubMembers, setClubMembers] = useState<address[]>([]);
+  // const { userPushAccount } = usePushProtocolAccount();
+  const members = useGetClubMembers(id as string);
+  const isMember = useMemo(
+    () => members.includes(user as address),
+    [members, user]
+  );
   const [clubErc721, setClubErc721] = useState<address>();
   const [clubGovernance, setClubGovernance] = useState<address>();
-  const { clubCastAddress } = useClubCastContract();
+  const { chain, clubCastAddress } = useClubCastContract();
   const [isLoading, setIsLoading] = useState(false);
   const { writeJoinClub, isSuccess } = useJoinClub(id as string);
   const isHost = useMemo(() => {
@@ -41,24 +47,13 @@ const ClubPage = () => {
   useContractReads({
     enabled: clubCastAddress ? true : false,
     onSuccess: async (data) => {
-      const members = data[0].result as address[];
-      const isMember = members.includes(user as address);
-      setIsMember(isMember);
-      setClubMembers(members);
-
-      const erc721Address = data[1].result as address;
+      const erc721Address = data[0].result as address;
       setClubErc721(erc721Address);
 
-      const governanceAddress = data[2].result as address;
+      const governanceAddress = data[1].result as address;
       setClubGovernance(governanceAddress);
     },
     contracts: [
-      {
-        address: clubCastAddress as address,
-        abi: ClubCast__factory.abi,
-        functionName: "getClubMembers",
-        args: [id as string],
-      },
       {
         address: clubCastAddress as address,
         abi: ClubCast__factory.abi,
@@ -80,6 +75,14 @@ const ClubPage = () => {
       if (id && writeJoinClub) {
         writeJoinClub();
         await joinClubApi(address as string, id as string);
+        // if (chain?.id === polygonMumbai.id) {
+        //   await userPushAccount?.channel.send([club.owner], {
+        //     notification: {
+        //       title: "New Club Member",
+        //       body: `${user} has joined your club`,
+        //     },
+        //   });
+        // }
       } else {
         throw new Error("check if the write function or id is defined");
       }
@@ -92,7 +95,6 @@ const ClubPage = () => {
   useEffect(() => {
     if (isSuccess) {
       setIsLoading(false);
-      setIsMember(true);
     }
   }, [isSuccess]);
 
@@ -132,6 +134,7 @@ const ClubPage = () => {
           ) : (
             <EpisodeController
               clubId={id as string}
+              clubName={club.name}
               isHost={isHost}
               hostAddress={club.owner}
             />

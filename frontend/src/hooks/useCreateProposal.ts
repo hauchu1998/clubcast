@@ -8,7 +8,6 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from "wagmi";
-import { set } from "date-fns";
 
 const useCreateProposal = (governanceAddress: address) => {
   const call = new Interface(ClubCastGovernor__factory.abi).encodeFunctionData(
@@ -25,7 +24,18 @@ const useCreateProposal = (governanceAddress: address) => {
     setCallData(call.toString());
   };
 
-  const { config } = usePrepareContractWrite({
+  // const { config } = usePrepareContractWrite({
+  //   address: governanceAddress,
+  //   abi: ClubCastGovernor__factory.abi,
+  //   functionName: "propose",
+  //   args: [
+  //     [governanceAddress],
+  //     [BigInt(0)],
+  //     [callData as `0x${string}`],
+  //     JSON.stringify({ title: title, description: description }),
+  //   ],
+  // });
+  const { data, write: writeCreateProposal } = useContractWrite({
     address: governanceAddress,
     abi: ClubCastGovernor__factory.abi,
     functionName: "propose",
@@ -36,7 +46,6 @@ const useCreateProposal = (governanceAddress: address) => {
       JSON.stringify({ title: title, description: description }),
     ],
   });
-  const { data, write: writeCreateProposal } = useContractWrite(config);
   const { isSuccess } = useWaitForTransaction({
     hash: data?.hash as `0x${string}`,
   });

@@ -20,7 +20,7 @@ const Login = () => {
     useConnect();
 
   const handleInitXmtp = useCallback(async () => {
-    if (!signer || !isConnected) return;
+    if (signer === undefined || !isConnected) return;
     const keys = await Client.getKeys(signer!);
     try {
       await initialize({
@@ -51,11 +51,11 @@ const Login = () => {
       <Image
         src="/logo4.png"
         alt="PodCast Logo"
-        width={800}
-        height={200}
+        width={825}
+        height={302}
         priority
       />
-      {steps === 0 ? (
+      {steps === 0 && connectors ? (
         <div className="mt-12 grid grid-rows-4 gap-4 w-64">
           {connectors.map((connector, index) => (
             <button
@@ -80,12 +80,14 @@ const Login = () => {
           ))}
         </div>
       ) : (
-        <button
-          className="mt-12 w-64 bg-black text-xl text-white font-bold py-2 px-4 rounded-full"
-          onClick={handleInitXmtp}
-        >
-          Connected to XMTP
-        </button>
+        steps === 1 && (
+          <button
+            className="mt-12 w-64 bg-black text-xl text-white font-bold py-2 px-4 rounded-full"
+            onClick={handleInitXmtp}
+          >
+            Connected to XMTP
+          </button>
+        )
       )}
 
       {error && (

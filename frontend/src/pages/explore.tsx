@@ -26,7 +26,7 @@ const Explore = () => {
             return (
               <Link
                 key={club.id}
-                className="flex justify-center"
+                className="w-full flex justify-center"
                 href={`/club/${club.id}`}
               >
                 <ClubCardContent club={club} />

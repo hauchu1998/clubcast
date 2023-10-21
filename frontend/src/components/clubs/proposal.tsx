@@ -122,15 +122,15 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
   });
 
   const handleCastVote = useCallback(async () => {
-    if (!vote) return;
+    if (vote === undefined) return;
     try {
       setIsLoading(true);
       writeCastVote?.();
     } catch (error: any) {
       alert(error.message);
-      setIsLoading(false);
     }
-  }, [vote, setIsLoading, writeCastVote]);
+    setIsLoading(false);
+  }, [setIsLoading, writeCastVote, vote]);
 
   const getUserVote = (vote: number) => {
     if (vote === Vote.Yes) {

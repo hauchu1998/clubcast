@@ -9,12 +9,14 @@ import EpisodeUpload from "./episodeUpload";
 
 interface EpisodeControllerProps {
   clubId: string;
+  clubName: string;
   hostAddress: string;
   isHost: boolean;
 }
 
 const EpisodeController = ({
   clubId,
+  clubName,
   isHost,
   hostAddress,
 }: EpisodeControllerProps) => {
@@ -36,7 +38,13 @@ const EpisodeController = ({
   return (
     <div className="mt-5 w-full h-full px-3 scrollbar flex justify-center">
       <div className="w-[90%] pr-20">
-        {isHost && <EpisodeUpload clubId={clubId} setEpisodes={setEpisodes} />}
+        {isHost && (
+          <EpisodeUpload
+            clubId={clubId}
+            clubName={clubName}
+            setEpisodes={setEpisodes}
+          />
+        )}
         {episodes.map((episode) => (
           <EpisodeContent
             key={episode.id}
