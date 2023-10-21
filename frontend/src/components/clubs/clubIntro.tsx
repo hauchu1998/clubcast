@@ -84,7 +84,7 @@ const ClubIntro = ({ club, css }: ClubIntroProps) => {
             <Tooltip title="share">
               <IconButton>
                 <Link
-                  href="https://sepolia-blockscout.scroll.io/address/0xF2A81D5fd465239542A9C66289A99305e1f645Cf#code"
+                  href="https://sepolia-blockscout.scroll.io/address/0x98390C103aA34c2A7438D2ef80AAf53b5270f531#code"
                   target="_blank"
                 >
                   <BiGlobe className="text-green-500 text-3xl" />

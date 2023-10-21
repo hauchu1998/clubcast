@@ -1,7 +1,7 @@
 import { ClubCast__factory } from "@/typechain-types";
 import { address } from "@/types/address";
 import { Episode } from "@/types/club";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   useContractWrite,
   usePrepareContractWrite,
@@ -9,10 +9,14 @@ import {
 } from "wagmi";
 
 const useUpoadEpisode = (clubId: string, id: string) => {
-  const [createdAt, setCreatedAt] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [ipfsUrl, setIpfsUrl] = useState("");
+  const createdAt = useMemo(() => {
+    if (!ipfsUrl || !title || !description) return "";
+    const timestamp = new Date();
+    return `${timestamp.toLocaleDateString()} ${timestamp.toLocaleTimeString()}`;
+  }, [ipfsUrl, title, description]);
 
   const { config } = usePrepareContractWrite({
     address: (process.env.NEXT_PUBLIC_SCROLL_CLUBCAST_ADDRESS as address) || "",
@@ -26,17 +30,13 @@ const useUpoadEpisode = (clubId: string, id: string) => {
   });
 
   const handlePublishEpisode = async () => {
-    const timestamp = new Date();
-    setCreatedAt(
-      `${timestamp.toLocaleDateString()} ${timestamp.toLocaleTimeString()}`
-    );
     writePublishEpisode?.();
     return {
       id,
       title,
       description,
       ipfsUrl,
-      createdAt: `${timestamp.toLocaleDateString()} ${timestamp.toLocaleTimeString()}`,
+      createdAt,
       likes: 0,
       dislikes: 0,
     } as Episode;

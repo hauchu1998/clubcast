@@ -1,49 +1,79 @@
 import { bangers } from "@/styles/fonts";
 import ProposalContent from "./proposal";
-import { Proposal } from "@/types/club";
+import { Proposal } from "@/types/governance";
+import { address } from "@/types/address";
+import { IoMdAdd } from "react-icons/io";
+import { useState } from "react";
+import ProposalModal from "./proposalModal";
+import { useContractEvent } from "wagmi";
+import { ClubCastGovernor__factory } from "@/typechain-types";
+import { createProposalApi } from "@/firebase/createProposal";
+import useGetAllProposals from "@/hooks/useGetAllProposals";
+import Spinner from "../spinner";
 interface ProposalControllerProps {
+  governanceAddress: address;
+  isMember: boolean;
   css: string;
 }
 
-const governanceProposals: Proposal[] = [
-  {
-    id: "asdfasdfager",
-    title: "Puppies in Bali",
-    proposer: "0x8F0D0011c2D3B6597Fa958bF2E551a69762c07Ab",
-    description:
-      "We're seeking your support to create a heartwarming video featuring adorable puppies in Bali in collaboration with a renowned influencer. We need to borrow 10,000 Matics to make this dream project a reality, and we're excited to share the details with you.",
-    expiration: new Date("30 Oct 2023 03:59:08 GMT"),
-    yes: 400,
-    abstain: 50,
-    no: 100,
-    user: 2,
-  },
-  {
-    id: "asdghaleroiur",
-    title: "Puppies in Andorra",
-    proposer: "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC",
-    description:
-      "We're seekinuserr support to create a heartwarming video featuring adorable puppies in Bali in collaboration with a renowned influencer. We need to borrow 10,000 Matics to make this dream project a reality, and we're excited to share the details with you.",
-    expiration: new Date("16 Oct 2023 03:59:08 GMT"),
-    yes: 100,
-    abstain: 13,
-    no: 101,
-    user: 0,
-  },
-];
+const ProposalController = ({
+  governanceAddress,
+  isMember,
+  css,
+}: ProposalControllerProps) => {
+  const {
+    data: proposals,
+    isLoading,
+    isSuccess,
+  } = useGetAllProposals(governanceAddress);
+  useContractEvent({
+    address: governanceAddress,
+    abi: ClubCastGovernor__factory.abi,
+    eventName: "ProposalCreated",
+    listener: async (log) => {
+      const event = log[0];
+      if (event.eventName === "ProposalCreated") {
+        const { title, description } = JSON.parse(
+          event.args.description as string
+        );
+        const proposal: Proposal = {
+          id: event.args.proposalId?.toString() || "",
+          blockNumber: Number(event.blockNumber),
+          title,
+          description,
+        };
+        await createProposalApi(governanceAddress, proposal);
+      }
+    },
+  });
 
-const ProposalController = ({ css }: ProposalControllerProps) => {
+  if (isLoading)
+    return (
+      <div className="w-full flex gap-3 justify-center text-xl text-black-500">
+        Loading <Spinner />
+      </div>
+    );
+
   return (
-    <div className={`${css} w-full pl-10 `}>
-      <div className={`${bangers.className} text-center text-2xl`}>
+    <div className={`${css} relative w-full pl-10 `}>
+      <div className={`${bangers.className} text-center text-3xl`}>
         Proposals
       </div>
+      <ProposalModal
+        isMember={isMember}
+        governanceAddress={governanceAddress}
+      />
       <div className="w-full h-full scrollbar">
         {
           // @ts-ignore
-          governanceProposals.map((proposal) => (
-            <ProposalContent key={proposal.id} proposal={proposal} />
-          ))
+          proposals &&
+            proposals.map((proposal: Proposal) => (
+              <ProposalContent
+                key={proposal.id}
+                governanceAddress={governanceAddress}
+                proposal={proposal}
+              />
+            ))
         }
       </div>
     </div>

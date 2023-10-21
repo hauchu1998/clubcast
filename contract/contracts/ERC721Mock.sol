@@ -5,8 +5,11 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Votes.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 
-contract ERC721Mock is ERC721, Ownable, EIP712, ERC721Votes {
+contract ERC721Mock is ERC721, Ownable, EIP712, ERC721Votes, ERC721Enumerable, ERC721Burnable {
     uint256 private _nextTokenId;
     uint256 private max_supply;
 
@@ -23,10 +26,6 @@ contract ERC721Mock is ERC721, Ownable, EIP712, ERC721Votes {
         return max_supply;
     }
 
-    // function _afterTokenTransfer(address from, address to, uint256 firstTokenId, uint256 batchSize) internal override(ERC721, ERC721Votes) {
-    //     super._afterTokenTransfer(from, to, firstTokenId, batchSize);
-    // }
-
     // Overrides IERC6372 functions to make the token & governor timestamp-based
     function clock() public view override returns (uint48) {
         return uint48(block.timestamp);
@@ -39,19 +38,15 @@ contract ERC721Mock is ERC721, Ownable, EIP712, ERC721Votes {
 
     function safeMint(address to) public onlyOwner {
         uint256 tokenId = _nextTokenId++;
+        require(tokenId < max_supply, "Max supply reached");
         _safeMint(to, tokenId);
     }
 
     function publicMint(address _to) external returns (uint256) {
-        uint256 _tokenId = _nextTokenId;
+        uint256 _tokenId = _nextTokenId++;
         require(_tokenId < max_supply, "Max supply reached");
-        _mint(_to, _tokenId);
-        _nextTokenId++;
+        _safeMint(_to, _tokenId);
         return _tokenId;
-    }
-
-    function mint(address _to, uint256 _tokenId) external {
-        _mint(_to, _tokenId);
     }
 
     function setOwner(address _newOwner) external onlyOwner {
@@ -64,11 +59,15 @@ contract ERC721Mock is ERC721, Ownable, EIP712, ERC721Votes {
         address to,
         uint256 tokenId,
         address auth
-    ) internal override(ERC721, ERC721Votes) returns (address) {
+    ) internal override(ERC721, ERC721Votes, ERC721Enumerable) returns (address) {
         return super._update(to, tokenId, auth);
     }
 
-    function _increaseBalance(address account, uint128 value) internal override(ERC721, ERC721Votes) {
+    function _increaseBalance(address account, uint128 value) internal override(ERC721, ERC721Votes, ERC721Enumerable) {
         super._increaseBalance(account, value);
+    }
+
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721Enumerable) returns (bool) {
+        return super.supportsInterface(interfaceId);
     }
 }

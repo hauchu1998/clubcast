@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Pepega
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interface/IERC721.sol";
@@ -92,6 +92,8 @@ contract ClubCast is Ownable {
         address _governanceAddress
     ) external onlyERC721Owner(_erc721Address) {
         IERC721 erc721 = IERC721(_erc721Address);
+        erc721.publicMint(msg.sender);
+        erc721.delegate(msg.sender);
         Club memory newClub = Club({
             clubId: _clubId,
             owner: msg.sender,
@@ -150,6 +152,7 @@ contract ClubCast is Ownable {
         address _erc721Address = getClubErc721(_clubId);
         IERC721 erc721 = IERC721(_erc721Address);
         _tokenId = erc721.publicMint(msg.sender);
+        erc721.delegate(msg.sender);
 
         require(erc721.ownerOf(_tokenId) == msg.sender, "Caller must be the owner of the token");
         userClubTokenMappings[msg.sender][_clubId] = _tokenId;

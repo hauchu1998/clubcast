@@ -25,6 +25,7 @@ import type {
 
 export interface IERC721Interface extends utils.Interface {
   functions: {
+    "delegate(address)": FunctionFragment;
     "getMaxSupply()": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
@@ -32,9 +33,18 @@ export interface IERC721Interface extends utils.Interface {
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "getMaxSupply" | "owner" | "ownerOf" | "publicMint"
+    nameOrSignatureOrTopic:
+      | "delegate"
+      | "getMaxSupply"
+      | "owner"
+      | "ownerOf"
+      | "publicMint"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "delegate",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "getMaxSupply",
     values?: undefined
@@ -49,6 +59,7 @@ export interface IERC721Interface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "delegate", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMaxSupply",
     data: BytesLike
@@ -87,6 +98,11 @@ export interface IERC721 extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    delegate(
+      delegatee: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     getMaxSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     owner(overrides?: CallOverrides): Promise<[string] & { owner: string }>;
@@ -101,6 +117,11 @@ export interface IERC721 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  delegate(
+    delegatee: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   getMaxSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -117,6 +138,11 @@ export interface IERC721 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    delegate(
+      delegatee: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     getMaxSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
@@ -135,6 +161,11 @@ export interface IERC721 extends BaseContract {
   filters: {};
 
   estimateGas: {
+    delegate(
+      delegatee: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     getMaxSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
@@ -151,6 +182,11 @@ export interface IERC721 extends BaseContract {
   };
 
   populateTransaction: {
+    delegate(
+      delegatee: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     getMaxSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;

@@ -9,7 +9,7 @@ import {
 import { useAccount, useNetwork } from "wagmi";
 import { address } from "@/types/address";
 import { Club } from "@/types/club";
-import { createClubApi } from "@/firebase/createClubs";
+import { createClubApi } from "@/firebase/createClub";
 import { bangers } from "@/styles/fonts";
 import ChainDropDown from "@/components/chainDropDown";
 import Spinner from "@/components/spinner";
@@ -87,6 +87,7 @@ const NewClub = () => {
           );
           const contract = await governorFactory.deploy(
             erc721Address,
+            `${clubName} Governance`,
             BigNumber.from("0"),
             BigNumber.from("4")
           ); // ERC721, proposal thresold, quorum
@@ -100,6 +101,7 @@ const NewClub = () => {
       }
     },
     [
+      clubName,
       erc721Address,
       maxMembers,
       address,
