@@ -165,16 +165,26 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
           </div>
           <div className="font-semibold">
             <span className="text-red-500">
-              No: {allVotes && totalVotes !== 0 ? allVotes[0] / totalVotes : 0}%
+              No:{" "}
+              {allVotes && totalVotes !== 0
+                ? (allVotes[0] / totalVotes) * 100
+                : 0}
+              %
             </span>{" "}
             <span className="text-green-500">
-              Yes: {allVotes && totalVotes !== 0 ? allVotes[1] / totalVotes : 0}
+              Yes:{" "}
+              {allVotes && totalVotes !== 0
+                ? (allVotes[1] / totalVotes) * 100
+                : 0}
               %
-            </span>
+            </span>{" "}
             <span className="text-blue-500">
               Abstain:{" "}
-              {allVotes && totalVotes !== 0 ? allVotes[2] / totalVotes : 0}%
-            </span>{" "}
+              {allVotes && totalVotes !== 0
+                ? (allVotes[2] / totalVotes) * 100
+                : 0}
+              %
+            </span>
           </div>
         </div>
       </div>
