@@ -8,10 +8,9 @@ import { useGetClub } from "./useGetClubs";
 const useGetClubMembers = (clubId: string) => {
   const [members, setMembers] = useState<address[]>([]);
   const { result: club } = useGetClub(clubId);
-  const { clubCastAddress } = useClubCastContract();
   useContractRead({
-    enabled: clubCastAddress ? true : false,
-    address: clubCastAddress as address,
+    enabled: club ? true : false,
+    address: club?.contractAddress as address,
 
     onSuccess: async (data: address[]) => {
       setMembers(data);

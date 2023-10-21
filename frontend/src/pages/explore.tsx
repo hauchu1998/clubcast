@@ -1,5 +1,5 @@
 import { bangers } from "@/styles/fonts";
-import { allClubs } from "@/db/clubs";
+// import { allClubs } from "@/db/clubs";
 import ClubCardContent from "@/components/clubs/clubCard";
 import Link from "next/link";
 import { useGetAllClubs } from "@/hooks/useGetClubs";

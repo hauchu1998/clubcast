@@ -28,4 +28,5 @@ interface Comment {
 export interface Club extends ClubCard {
   owner: string;
   chainId: number;
+  contractAddress: address;
 }

@@ -10,10 +10,11 @@ import {
 import { useClubCastContract } from "./useClubCastContract";
 
 const useUpoadEpisode = (clubId: string, id: string) => {
+  const { chain, clubCastAddress } = useClubCastContract();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [ipfsUrl, setIpfsUrl] = useState("");
-  const { clubCastAddress } = useClubCastContract();
+
   const createdAt = useMemo(() => {
     if (!ipfsUrl || !title || !description) return "";
     const timestamp = new Date();
@@ -25,7 +26,9 @@ const useUpoadEpisode = (clubId: string, id: string) => {
     abi: ClubCast__factory.abi,
     functionName: "publishEpisode",
     args: [clubId, id, createdAt, title, description, ipfsUrl],
+    chainId: chain?.id,
   });
+
   const { isSuccess } = useWaitForTransaction({
     hash: data?.hash as `0x${string}`,
   });

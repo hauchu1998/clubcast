@@ -45,6 +45,7 @@ const Navbar = () => {
 
   useEffect(() => {
     if (!isConnected) {
+      console.log("not connected");
       Router.replace("/login");
     }
   }, [isConnected]);

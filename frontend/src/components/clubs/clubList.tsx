@@ -1,5 +1,5 @@
 import { bangers } from "@/styles/fonts";
-import { personalClubs, subscribedClubs } from "@/db/clubs";
+// import { personalClubs, subscribedClubs } from "@/db/clubs";
 import ClubCardContent from "./clubCard";
 import Link from "next/link";
 import { Club } from "@/types/club";

@@ -14,9 +14,10 @@ import { bangers } from "@/styles/fonts";
 import ChainDropDown from "@/components/chainDropDown";
 import Spinner from "@/components/spinner";
 import useEtherWalletClient from "@/hooks/useEtherWalletClient";
-import { useRouter } from "next/router";
+import Router from "next/router";
 import { useMediaUploaded } from "@/hooks/useMediaUploaded";
 import useCreateClub from "@/hooks/useCreateClub";
+import { useClubCastContract } from "@/hooks/useClubCastContract";
 
 const defaultImageUrls = [
   "https://cdn.pixabay.com/photo/2022/10/03/12/03/microphone-7495739_1280.jpg",
@@ -28,11 +29,10 @@ const defaultImageUrls = [
 // Governance = 0x7712Fbb7834Ab30e76CA716a451460e6431B0b96
 
 const NewClub = () => {
-  const router = useRouter();
   const clubId = useMemo(() => generateRandomId(), []);
   const { address } = useAccount();
   const { result: signer } = useEtherWalletClient();
-  const { chain } = useNetwork();
+  const { chain, clubCastAddress } = useClubCastContract();
   const [clubName, setClubName] = useState("");
   const [maxMembers, setMaxMembers] = useState<number>();
   const [description, setDescription] = useState("");
@@ -125,6 +125,7 @@ const NewClub = () => {
         name: clubName,
         description,
         chainId: chain?.id as number,
+        contractAddress: clubCastAddress,
         image: ipfsUrl !== undefined ? ipfsUrl : defaultImg,
       };
       writeCreateClub?.();
@@ -139,19 +140,19 @@ const NewClub = () => {
     description,
     defaultImg,
     address,
-    chain?.id,
+    chain,
     writeCreateClub,
     erc721Address,
     governanceAddress,
     handleMediaUpload,
+    clubCastAddress,
   ]);
 
   useEffect(() => {
     if (isSuccess) {
-      setIsLoading(false);
-      router.push(`/club/${clubId}`);
+      Router.push(`/club/${clubId}`);
     }
-  }, [isSuccess, router, clubId]);
+  }, [isSuccess, clubId]);
 
   //text-[#B52F6B]
   // 0xfAAB5F8F4Da7AAB77Fc58da4ed8cDd992Ab0552D

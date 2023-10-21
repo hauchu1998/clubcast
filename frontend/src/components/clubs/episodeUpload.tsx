@@ -8,7 +8,7 @@ import { Episode } from "@/types/club";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RiVideoUploadLine } from "react-icons/ri";
 import Spinner from "../spinner";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { AiOutlineClose } from "react-icons/ai";
 import { useClubCastContract } from "@/hooks/useClubCastContract";
 import useGetClubMembers from "@/hooks/useGetClubMembers";
@@ -26,7 +26,7 @@ const EpisodeUpload = ({
 }: EpisodeUploadProps) => {
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { chain, clubCastAddress } = useClubCastContract();
+  const { chain } = useNetwork();
   const members = useGetClubMembers(clubId);
   const { address } = useAccount();
   // const { userPushAccount } = usePushProtocolAccount();
@@ -108,7 +108,10 @@ const EpisodeUpload = ({
             <div className="relative h-16 flex justify-center items-center bg-purple-500 text-white rounded-t-lg">
               <button
                 className="absolute top-5 right-5 text-white text-xl"
-                onClick={() => setOpenModal(false)}
+                onClick={() => {
+                  setOpenModal(false);
+                  setIsLoading(false);
+                }}
               >
                 <AiOutlineClose />
               </button>

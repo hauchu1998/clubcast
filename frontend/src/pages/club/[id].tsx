@@ -7,14 +7,11 @@ import { useAccount, useContractReads, useNetwork } from "wagmi";
 import SwitchNetworkButton from "@/components/switchNetworkButton";
 import ClubIntro from "@/components/clubs/clubIntro";
 import { useGetClub } from "@/hooks/useGetClubs";
-import { useClubCastContract } from "@/hooks/useClubCastContract";
 import { address } from "@/types/address";
 import { ClubCast__factory } from "@/typechain-types";
 import Spinner from "@/components/spinner";
 import { joinClubApi } from "@/firebase/joinClubs";
 import useJoinClub from "@/hooks/useJoinClub";
-import { governance } from "@/typechain-types/@openzeppelin/contracts";
-import { set } from "date-fns";
 import usePushProtocolAccount from "@/hooks/usePushProtocolAccount";
 import { polygonMumbai } from "viem/chains";
 import useGetClubMembers from "@/hooks/useGetClubMembers";
@@ -32,7 +29,7 @@ const ClubPage = () => {
   );
 
   const [clubGovernance, setClubGovernance] = useState<address>();
-  const { chain, clubCastAddress } = useClubCastContract();
+  const { chain } = useNetwork();
   const [isLoading, setIsLoading] = useState(false);
   const { writeJoinClub, isSuccess } = useJoinClub(id as string);
   const isHost = useMemo(() => {
@@ -44,14 +41,14 @@ const ClubPage = () => {
   }, [user, club]);
 
   useContractReads({
-    enabled: clubCastAddress ? true : false,
+    enabled: club ? true : false,
     onSuccess: async (data) => {
       const governanceAddress = data[0].result as address;
       setClubGovernance(governanceAddress);
     },
     contracts: [
       {
-        address: clubCastAddress as address,
+        address: club?.contractAddress as address,
         abi: ClubCast__factory.abi,
         functionName: "getClubGovernance",
         args: [id as string],

@@ -17,6 +17,8 @@ import Spinner from "../spinner";
 import { castVoteApi } from "@/firebase/castVote";
 import useGetUserVote from "@/hooks/useGetUserVote";
 import useGetAllVotes from "@/hooks/useGetAllVotes";
+import { useGetClub } from "@/hooks/useGetClubs";
+// import { club } from "@/db/clubs";
 
 interface PropoaslProps {
   clubId: string;
@@ -27,12 +29,17 @@ interface PropoaslProps {
 // const proposalId =
 //   "96746906373507733040695763531914744171080293021180906263408370888270499252248";
 
-const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
+const ProposalContent = ({
+  clubId,
+  governanceAddress,
+  proposal,
+}: PropoaslProps) => {
   const [openModal, setOpenModal] = useState(false);
   const { address } = useAccount();
   const [proposer, setProposer] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
   const [alreadyVote, setAlreadyVote] = useState(true);
+  const { result: club } = useGetClub(clubId);
   const { data: userVote } = useGetUserVote(governanceAddress, proposal.id);
   const { data: allVotes } = useGetAllVotes(governanceAddress, proposal.id);
   const totalVotes = useMemo(() => {
@@ -63,24 +70,28 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
         abi: ClubCastGovernor__factory.abi,
         functionName: "hasVoted",
         args: [BigInt(proposal.id), address as address],
+        chainId: club?.chainId,
       },
       {
         address: governanceAddress as `0x${string}`,
         abi: ClubCastGovernor__factory.abi,
         functionName: "proposalSnapshot",
         args: [BigInt(proposal.id)],
+        chainId: club?.chainId,
       },
       {
         address: governanceAddress as `0x${string}`,
         abi: ClubCastGovernor__factory.abi,
         functionName: "proposalDeadline",
         args: [BigInt(proposal.id)],
+        chainId: club?.chainId,
       },
       {
         address: governanceAddress as `0x${string}`,
         abi: ClubCastGovernor__factory.abi,
         functionName: "proposalProposer",
         args: [BigInt(proposal.id)],
+        chainId: club?.chainId,
       },
     ],
   });
@@ -89,6 +100,7 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
     address: governanceAddress,
     abi: ClubCastGovernor__factory.abi,
     eventName: "VoteCast",
+    chainId: club?.chainId,
     listener: async (log) => {
       const event = log[0];
       if (event.eventName === "VoteCast") {
@@ -123,7 +135,6 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
       alert(error.message);
       setIsLoading(false);
     }
-    setIsLoading(false);
   }, [setIsLoading, writeCastVote, vote]);
 
   const getUserVote = (vote: number) => {
@@ -244,14 +255,14 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
                         >
                           Abstain
                         </button>
-                      </div>
-                      <div className="mt-5 flex flex-col items-center">
                         <button
                           className="bg-purple-500 px-3 py-1 text-xl text-white font-semibold rounded-lg"
                           onClick={handleCastVote}
                         >
                           Vote
                         </button>
+                      </div>
+                      <div className="mt-5 flex flex-col items-center">
                         {isLoading && (
                           <div className="mt-3 w-full flex gap-3 justify-center text-xl text-pink-500">
                             Loading <Spinner />

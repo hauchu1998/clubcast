@@ -120,6 +120,7 @@ const Conversation = (props: ConversationProps) => {
         if (attach && cachedConversation) {
           await sendMessageContent(cachedConversation, attach, "attachment");
         }
+
         if (cachedConversation) {
           setConversationTopic(cachedConversation.topic);
           setMode("room");

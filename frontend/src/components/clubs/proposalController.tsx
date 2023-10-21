@@ -10,7 +10,7 @@ import { ClubCastGovernor__factory } from "@/typechain-types";
 import { createProposalApi } from "@/firebase/createProposal";
 import useGetAllProposals from "@/hooks/useGetAllProposals";
 import Spinner from "../spinner";
-import { club } from "@/db/clubs";
+import { useGetClub } from "@/hooks/useGetClubs";
 interface ProposalControllerProps {
   clubId: string;
   governanceAddress: address;
@@ -24,6 +24,7 @@ const ProposalController = ({
   isMember,
   css,
 }: ProposalControllerProps) => {
+  const { result: club } = useGetClub(clubId);
   const {
     data: proposals,
     isLoading,
@@ -32,6 +33,7 @@ const ProposalController = ({
   useContractEvent({
     address: governanceAddress,
     abi: ClubCastGovernor__factory.abi,
+    chainId: club?.chainId,
     eventName: "ProposalCreated",
     listener: async (log) => {
       const event = log[0];
@@ -65,8 +67,7 @@ const ProposalController = ({
       </div>
       <ProposalModal
         isMember={isMember}
-        clubId={club.id}
-        clubName={club.name}
+        clubId={clubId}
         governanceAddress={governanceAddress}
       />
       <div className="w-full h-full scrollbar">

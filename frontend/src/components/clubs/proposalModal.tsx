@@ -9,11 +9,11 @@ import { useClubCastContract } from "@/hooks/useClubCastContract";
 import { polygonMumbai } from "viem/chains";
 import usePushProtocolAccount from "@/hooks/usePushProtocolAccount";
 import useGetClubMembers from "@/hooks/useGetClubMembers";
+import { useNetwork } from "wagmi";
 
 interface ProposalModalProps {
   governanceAddress: address;
   clubId: string;
-  clubName: string;
   isMember: boolean;
 }
 
@@ -22,11 +22,10 @@ const ProposalModal = ({
   governanceAddress,
   isMember,
   clubId,
-  clubName,
 }: ProposalModalProps) => {
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { chain, clubCastAddress } = useClubCastContract();
+  const { chain } = useNetwork();
   // const { userPushAccount } = usePushProtocolAccount();
   const members = useGetClubMembers(clubId);
   const {
@@ -93,7 +92,10 @@ const ProposalModal = ({
             <div className="relative h-16 flex justify-center items-center bg-purple-500 text-white rounded-t-lg">
               <button
                 className="absolute top-5 right-5 text-white text-xl"
-                onClick={() => setOpenModal(false)}
+                onClick={() => {
+                  setOpenModal(false);
+                  setIsLoading(false);
+                }}
               >
                 <AiOutlineClose />
               </button>
