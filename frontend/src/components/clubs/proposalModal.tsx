@@ -5,20 +5,15 @@ import Spinner from "../spinner";
 import { bangers } from "@/styles/fonts";
 import { AiOutlineClose } from "react-icons/ai";
 import useCreateProposal from "@/hooks/useCreateProposal";
-import { call } from "viem/_types/actions/public/call";
+import { Proposal } from "@/types/governance";
 
 interface ProposalModalProps {
   governanceAddress: address;
   isMember: boolean;
-  setProposals: Function;
 }
 
 // 0x250E633D64F5D4810438cDBE9367E1bE835f8fdB
-const ProposalModal = ({
-  governanceAddress,
-  isMember,
-  setProposals,
-}: ProposalModalProps) => {
+const ProposalModal = ({ governanceAddress, isMember }: ProposalModalProps) => {
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -37,10 +32,9 @@ const ProposalModal = ({
   const handleProposalCreated = useCallback(async () => {
     if (!title || !description || !callData) return;
     try {
+      console.log("creating proposal");
       setIsLoading(true);
       writeCreateProposal?.();
-      //   setProposals((prev: Propsoal[]) => [episode, ...prev]);
-      //   setIsLoading(false);
     } catch (error: any) {
       alert(error.message);
       setIsLoading(false);

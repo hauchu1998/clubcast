@@ -26,14 +26,14 @@ const useCreateProposal = (governanceAddress: address) => {
   };
 
   const { config } = usePrepareContractWrite({
-    address: governanceAddress || "",
+    address: governanceAddress,
     abi: ClubCastGovernor__factory.abi,
     functionName: "propose",
     args: [
       [governanceAddress],
       [BigInt(0)],
       [callData as `0x${string}`],
-      title,
+      JSON.stringify({ title: title, description: description }),
     ],
   });
   const { data, write: writeCreateProposal } = useContractWrite(config);

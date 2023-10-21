@@ -1,7 +1,5 @@
 import { getDatabase, get, ref } from "firebase/database";
 import app from "./index";
-import { Club } from "@/types/club";
-import { sub } from "date-fns";
 
 export const fetchAllClubs = async () => {
   const defRef = ref(getDatabase(app), "clubs");

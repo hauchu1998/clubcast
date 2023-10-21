@@ -49,8 +49,17 @@ describe("governance", async () => {
     const call = governance.interface.encodeFunctionData("doNothing");
 
     // await erc721Mock.transferOwnership(governance.address);
-    await erc721Mock.connect(addr1).delegate(addr1.address);
     // await erc721Mock.connect(addr2).delegate(addr1.address);
+    await erc721Mock.connect(addr1).delegate(addr1.address);
+    await erc721Mock.connect(addr2).delegate(addr2.address);
+    await erc721Mock.connect(addr3).delegate(addr3.address);
+
+    await moveBlocks(2);
+
+    const block = await ethers.provider.getBlock("latest");
+    expect(await governance.getVotes(addr1.address, block.timestamp - 1)).equal(
+      1
+    );
 
     return {
       erc721Mock,
@@ -89,11 +98,16 @@ describe("governance", async () => {
     const proposeReceipt = await proposal.wait(1);
     const proposalId = proposeReceipt.events![0].args!.proposalId;
     await moveBlocks(2);
+
+    const deadLine = await governance.proposalDeadline(proposalId);
+    const startTime = await governance.proposalSnapshot(proposalId);
+    const period = await governance.votingPeriod();
+    expect(deadLine).to.equal(startTime.add(period));
     expect(await governance.state(proposalId)).to.equal(1);
   });
 
   it("Should be able to vote", async () => {
-    const { addr1, addr2, governance, call } = await loadFixture(
+    const { addr1, addr2, addr3, governance, call } = await loadFixture(
       deploySettings
     );
     const proposal = await governance
@@ -103,9 +117,14 @@ describe("governance", async () => {
     const proposalId = proposeReceipt.events![0].args!.proposalId;
     await moveBlocks(2);
     await governance.connect(addr1).castVote(proposalId, 1);
-    await governance.connect(addr2).castVote(proposalId, 1);
+    await governance.connect(addr2).castVote(proposalId, 0);
+    await governance.connect(addr3).castVote(proposalId, 1);
+
     await moveBlocks(2);
+
     expect(await governance.hasVoted(proposalId, addr1.address)).to.equal(true);
+    const proposalVotes = await governance.proposalVotes(proposalId);
+    console.log(proposalVotes);
   });
 
   //   it("Should get the quorum", async function () {

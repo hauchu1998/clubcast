@@ -26,7 +26,6 @@ const EpisodeController = ({
     address: contractAddress as `0x${string}`,
     enabled: contractAddress ? true : false,
     onSuccess: async (data: Episode[]) => {
-      console.log(data);
       setEpisodes(data);
     },
     abi: ClubCast__factory.abi,
