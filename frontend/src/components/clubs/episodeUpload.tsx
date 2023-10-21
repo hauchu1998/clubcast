@@ -8,13 +8,9 @@ import { Episode } from "@/types/club";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RiVideoUploadLine } from "react-icons/ri";
 import Spinner from "../spinner";
-import { useAccount, useContractRead } from "wagmi";
+import { useAccount } from "wagmi";
 import { AiOutlineClose } from "react-icons/ai";
-import { polygonMumbai } from "viem/chains";
-import usePushProtocolAccount from "@/hooks/usePushProtocolAccount";
-import { address } from "@/types/address";
 import { useClubCastContract } from "@/hooks/useClubCastContract";
-import { ClubCast__factory } from "@/typechain-types";
 import useGetClubMembers from "@/hooks/useGetClubMembers";
 
 interface EpisodeUploadProps {

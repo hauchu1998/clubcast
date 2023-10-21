@@ -20,12 +20,6 @@ const useUpoadEpisode = (clubId: string, id: string) => {
     return `${timestamp.toLocaleDateString()} ${timestamp.toLocaleTimeString()}`;
   }, [ipfsUrl, title, description]);
 
-  // const { config } = usePrepareContractWrite({
-  //   address: clubCastAddress,
-  //   abi: ClubCast__factory.abi,
-  //   functionName: "publishEpisode",
-  //   args: [clubId, id, createdAt, title, description, ipfsUrl],
-  // });
   const { data, write: writePublishEpisode } = useContractWrite({
     address: clubCastAddress,
     abi: ClubCast__factory.abi,

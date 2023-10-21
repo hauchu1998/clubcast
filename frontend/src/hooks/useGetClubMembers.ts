@@ -3,9 +3,11 @@ import { useContractRead } from "wagmi";
 import { useClubCastContract } from "./useClubCastContract";
 import { address } from "@/types/address";
 import { ClubCast__factory } from "@/typechain-types";
+import { useGetClub } from "./useGetClubs";
 
 const useGetClubMembers = (clubId: string) => {
   const [members, setMembers] = useState<address[]>([]);
+  const { result: club } = useGetClub(clubId);
   const { clubCastAddress } = useClubCastContract();
   useContractRead({
     enabled: clubCastAddress ? true : false,
@@ -17,6 +19,7 @@ const useGetClubMembers = (clubId: string) => {
     abi: ClubCast__factory.abi,
     functionName: "getClubMembers",
     args: [clubId as string],
+    chainId: club?.chainId,
     watch: true,
   });
 

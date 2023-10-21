@@ -12,12 +12,14 @@ import useGetAllProposals from "@/hooks/useGetAllProposals";
 import Spinner from "../spinner";
 import { club } from "@/db/clubs";
 interface ProposalControllerProps {
+  clubId: string;
   governanceAddress: address;
   isMember: boolean;
   css: string;
 }
 
 const ProposalController = ({
+  clubId,
   governanceAddress,
   isMember,
   css,
@@ -74,6 +76,7 @@ const ProposalController = ({
             proposals.map((proposal: Proposal) => (
               <ProposalContent
                 key={proposal.id}
+                clubId={clubId}
                 governanceAddress={governanceAddress}
                 proposal={proposal}
               />

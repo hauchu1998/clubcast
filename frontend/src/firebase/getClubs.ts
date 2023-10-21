@@ -1,5 +1,6 @@
 import { getDatabase, get, ref } from "firebase/database";
 import app from "./index";
+import { Club } from "@/types/club";
 
 export const fetchAllClubs = async () => {
   const defRef = ref(getDatabase(app), "clubs");
@@ -12,7 +13,7 @@ export const fetchAllClubs = async () => {
 export const fetchClub = async (id: string) => {
   const defRef = ref(getDatabase(app), `clubs/${id}`);
   const snapshot = await get(defRef);
-  return snapshot.val();
+  return snapshot.val() as Club;
 };
 
 export const fetchUserPersonalClubs = async (address: string) => {

@@ -12,12 +12,7 @@ const useCreateClub = (clubId: string) => {
   const [erc721Address, setErc721Address] = useState("");
   const [governanceAddress, setGovernanceAddress] = useState("");
   const { clubCastAddress } = useClubCastContract();
-  // const { config } = usePrepareContractWrite({
-  //   address: (clubCastAddress as address) || "",
-  //   abi: ClubCast__factory.abi,
-  //   functionName: "createClub",
-  //   args: [clubId, erc721Address as address, governanceAddress as address],
-  // });
+
   const { data, write: writeCreateClub } = useContractWrite({
     address: (clubCastAddress as address) || "",
     abi: ClubCast__factory.abi,

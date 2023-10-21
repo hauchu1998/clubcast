@@ -23,7 +23,6 @@ const ClubPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const { result: club, loading } = useGetClub(id as string);
-  const { address } = useAccount();
   const { address: user } = useAccount();
   // const { userPushAccount } = usePushProtocolAccount();
   const members = useGetClubMembers(id as string);
@@ -31,40 +30,32 @@ const ClubPage = () => {
     () => members.includes(user as address),
     [members, user]
   );
-  const [clubErc721, setClubErc721] = useState<address>();
+
   const [clubGovernance, setClubGovernance] = useState<address>();
   const { chain, clubCastAddress } = useClubCastContract();
   const [isLoading, setIsLoading] = useState(false);
   const { writeJoinClub, isSuccess } = useJoinClub(id as string);
   const isHost = useMemo(() => {
-    if (address && club) {
-      return address === club.owner;
+    if (user && club) {
+      return user === club.owner;
     } else {
       return false;
     }
-  }, [address, club]);
+  }, [user, club]);
 
   useContractReads({
     enabled: clubCastAddress ? true : false,
     onSuccess: async (data) => {
-      const erc721Address = data[0].result as address;
-      setClubErc721(erc721Address);
-
-      const governanceAddress = data[1].result as address;
+      const governanceAddress = data[0].result as address;
       setClubGovernance(governanceAddress);
     },
     contracts: [
       {
         address: clubCastAddress as address,
         abi: ClubCast__factory.abi,
-        functionName: "getClubErc721",
-        args: [id as string],
-      },
-      {
-        address: clubCastAddress as address,
-        abi: ClubCast__factory.abi,
         functionName: "getClubGovernance",
         args: [id as string],
+        chainId: club?.chainId,
       },
     ],
   });
@@ -74,7 +65,7 @@ const ClubPage = () => {
       setIsLoading(true);
       if (id && writeJoinClub) {
         writeJoinClub();
-        await joinClubApi(address as string, id as string);
+        await joinClubApi(user as string, id as string);
         // if (chain?.id === polygonMumbai.id) {
         //   await userPushAccount?.channel.send([club.owner], {
         //     notification: {
@@ -90,7 +81,7 @@ const ClubPage = () => {
       console.log(e);
       setIsLoading(false);
     }
-  }, [id, writeJoinClub, address]);
+  }, [id, writeJoinClub, user]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -100,6 +91,8 @@ const ClubPage = () => {
 
   if (loading) return <div>Loading...</div>;
 
+  if (club === undefined) return <div>Club not found</div>;
+
   return (
     <div className="w-full h-[calc(100vh-5.5rem)] flex flex-col items-center">
       <div className="w-full h-full flex">
@@ -107,6 +100,7 @@ const ClubPage = () => {
           <ClubIntro club={club} css="h-[40%] scrollbar " />
           {chain?.id === club.chainId && (isMember || isHost) && (
             <ProposalController
+              clubId={club.id}
               governanceAddress={clubGovernance as address}
               isMember={isMember}
               css="h-[60%]"
@@ -133,7 +127,7 @@ const ClubPage = () => {
             </div>
           ) : (
             <EpisodeController
-              clubId={id as string}
+              clubId={club.id}
               clubName={club.name}
               isHost={isHost}
               hostAddress={club.owner}

@@ -9,12 +9,6 @@ import { useClubCastContract } from "./useClubCastContract";
 
 const useJoinClub = (clubId: string) => {
   const { clubCastAddress } = useClubCastContract();
-  // const { config } = usePrepareContractWrite({
-  //   address: (process.env.NEXT_PUBLIC_SCROLL_CLUBCAST_ADDRESS as address) || "",
-  //   abi: ClubCast__factory.abi,
-  //   functionName: "joinClub",
-  //   args: [clubId as string],
-  // });
 
   const { write: writeJoinClub, data } = useContractWrite({
     address: (clubCastAddress as address) || "",

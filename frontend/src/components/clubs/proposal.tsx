@@ -8,8 +8,8 @@ import { address } from "@/types/address";
 import {
   useAccount,
   useContractEvent,
-  useContractRead,
   useContractReads,
+  useNetwork,
 } from "wagmi";
 import { ClubCastGovernor__factory } from "@/typechain-types";
 import { set } from "date-fns";
@@ -19,6 +19,7 @@ import useGetUserVote from "@/hooks/useGetUserVote";
 import useGetAllVotes from "@/hooks/useGetAllVotes";
 
 interface PropoaslProps {
+  clubId: string;
   governanceAddress: address;
   proposal: Proposal;
 }
@@ -32,7 +33,6 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
   const [proposer, setProposer] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
   const [alreadyVote, setAlreadyVote] = useState(true);
-  // const [allVotes, setAllVotes] = useState<number[]>();
   const { data: userVote } = useGetUserVote(governanceAddress, proposal.id);
   const { data: allVotes } = useGetAllVotes(governanceAddress, proposal.id);
   const totalVotes = useMemo(() => {
@@ -56,7 +56,6 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
       const endTime = Number(data[2].result);
       setTimeLeft(((endTime - startTime) * 12) / (24 * 3600));
       setProposer(data[3].result as address);
-      // setAllVotes(data[4]?.result?.map((x: any) => Number(x)));
     },
     contracts: [
       {
@@ -83,12 +82,6 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
         functionName: "proposalProposer",
         args: [BigInt(proposal.id)],
       },
-      // {
-      //   address: governanceAddress as `0x${string}`,
-      //   abi: ClubCastGovernor__factory.abi,
-      //   functionName: "proposalVotes",
-      //   args: [BigInt(proposal.id)],
-      // },
     ],
   });
 
@@ -128,6 +121,7 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
       writeCastVote?.();
     } catch (error: any) {
       alert(error.message);
+      setIsLoading(false);
     }
     setIsLoading(false);
   }, [setIsLoading, writeCastVote, vote]);
@@ -202,7 +196,6 @@ const ProposalContent = ({ governanceAddress, proposal }: PropoaslProps) => {
               <div className="text-xl  font-semibold">
                 Proposal: {proposal.title} {}
               </div>
-              <div className="text-sm underline">click outside to close</div>
             </div>
             <div className="grid grid-cols-3 gap-5 pb-5">
               <div className="col-span-2 px-8 py-5">

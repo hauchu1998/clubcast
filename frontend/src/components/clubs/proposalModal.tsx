@@ -1,16 +1,13 @@
 import { address } from "@/types/address";
-import { use, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import Spinner from "../spinner";
 import { bangers } from "@/styles/fonts";
 import { AiOutlineClose } from "react-icons/ai";
 import useCreateProposal from "@/hooks/useCreateProposal";
-import { Proposal } from "@/types/governance";
 import { useClubCastContract } from "@/hooks/useClubCastContract";
 import { polygonMumbai } from "viem/chains";
 import usePushProtocolAccount from "@/hooks/usePushProtocolAccount";
-import { useContractRead } from "wagmi";
-import { ClubCast__factory } from "@/typechain-types";
 import useGetClubMembers from "@/hooks/useGetClubMembers";
 
 interface ProposalModalProps {
