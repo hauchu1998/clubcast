@@ -58,6 +58,6 @@ export const wagmiConfig = createConfig({
   autoConnect: false,
   connectors: connectors,
   publicClient,
-  storage,
+  // storage,
 });
 export const ethereumClient = new EthereumClient(wagmiConfig, chains);

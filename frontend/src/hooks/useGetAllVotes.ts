@@ -18,6 +18,7 @@ const useGetAllVotes = (governanceAddress: address, proposalId: string) => {
     queryFn: async () => {
       const votes = await fetchAllVotes(governanceAddress, proposalId);
       let proposalVotes = [0, 0, 0];
+      if (!votes) return proposalVotes;
       Object.keys(votes).forEach((key) => {
         proposalVotes[votes[key]] += 1;
       });

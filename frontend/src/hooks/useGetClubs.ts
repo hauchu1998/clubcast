@@ -37,6 +37,7 @@ export const useGetUserSubscribedClubs = () => {
     queryKey: [address, "subscribed", "clubs"],
     queryFn: async () => {
       const clubIds = await fetchUserSubscribedClubs(address as string);
+      if (!clubIds) return [] as Club[];
       const clubs: Club[] = await Promise.all(
         clubIds.map(async (id: string) => {
           return fetchClub(id);

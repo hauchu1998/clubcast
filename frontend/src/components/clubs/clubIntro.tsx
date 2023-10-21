@@ -81,7 +81,7 @@ const ClubIntro = ({ club, css }: ClubIntroProps) => {
                 <BiCopy className="text-orange-500 text-3xl" />
               </IconButton>
             </Tooltip>
-            <Tooltip title="share">
+            <Tooltip title="view in explorer">
               <IconButton>
                 <Link
                   href="https://sepolia-blockscout.scroll.io/address/0x98390C103aA34c2A7438D2ef80AAf53b5270f531#code"

@@ -7,69 +7,52 @@ import { useAccount, useContractReads, useNetwork } from "wagmi";
 import SwitchNetworkButton from "@/components/switchNetworkButton";
 import ClubIntro from "@/components/clubs/clubIntro";
 import { useGetClub } from "@/hooks/useGetClubs";
-import { useClubCastContract } from "@/hooks/useClubCastContract";
 import { address } from "@/types/address";
 import { ClubCast__factory } from "@/typechain-types";
 import Spinner from "@/components/spinner";
 import { joinClubApi } from "@/firebase/joinClubs";
 import useJoinClub from "@/hooks/useJoinClub";
-import { governance } from "@/typechain-types/@openzeppelin/contracts";
-import { set } from "date-fns";
+import usePushProtocolAccount from "@/hooks/usePushProtocolAccount";
+import { polygonMumbai } from "viem/chains";
+import useGetClubMembers from "@/hooks/useGetClubMembers";
 
 const ClubPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const { result: club, loading } = useGetClub(id as string);
-  const { chain } = useNetwork();
-  const { address } = useAccount();
-  const [isMember, setIsMember] = useState(false);
   const { address: user } = useAccount();
-  const [clubMembers, setClubMembers] = useState<address[]>([]);
-  const [clubErc721, setClubErc721] = useState<address>();
+  // const { userPushAccount } = usePushProtocolAccount();
+  const members = useGetClubMembers(id as string);
+  const isMember = useMemo(
+    () => members.includes(user as address),
+    [members, user]
+  );
+
   const [clubGovernance, setClubGovernance] = useState<address>();
-  const { clubCastAddress } = useClubCastContract();
+  const { chain } = useNetwork();
   const [isLoading, setIsLoading] = useState(false);
   const { writeJoinClub, isSuccess } = useJoinClub(id as string);
   const isHost = useMemo(() => {
-    if (address && club) {
-      return address === club.owner;
+    if (user && club) {
+      return user === club.owner;
     } else {
       return false;
     }
-  }, [address, club]);
+  }, [user, club]);
 
   useContractReads({
-    enabled: clubCastAddress ? true : false,
+    enabled: club ? true : false,
     onSuccess: async (data) => {
-      const members = data[0].result as address[];
-      const isMember = members.includes(user as address);
-      setIsMember(isMember);
-      setClubMembers(members);
-
-      const erc721Address = data[1].result as address;
-      setClubErc721(erc721Address);
-
-      const governanceAddress = data[2].result as address;
+      const governanceAddress = data[0].result as address;
       setClubGovernance(governanceAddress);
     },
     contracts: [
       {
-        address: clubCastAddress as address,
-        abi: ClubCast__factory.abi,
-        functionName: "getClubMembers",
-        args: [id as string],
-      },
-      {
-        address: clubCastAddress as address,
-        abi: ClubCast__factory.abi,
-        functionName: "getClubErc721",
-        args: [id as string],
-      },
-      {
-        address: clubCastAddress as address,
+        address: club?.contractAddress as address,
         abi: ClubCast__factory.abi,
         functionName: "getClubGovernance",
         args: [id as string],
+        chainId: club?.chainId,
       },
     ],
   });
@@ -79,7 +62,15 @@ const ClubPage = () => {
       setIsLoading(true);
       if (id && writeJoinClub) {
         writeJoinClub();
-        await joinClubApi(address as string, id as string);
+        await joinClubApi(user as string, id as string);
+        // if (chain?.id === polygonMumbai.id) {
+        //   await userPushAccount?.channel.send([club.owner], {
+        //     notification: {
+        //       title: "New Club Member",
+        //       body: `${user} has joined your club`,
+        //     },
+        //   });
+        // }
       } else {
         throw new Error("check if the write function or id is defined");
       }
@@ -87,16 +78,17 @@ const ClubPage = () => {
       console.log(e);
       setIsLoading(false);
     }
-  }, [id, writeJoinClub, address]);
+  }, [id, writeJoinClub, user]);
 
   useEffect(() => {
     if (isSuccess) {
       setIsLoading(false);
-      setIsMember(true);
     }
   }, [isSuccess]);
 
   if (loading) return <div>Loading...</div>;
+
+  if (club === undefined) return <div>Club not found</div>;
 
   return (
     <div className="w-full h-[calc(100vh-5.5rem)] flex flex-col items-center">
@@ -105,6 +97,7 @@ const ClubPage = () => {
           <ClubIntro club={club} css="h-[40%] scrollbar " />
           {chain?.id === club.chainId && (isMember || isHost) && (
             <ProposalController
+              clubId={club.id}
               governanceAddress={clubGovernance as address}
               isMember={isMember}
               css="h-[60%]"
@@ -131,7 +124,8 @@ const ClubPage = () => {
             </div>
           ) : (
             <EpisodeController
-              clubId={id as string}
+              clubId={club.id}
+              clubName={club.name}
               isHost={isHost}
               hostAddress={club.owner}
             />

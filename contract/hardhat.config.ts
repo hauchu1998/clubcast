@@ -17,6 +17,8 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
+      mantleTest: process.env.MANTLE_TEST_API_KEY || "",
+      polygonMumbai: process.env.MUMBAI_API_KEY || "",
       scrollSepolia: "abc",
     },
     customChains: [
@@ -28,52 +30,29 @@ const config: HardhatUserConfig = {
           browserURL: "https://sepolia-blockscout.scroll.io/",
         },
       },
+      {
+        network: "mantleTest",
+        chainId: 5001,
+        urls: {
+          apiURL: "https://explorer.testnet.mantle.xyz/api",
+          browserURL: "https://explorer.testnet.mantle.xyz",
+        },
+      },
     ],
   },
   networks: {
-    xdcTestnet: {
-      url: process.env.XINFIN_TESTNET_URL || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
-    scrollTestnet: {
-      url: "https://eth-sepolia-public.unifra.io",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
     scrollSepolia: {
       url: process.env.SCROLL_SPEOLIA_TESTNET_RPC || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
-    maticTestnet: {
-      url: "https://endpoints.omniatech.io/v1/matic/mumbai/public",
+    polygonMumbai: {
+      url: "https://polygon-mumbai.infura.io/v3/" + process.env.INFURA_API_KEY,
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
-    arbitrumTestnet: {
-      url: process.env.ARBITRUM_TESTNET || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
-    gnosisTestnet: {
-      url: process.env.GNOSIS_TESTNET || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
-    "base-goerli": {
-      url: process.env.BASE_TESTNET || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
-    // Mainnets
-    matic: {
-      url: process.env.MATIC_MAINNET || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
-    xdc: {
-      url: process.env.XDC_NETWORK_URL || "",
+    mantleTest: {
+      url: "https://rpc.testnet.mantle.xyz/",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },

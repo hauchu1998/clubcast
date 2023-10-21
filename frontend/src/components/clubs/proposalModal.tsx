@@ -5,17 +5,29 @@ import Spinner from "../spinner";
 import { bangers } from "@/styles/fonts";
 import { AiOutlineClose } from "react-icons/ai";
 import useCreateProposal from "@/hooks/useCreateProposal";
-import { Proposal } from "@/types/governance";
+import { useClubCastContract } from "@/hooks/useClubCastContract";
+import { polygonMumbai } from "viem/chains";
+import usePushProtocolAccount from "@/hooks/usePushProtocolAccount";
+import useGetClubMembers from "@/hooks/useGetClubMembers";
+import { useNetwork } from "wagmi";
 
 interface ProposalModalProps {
   governanceAddress: address;
+  clubId: string;
   isMember: boolean;
 }
 
 // 0x250E633D64F5D4810438cDBE9367E1bE835f8fdB
-const ProposalModal = ({ governanceAddress, isMember }: ProposalModalProps) => {
+const ProposalModal = ({
+  governanceAddress,
+  isMember,
+  clubId,
+}: ProposalModalProps) => {
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { chain } = useNetwork();
+  // const { userPushAccount } = usePushProtocolAccount();
+  const members = useGetClubMembers(clubId);
   const {
     proposalId,
     title,
@@ -35,11 +47,29 @@ const ProposalModal = ({ governanceAddress, isMember }: ProposalModalProps) => {
       console.log("creating proposal");
       setIsLoading(true);
       writeCreateProposal?.();
+      // if (chain?.id === polygonMumbai.id) {
+      //   await userPushAccount?.channel.send(members, {
+      //     notification: {
+      //       title: "New Proposal",
+      //       body: `${clubName} has new proposal, check it out!`,
+      //     },
+      //   });
+      // }
     } catch (error: any) {
       alert(error.message);
       setIsLoading(false);
     }
-  }, [title, description, callData, writeCreateProposal, setIsLoading]);
+  }, [
+    title,
+    description,
+    callData,
+    writeCreateProposal,
+    setIsLoading,
+    // chain,
+    // clubName,
+    // userPushAccount,
+    // members,
+  ]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -62,7 +92,10 @@ const ProposalModal = ({ governanceAddress, isMember }: ProposalModalProps) => {
             <div className="relative h-16 flex justify-center items-center bg-purple-500 text-white rounded-t-lg">
               <button
                 className="absolute top-5 right-5 text-white text-xl"
-                onClick={() => setOpenModal(false)}
+                onClick={() => {
+                  setOpenModal(false);
+                  setIsLoading(false);
+                }}
               >
                 <AiOutlineClose />
               </button>

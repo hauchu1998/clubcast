@@ -92,7 +92,7 @@ contract ClubCast is Ownable {
         address _governanceAddress
     ) external onlyERC721Owner(_erc721Address) {
         IERC721 erc721 = IERC721(_erc721Address);
-        erc721.publicMint(msg.sender);
+        uint256 _tokenId = erc721.publicMint(msg.sender);
         erc721.delegate(msg.sender);
         Club memory newClub = Club({
             clubId: _clubId,
@@ -101,7 +101,9 @@ contract ClubCast is Ownable {
             erc721Address: _erc721Address,
             maxMember: erc721.getMaxSupply()
         });
+        userClubTokenMappings[msg.sender][_clubId] = _tokenId;
         clubs[_clubId] = newClub;
+        clubMembers[_clubId].push(msg.sender);
         emit NewClub(_clubId, msg.sender, _erc721Address, _governanceAddress);
     }
 

@@ -1,28 +1,18 @@
 import { ClubCastGovernor__factory } from "@/typechain-types";
 import { address } from "@/types/address";
 import { useState } from "react";
-import { ethers } from "ethers";
-import { Interface } from "ethers/lib/utils";
-import {
-  useContractWrite,
-  usePrepareContractWrite,
-  useWaitForTransaction,
-} from "wagmi";
+import { useContractWrite, useWaitForTransaction } from "wagmi";
 import { Vote } from "@/types/governance";
 
 const useCastVote = (governanceAddress: address, proposalId: string) => {
   const [vote, setVote] = useState<Vote>();
-  const { config } = usePrepareContractWrite({
+
+  const { data, write: writeCastVote } = useContractWrite({
     address: governanceAddress || "",
-    enabled:
-      governanceAddress !== undefined &&
-      proposalId !== undefined &&
-      vote !== undefined,
     abi: ClubCastGovernor__factory.abi,
     functionName: "castVote",
     args: [BigInt(proposalId), Number(vote)],
   });
-  const { data, write: writeCastVote } = useContractWrite(config);
   const { isSuccess } = useWaitForTransaction({
     hash: data?.hash as `0x${string}`,
   });

@@ -8,7 +8,8 @@ const ChainDropDown = () => {
   const [isShow, setIsShow] = useState(false);
   const { chain } = useNetwork();
   const icon = useMemo(() => {
-    return networksIcon[chain!.id];
+    if (!chain) return networksIcon["80001"];
+    return networksIcon[chain.id];
   }, [chain]);
   const { switchNetwork } = useSwitchNetwork();
 

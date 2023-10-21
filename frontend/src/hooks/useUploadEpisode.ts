@@ -7,24 +7,28 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from "wagmi";
+import { useClubCastContract } from "./useClubCastContract";
 
 const useUpoadEpisode = (clubId: string, id: string) => {
+  const { chain, clubCastAddress } = useClubCastContract();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [ipfsUrl, setIpfsUrl] = useState("");
+
   const createdAt = useMemo(() => {
     if (!ipfsUrl || !title || !description) return "";
     const timestamp = new Date();
     return `${timestamp.toLocaleDateString()} ${timestamp.toLocaleTimeString()}`;
   }, [ipfsUrl, title, description]);
 
-  const { config } = usePrepareContractWrite({
-    address: (process.env.NEXT_PUBLIC_SCROLL_CLUBCAST_ADDRESS as address) || "",
+  const { data, write: writePublishEpisode } = useContractWrite({
+    address: clubCastAddress,
     abi: ClubCast__factory.abi,
     functionName: "publishEpisode",
     args: [clubId, id, createdAt, title, description, ipfsUrl],
+    chainId: chain?.id,
   });
-  const { data, write: writePublishEpisode } = useContractWrite(config);
+
   const { isSuccess } = useWaitForTransaction({
     hash: data?.hash as `0x${string}`,
   });

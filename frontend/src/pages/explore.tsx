@@ -1,5 +1,5 @@
 import { bangers } from "@/styles/fonts";
-import { allClubs } from "@/db/clubs";
+// import { allClubs } from "@/db/clubs";
 import ClubCardContent from "@/components/clubs/clubCard";
 import Link from "next/link";
 import { useGetAllClubs } from "@/hooks/useGetClubs";
@@ -26,7 +26,7 @@ const Explore = () => {
             return (
               <Link
                 key={club.id}
-                className="flex justify-center"
+                className="w-full flex justify-center"
                 href={`/club/${club.id}`}
               >
                 <ClubCardContent club={club} />

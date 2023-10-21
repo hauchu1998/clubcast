@@ -3,6 +3,7 @@ import { ClubCard, Club } from "@/types/club";
 export const club: Club = {
   id: "asdfasdf",
   name: "EthGlobal Podcast",
+  contractAddress: "0x8F0D0011c2D3B6597Fa958bF2E551a69762c07Ab",
   description:
     "ETHGlobal's flagship online event is back: The idea for the first ETHOnline formed out of sheer necessity. As we were forced to take a break from in-person events back in 2020, we raced to create a virtual equivalent that could inspire the same magical feeling.",
   image:
@@ -14,9 +15,9 @@ export const club: Club = {
 export const episodes = [
   {
     id: "ghuiiia",
-    title: "Crypto Analysis - ApeCoin",
+    title: "Compact Certificate",
     description:
-      "ApeCoin raise its value recently, lets see what's going on and what will happen in the following days.",
+      "Compact Certificate is a tool that leverage EdDSA and ZK to generate proof for state, messages or anything. Very efficient verification. Please check it out.",
     contentUrl: "https://www.youtube.com/watch?v=TUFr3rfxSlY",
     createdAt: "2021-10-01",
     likes: 100,

@@ -186,7 +186,7 @@ describe("clubcast", function () {
         const members = await clubcast.getClubMembers(clubId);
         const mappedClubTokens = clubTokens.map((token) => token.toNumber());
         expect(clubIds).to.include.members([clubId]);
-        expect(mappedClubTokens).to.include.members([0]);
+        expect(mappedClubTokens).to.include.members([1]); // tokenId 0 is minted to the host
         expect(members).to.include.members([addr2.address]);
       });
     });

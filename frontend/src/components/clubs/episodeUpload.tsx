@@ -8,18 +8,28 @@ import { Episode } from "@/types/club";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RiVideoUploadLine } from "react-icons/ri";
 import Spinner from "../spinner";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { AiOutlineClose } from "react-icons/ai";
+import { useClubCastContract } from "@/hooks/useClubCastContract";
+import useGetClubMembers from "@/hooks/useGetClubMembers";
 
 interface EpisodeUploadProps {
   clubId: string;
+  clubName: string;
   setEpisodes: Function;
 }
 
-const EpisodeUpload = ({ clubId, setEpisodes }: EpisodeUploadProps) => {
+const EpisodeUpload = ({
+  clubId,
+  clubName,
+  setEpisodes,
+}: EpisodeUploadProps) => {
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { chain } = useNetwork();
+  const members = useGetClubMembers(clubId);
   const { address } = useAccount();
+  // const { userPushAccount } = usePushProtocolAccount();
   const videoId = useMemo(() => generateRandomId(), []);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
   const { media, mediaUrl, handleMediaChange, handleMediaUpload } =
@@ -51,6 +61,14 @@ const EpisodeUpload = ({ clubId, setEpisodes }: EpisodeUploadProps) => {
       const episode: Episode = await handlePublishEpisode();
       await uploadEpisodeApi(episode);
       setEpisodes((prev: Episode[]) => [episode, ...prev]);
+      // if (chain?.id === polygonMumbai.id) {
+      //   await userPushAccount?.channel.send(members, {
+      //     notification: {
+      //       title: "New Episode",
+      //       body: `${clubName} has new episode, check it out!`,
+      //     },
+      //   });
+      // }
       // setIsLoading(false);
     } catch (error: any) {
       alert(error.message);
@@ -63,6 +81,10 @@ const EpisodeUpload = ({ clubId, setEpisodes }: EpisodeUploadProps) => {
     handlePublishEpisode,
     setIsLoading,
     setEpisodes,
+    // chain,
+    // clubName,
+    // members,
+    // userPushAccount,
   ]);
 
   useEffect(() => {
@@ -86,7 +108,10 @@ const EpisodeUpload = ({ clubId, setEpisodes }: EpisodeUploadProps) => {
             <div className="relative h-16 flex justify-center items-center bg-purple-500 text-white rounded-t-lg">
               <button
                 className="absolute top-5 right-5 text-white text-xl"
-                onClick={() => setOpenModal(false)}
+                onClick={() => {
+                  setOpenModal(false);
+                  setIsLoading(false);
+                }}
               >
                 <AiOutlineClose />
               </button>

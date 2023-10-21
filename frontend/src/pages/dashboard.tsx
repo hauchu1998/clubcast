@@ -9,7 +9,7 @@ import {
   useGetUserSubscribedClubs,
 } from "@/hooks/useGetClubs";
 
-import { personalClubs as pC, subscribedClubs as sC } from "@/db/clubs";
+// import { personalClubs as pC, subscribedClubs as sC } from "@/db/clubs";
 
 const Dashboard = () => {
   const { address: walletAddress } = useAccount();

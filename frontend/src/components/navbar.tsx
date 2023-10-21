@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import { useAccount, useDisconnect } from "wagmi";
 import { bangers } from "@/styles/fonts";
 import { type Signer, useClient } from "@xmtp/react-sdk";
@@ -18,7 +18,7 @@ const Navbar = () => {
   const { pathname } = router;
   const handleDisconnect = () => {
     disconnect();
-    router.replace("/login");
+    Router.push("/login");
   };
 
   useEffect(() => {
@@ -45,17 +45,19 @@ const Navbar = () => {
 
   useEffect(() => {
     if (!isConnected) {
-      router.replace("/login");
+      console.log("not connected");
+      Router.replace("/login");
     }
-  }, [isConnected, router]);
+  }, [isConnected]);
 
   return (
     <div className="fixed top-0 w-full flex justify-between items-center gap-5 px-10 text-xl border-b border-black h-[4.5rem] bg-color">
       <Image
         src="/logo4.png"
+        className="w-auto h-auto"
         alt="Padcast Logo"
-        width={150}
-        height={30}
+        width={165}
+        height={60}
         priority
       />
       <div
