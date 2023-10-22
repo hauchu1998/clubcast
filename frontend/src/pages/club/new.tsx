@@ -34,8 +34,8 @@ const NewClub = () => {
   const { result: signer } = useEtherWalletClient();
   const { chain, clubCastAddress } = useClubCastContract();
   const [clubName, setClubName] = useState("");
-  const [maxMembers, setMaxMembers] = useState<number>();
-  const [price, setPrice] = useState<number>();
+  const [maxMembers, setMaxMembers] = useState("");
+  const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const { media, handleMediaChange, handleMediaUpload } = useMediaUploaded();
   const defaultImg = useMemo(
@@ -71,7 +71,7 @@ const NewClub = () => {
             address,
             "ClubCast Fragment",
             "CCF",
-            BigNumber.from(maxMembers?.toString())
+            BigNumber.from(maxMembers)
           );
           await contract.deployed();
           setErc721Address(contract.address);
@@ -214,7 +214,7 @@ const NewClub = () => {
                 className="w-20 bg-transparent px-3 py-1 text-lg border border-black rounded-lg"
                 placeholder="ex: 10"
                 value={maxMembers}
-                onChange={(e) => setMaxMembers(Number(e.target.value))}
+                onChange={(e) => setMaxMembers(e.target.value)}
               />
               <div className={`${bangers.className} text-3xl`}>Price: </div>
               <input
@@ -222,11 +222,12 @@ const NewClub = () => {
                 className="w-20 bg-transparent px-3 py-1 text-lg border border-black rounded-lg"
                 placeholder="1 ETH"
                 value={price}
-                onChange={(e) => setPrice(Number(e.target.value))}
+                onChange={(e) => setPrice(e.target.value)}
               />
               {maxMembers && price && (
                 <div className="mt-1 text-sm text-pink-500 underline text-">
-                  Required to stake {maxMembers * price * 0.1} ETH
+                  Required to stake {Number(maxMembers) * Number(price) * 0.1}{" "}
+                  ETH
                 </div>
               )}
             </div>

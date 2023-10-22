@@ -1,7 +1,6 @@
 import { ClubCastGovernor__factory } from "@/typechain-types";
 import { address } from "@/types/address";
 import { useState } from "react";
-import { ethers } from "ethers";
 import { Interface } from "ethers/lib/utils";
 import {
   useContractWrite,

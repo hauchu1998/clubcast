@@ -32,7 +32,7 @@ const EpisodeUpload = ({
   // const { userPushAccount } = usePushProtocolAccount();
   const videoId = useMemo(() => generateRandomId(), []);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
-  const { media, mediaUrl, handleMediaChange, handleMediaUpload } =
+  const { media, setMedia, mediaUrl, handleMediaChange, handleMediaUpload } =
     useMediaUploaded();
   const {
     title,
@@ -92,13 +92,19 @@ const EpisodeUpload = ({
       setOpenModal(false);
       setIsLoading(false);
     }
-  }, [isSuccess, address, ipfsUrl, videoId, setEpisodes]);
+  }, [isSuccess]);
 
   return (
     <div>
       <button
         className="mt-5 w-full h-20 border-4 border-purple-500 border-dashed text-center text-5xl font-bold text-purple-500"
-        onClick={() => setOpenModal(true)}
+        onClick={() => {
+          setOpenModal(true);
+          setMedia(null);
+          setTitle("");
+          setDescription("");
+          setIpfsUrl("");
+        }}
       >
         +
       </button>

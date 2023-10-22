@@ -1,7 +1,7 @@
 import { ClubCast__factory } from "@/typechain-types";
 import { address } from "@/types/address";
 import { Episode } from "@/types/club";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   useContractWrite,
   usePrepareContractWrite,
