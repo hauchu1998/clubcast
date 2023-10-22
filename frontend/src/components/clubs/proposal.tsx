@@ -158,7 +158,10 @@ const ProposalContent = ({
       <div
         key={proposal.id}
         className="h-20 border-2 border-purple-500 px-3 py-3 flex flex-col rounded-lg bg-[#f5eae8] hover:cursor-pointer"
-        onClick={() => setOpenModal(true)}
+        onClick={() => {
+          setOpenModal(true);
+          setVote(undefined);
+        }}
       >
         <div className="flex justify-between ">
           <div className="text-lg font-bold">{proposal.title}</div>

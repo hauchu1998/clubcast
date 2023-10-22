@@ -80,7 +80,14 @@ const ProposalModal = ({
 
   return (
     <div className="absolute top-0 right-5 text-3xl text-purple-500 hover:cursor-pointer">
-      <button onClick={() => setOpenModal(true)}>
+      <button
+        onClick={() => {
+          setOpenModal(true);
+          setTitle("");
+          setDescription("");
+          setCallData("");
+        }}
+      >
         <IoMdAdd />
       </button>
 
