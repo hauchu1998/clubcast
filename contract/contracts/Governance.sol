@@ -45,4 +45,9 @@ contract ClubCastGovernor is
     function doNothing() public pure returns (bool) {
         return true;
     }
+
+    function askForRefund() public view returns (bool) {
+        require(super.getVotes(msg.sender, block.timestamp) > proposalThreshold(), "Governor: votes below threshold");
+        return true;
+    }
 }

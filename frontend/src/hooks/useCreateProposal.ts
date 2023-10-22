@@ -10,18 +10,21 @@ import {
 } from "wagmi";
 
 const useCreateProposal = (governanceAddress: address) => {
-  const call = new Interface(ClubCastGovernor__factory.abi).encodeFunctionData(
-    "doNothing"
-  );
+  const callDoNothing = new Interface(
+    ClubCastGovernor__factory.abi
+  ).encodeFunctionData("doNothing");
+  const callRefund = new Interface(
+    ClubCastGovernor__factory.abi
+  ).encodeFunctionData("askForRefund");
   const [title, setTitle] = useState("Topic for next week: UMA snapshot");
   const [description, setDescription] = useState(
     "UMA is an optimistic oracle that can verify any natural language statement as true on the blockchain, so contracts asking for that data can be settled. "
   );
-  const [callData, setCallData] = useState(call.toString());
+  const [callData, setCallData] = useState("");
   const [proposalId, setProposalId] = useState("");
 
-  const doNothing = async () => {
-    setCallData(call.toString());
+  const askForRefund = async () => {
+    setCallData(callRefund);
   };
 
   const { data, write: writeCreateProposal } = useContractWrite({
@@ -31,7 +34,11 @@ const useCreateProposal = (governanceAddress: address) => {
     args: [
       [governanceAddress],
       [BigInt(0)],
-      [callData as `0x${string}`],
+      [
+        callData !== undefined
+          ? (callData as `0x${string}`)
+          : (callDoNothing as `0x${string}`),
+      ],
       JSON.stringify({ title: title, description: description }),
     ],
   });
@@ -47,7 +54,7 @@ const useCreateProposal = (governanceAddress: address) => {
     setDescription,
     callData,
     setCallData,
-    doNothing,
+    askForRefund,
     writeCreateProposal,
     isSuccess,
   };

@@ -35,6 +35,7 @@ const NewClub = () => {
   const { chain, clubCastAddress } = useClubCastContract();
   const [clubName, setClubName] = useState("");
   const [maxMembers, setMaxMembers] = useState<number>();
+  const [price, setPrice] = useState<number>();
   const [description, setDescription] = useState("");
   const { media, handleMediaChange, handleMediaUpload } = useMediaUploaded();
   const defaultImg = useMemo(
@@ -204,7 +205,7 @@ const NewClub = () => {
               <div className={`${bangers.className} text-3xl`}>Chain: </div>
               <ChainDropDown />
             </div>
-            <div className="mt-5 w-full flex gap-5 items-center">
+            <div className="mt-5 flex gap-5 items-center">
               <div className={`${bangers.className} text-3xl`}>
                 Member Limit:{" "}
               </div>
@@ -215,6 +216,19 @@ const NewClub = () => {
                 value={maxMembers}
                 onChange={(e) => setMaxMembers(Number(e.target.value))}
               />
+              <div className={`${bangers.className} text-3xl`}>Price: </div>
+              <input
+                type="text"
+                className="w-20 bg-transparent px-3 py-1 text-lg border border-black rounded-lg"
+                placeholder="1 ETH"
+                value={price}
+                onChange={(e) => setPrice(Number(e.target.value))}
+              />
+              {maxMembers && price && (
+                <div className="mt-1 text-sm text-pink-500 underline text-">
+                  Required to stake {maxMembers * price * 0.1} ETH
+                </div>
+              )}
             </div>
           </div>
         </div>

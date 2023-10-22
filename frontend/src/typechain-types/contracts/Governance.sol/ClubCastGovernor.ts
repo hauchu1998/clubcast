@@ -34,6 +34,7 @@ export interface ClubCastGovernorInterface extends utils.Interface {
     "CLOCK_MODE()": FunctionFragment;
     "COUNTING_MODE()": FunctionFragment;
     "EXTENDED_BALLOT_TYPEHASH()": FunctionFragment;
+    "askForRefund()": FunctionFragment;
     "cancel(address[],uint256[],bytes[],bytes32)": FunctionFragment;
     "castVote(uint256,uint8)": FunctionFragment;
     "castVoteBySig(uint256,uint8,address,bytes)": FunctionFragment;
@@ -85,6 +86,7 @@ export interface ClubCastGovernorInterface extends utils.Interface {
       | "CLOCK_MODE"
       | "COUNTING_MODE"
       | "EXTENDED_BALLOT_TYPEHASH"
+      | "askForRefund"
       | "cancel"
       | "castVote"
       | "castVoteBySig"
@@ -144,6 +146,10 @@ export interface ClubCastGovernorInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "EXTENDED_BALLOT_TYPEHASH",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "askForRefund",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -386,6 +392,10 @@ export interface ClubCastGovernorInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "EXTENDED_BALLOT_TYPEHASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "askForRefund",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "cancel", data: BytesLike): Result;
@@ -721,6 +731,8 @@ export interface ClubCastGovernor extends BaseContract {
 
     EXTENDED_BALLOT_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
 
+    askForRefund(overrides?: CallOverrides): Promise<[boolean]>;
+
     cancel(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
@@ -976,6 +988,8 @@ export interface ClubCastGovernor extends BaseContract {
 
   EXTENDED_BALLOT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
+  askForRefund(overrides?: CallOverrides): Promise<boolean>;
+
   cancel(
     targets: PromiseOrValue<string>[],
     values: PromiseOrValue<BigNumberish>[],
@@ -1230,6 +1244,8 @@ export interface ClubCastGovernor extends BaseContract {
     COUNTING_MODE(overrides?: CallOverrides): Promise<string>;
 
     EXTENDED_BALLOT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
+
+    askForRefund(overrides?: CallOverrides): Promise<boolean>;
 
     cancel(
       targets: PromiseOrValue<string>[],
@@ -1598,6 +1614,8 @@ export interface ClubCastGovernor extends BaseContract {
 
     EXTENDED_BALLOT_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
 
+    askForRefund(overrides?: CallOverrides): Promise<BigNumber>;
+
     cancel(
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
@@ -1837,6 +1855,8 @@ export interface ClubCastGovernor extends BaseContract {
     EXTENDED_BALLOT_TYPEHASH(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    askForRefund(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     cancel(
       targets: PromiseOrValue<string>[],

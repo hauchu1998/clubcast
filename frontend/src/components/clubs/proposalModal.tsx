@@ -5,7 +5,6 @@ import Spinner from "../spinner";
 import { bangers } from "@/styles/fonts";
 import { AiOutlineClose } from "react-icons/ai";
 import useCreateProposal from "@/hooks/useCreateProposal";
-import { useClubCastContract } from "@/hooks/useClubCastContract";
 import { polygonMumbai } from "viem/chains";
 import usePushProtocolAccount from "@/hooks/usePushProtocolAccount";
 import useGetClubMembers from "@/hooks/useGetClubMembers";
@@ -36,13 +35,13 @@ const ProposalModal = ({
     setDescription,
     callData,
     setCallData,
-    doNothing,
+    askForRefund,
     writeCreateProposal,
     isSuccess,
   } = useCreateProposal(governanceAddress);
 
   const handleProposalCreated = useCallback(async () => {
-    if (!title || !description || !callData) return;
+    if (!title || !description) return;
     try {
       console.log("creating proposal");
       setIsLoading(true);
@@ -62,7 +61,6 @@ const ProposalModal = ({
   }, [
     title,
     description,
-    callData,
     writeCreateProposal,
     setIsLoading,
     // chain,
@@ -124,20 +122,20 @@ const ProposalModal = ({
                 <div className={`${bangers.className} text-3xl`}>CallData</div>
                 <button
                   className="text-sm text-purple-500 underline"
-                  onClick={doNothing}
+                  onClick={askForRefund}
                 >
-                  Do Nothing
+                  Refund
                 </button>
               </div>
               <textarea
                 className="w-full bg-transparent px-3 py-1 text-lg border border-black rounded-lg"
-                placeholder="Enter Episode Description"
+                placeholder="Enter CallData Bytes (0x...)"
                 rows={3}
                 value={callData}
                 onChange={(e) => setCallData(e.target.value)}
               />
               <div className="w-full">
-                {title && description && callData && (
+                {title && description && (
                   <div className="w-full flex justify-center">
                     <button
                       className={`${bangers.className} mt-5 px-3 py-1 bg-black text-white text-2xl rounded-lg`}

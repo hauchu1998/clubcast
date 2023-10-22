@@ -54,11 +54,12 @@ const Navbar = () => {
     <div className="fixed top-0 w-full flex justify-between items-center gap-5 px-10 text-xl border-b border-black h-[4.5rem] bg-color">
       <Image
         src="/logo4.png"
-        className="w-auto h-auto"
+        className="w-auto h-16 hover:cursor-pointer"
         alt="Padcast Logo"
         width={165}
         height={60}
         priority
+        onClick={() => Router.push("/dashboard")}
       />
       <div
         className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-10 text-3xl ${bangers.className}`}
