@@ -25,7 +25,7 @@ const ProposalModal = ({
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { chain } = useNetwork();
-  // const { userPushAccount } = usePushProtocolAccount();
+  const { userPushAccount } = usePushProtocolAccount();
   const members = useGetClubMembers(clubId);
   const {
     proposalId,
@@ -46,14 +46,14 @@ const ProposalModal = ({
       console.log("creating proposal");
       setIsLoading(true);
       writeCreateProposal?.();
-      // if (chain?.id === polygonMumbai.id) {
-      //   await userPushAccount?.channel.send(members, {
-      //     notification: {
-      //       title: "New Proposal",
-      //       body: `${clubName} has new proposal, check it out!`,
-      //     },
-      //   });
-      // }
+      if (chain?.id === polygonMumbai.id) {
+        await userPushAccount?.channel.send(members, {
+          notification: {
+            title: "New Proposal",
+            body: `new proposal, check it out!`,
+          },
+        });
+      }
     } catch (error: any) {
       alert(error.message);
       setIsLoading(false);
@@ -63,10 +63,10 @@ const ProposalModal = ({
     description,
     writeCreateProposal,
     setIsLoading,
-    // chain,
+    chain,
     // clubName,
-    // userPushAccount,
-    // members,
+    userPushAccount,
+    members,
   ]);
 
   useEffect(() => {

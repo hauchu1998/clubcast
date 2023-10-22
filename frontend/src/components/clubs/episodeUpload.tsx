@@ -12,6 +12,8 @@ import { useAccount, useNetwork } from "wagmi";
 import { AiOutlineClose } from "react-icons/ai";
 import { useClubCastContract } from "@/hooks/useClubCastContract";
 import useGetClubMembers from "@/hooks/useGetClubMembers";
+import usePushProtocolAccount from "@/hooks/usePushProtocolAccount";
+import { polygonMumbai } from "viem/chains";
 
 interface EpisodeUploadProps {
   clubId: string;
@@ -29,7 +31,7 @@ const EpisodeUpload = ({
   const { chain } = useNetwork();
   const members = useGetClubMembers(clubId);
   const { address } = useAccount();
-  // const { userPushAccount } = usePushProtocolAccount();
+  const { userPushAccount } = usePushProtocolAccount();
   const videoId = useMemo(() => generateRandomId(), []);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
   const { media, setMedia, mediaUrl, handleMediaChange, handleMediaUpload } =
@@ -61,15 +63,15 @@ const EpisodeUpload = ({
       const episode: Episode = await handlePublishEpisode();
       await uploadEpisodeApi(episode);
       setEpisodes((prev: Episode[]) => [episode, ...prev]);
-      // if (chain?.id === polygonMumbai.id) {
-      //   await userPushAccount?.channel.send(members, {
-      //     notification: {
-      //       title: "New Episode",
-      //       body: `${clubName} has new episode, check it out!`,
-      //     },
-      //   });
-      // }
-      // setIsLoading(false);
+      if (chain?.id === polygonMumbai.id) {
+        await userPushAccount?.channel.send(members, {
+          notification: {
+            title: "New Episode",
+            body: `New episode, check it out!`,
+          },
+        });
+      }
+      setIsLoading(false);
     } catch (error: any) {
       alert(error.message);
       setIsLoading(false);
@@ -81,10 +83,10 @@ const EpisodeUpload = ({
     handlePublishEpisode,
     setIsLoading,
     setEpisodes,
-    // chain,
+    chain,
     // clubName,
-    // members,
-    // userPushAccount,
+    members,
+    userPushAccount,
   ]);
 
   useEffect(() => {

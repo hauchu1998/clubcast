@@ -21,7 +21,7 @@ const ClubPage = () => {
   const { id } = router.query;
   const { result: club, loading } = useGetClub(id as string);
   const { address: user } = useAccount();
-  // const { userPushAccount } = usePushProtocolAccount();
+  const { userPushAccount } = usePushProtocolAccount();
   const members = useGetClubMembers(id as string);
   const isMember = useMemo(
     () => members.includes(user as address),
@@ -63,14 +63,14 @@ const ClubPage = () => {
       if (id && writeJoinClub) {
         writeJoinClub();
         await joinClubApi(user as string, id as string);
-        // if (chain?.id === polygonMumbai.id) {
-        //   await userPushAccount?.channel.send([club.owner], {
-        //     notification: {
-        //       title: "New Club Member",
-        //       body: `${user} has joined your club`,
-        //     },
-        //   });
-        // }
+        if (chain?.id === polygonMumbai.id && club) {
+          await userPushAccount?.channel.send([club.owner], {
+            notification: {
+              title: "New Club Member",
+              body: `${user} has joined your club`,
+            },
+          });
+        }
       } else {
         throw new Error("check if the write function or id is defined");
       }
@@ -78,7 +78,7 @@ const ClubPage = () => {
       console.log(e);
       setIsLoading(false);
     }
-  }, [id, writeJoinClub, user]);
+  }, [id, writeJoinClub, user, chain, userPushAccount, club]);
 
   useEffect(() => {
     if (isSuccess) {
