@@ -8,6 +8,7 @@ async function main() {
 
   governor = await Governor.deploy(
     "0xA6c5bD390E92616CA1efE23ABA568e69C4B44FEB",
+    "ClubCast",
     0,
     4
   );

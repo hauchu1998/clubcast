@@ -7,6 +7,10 @@ import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol
 import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
 
+interface IUmaAsserter {
+    function getData(bytes32 assertionId) external view returns (bool, bytes32);
+}
+
 contract ClubCastGovernor is
     Governor,
     GovernorSettings,
@@ -46,8 +50,10 @@ contract ClubCastGovernor is
         return true;
     }
 
-    function askForRefund() public view returns (bool) {
+    function askForRefund(address umaAddress, bytes32 assertionId) public view returns (bool) {
         require(super.getVotes(msg.sender, block.timestamp) > proposalThreshold(), "Governor: votes below threshold");
-        return true;
+        IUmaAsserter umaAsserter = IUmaAsserter(umaAddress);
+        (bool pass, ) = umaAsserter.getData(assertionId);
+        return pass;
     }
 }
