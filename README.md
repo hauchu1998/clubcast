@@ -5,7 +5,7 @@ Here's what our team is working on so far:
 
 Welcome to ClubCast - a DAO clubhouse where the member have the power to decide the topics members truly care about. Buy a "club fragment", vote on the topic and ensure every session you attend is truly worth your time.
 
-Public URL: (https://ethglobal.com/showcase/undefined-2gr03)[https://ethglobal.com/showcase/undefined-2gr03]
+Public URL: (EthGlobal Showcase)[https://ethglobal.com/showcase/undefined-2gr03]
 
 ## Contracts
 
