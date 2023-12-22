@@ -1,4 +1,4 @@
-# Linkt.tv
+# Clubcast
 
 - `npx hardhat compile`
 - `npx hardhat test`
